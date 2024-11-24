@@ -11,10 +11,13 @@
     
     <!-- Iconos y Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/logo-web.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/logo-web.png') }}">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='img/logo-web.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/logo-web.jpg') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/logo-web.jpg') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='img/logo-web.jpg') }}">
     <meta name="HandheldFriendly" content="true">
+
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
     <!-- Título de la Página -->
     <title>{% block title %}NFC Connect{% endblock %}</title>
@@ -33,19 +36,6 @@
 
     <!-- Navbar -->
     {% include 'layout/navbar.html' %}
-
-    <!-- Flash messages -->
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div>
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
-    </div>
 
     <!-- Content -->
     {% block content %}
@@ -80,6 +70,43 @@
             else { remove_class_on_scroll(); }
         })
     </script>
+         <!-- Script para Consentimiento de Cookies -->
+         <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              if (!getCookie('cookiesAccepted')) {
+                  document.getElementById('cookieConsent').style.display = 'block';
+              }
+    
+              const acceptBtn = document.getElementById('acceptCookies');
+              if (acceptBtn) {
+                  acceptBtn.addEventListener('click', function() {
+                      setCookie('cookiesAccepted', 'true', 365);
+                      document.getElementById('cookieConsent').style.display = 'none';
+                  });
+              }
+          });
+    
+          function setCookie(name, value, days) {
+              var expires = "";
+              if (days) {
+                  var date = new Date();
+                  date.setTime(date.getTime() + (days*24*60*60*1000));
+                  expires = "; expires=" + date.toUTCString();
+              }
+              document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+          }
+    
+          function getCookie(name) {
+              var nameEQ = name + "=";
+              var ca = document.cookie.split(';');
+              for(var i=0;i < ca.length;i++) {
+                  var c = ca[i];
+                  while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                  if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+              }
+              return null;
+          }
+      </script>
 
     <!-- Page-specific scripts -->
     {% block scripts %}

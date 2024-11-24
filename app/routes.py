@@ -1,11 +1,18 @@
 import os
-from flask import current_app, render_template, request, redirect, flash, url_for, g
+import openai
+from flask import current_app, jsonify, render_template, request, redirect, flash, url_for, g
 from flask_mail import Message
 from flask_login import login_user, logout_user, current_user, login_required
+from flask_wtf.csrf import CSRFProtect
 from app import app, mail, db
 from app.models import Cart, CartItem, NewsletterSubscription, User, Product  # Asegúrate de tener el modelo Product
 from app.forms import ContactForm, NewsletterForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm
 from app.utils import url_for_locale
+
+# Configura tu clave de API de OpenAI
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+csrf = CSRFProtect(app)
 
 #------------------------------------------------------------------------
 #------------------------MIDDLEWARE--------------------------------------
@@ -92,12 +99,39 @@ def subscribe():
     form = NewsletterForm()
     if form.validate_on_submit():
         email = form.email.data
-        subscription = NewsletterSubscription(email=email)
-        db.session.add(subscription)
-        db.session.commit()
-        flash('You have been successfully subscribed to our newsletter!', 'success')
+        # Verificar si el email ya está suscrito
+        existing_subscription = NewsletterSubscription.query.filter_by(email=email).first()
+        if existing_subscription:
+            flash('Ya estás suscrito a nuestra newsletter.', 'info')
+        else:
+            subscription = NewsletterSubscription(email=email)
+            db.session.add(subscription)
+            db.session.commit()
+            flash('¡Te has suscrito exitosamente a nuestra newsletter!', 'success')
+    else:
+        flash('Por favor, ingresa un correo electrónico válido.', 'danger')
     return redirect(url_for_locale('index', lang=g.lang_code))
 
+#------------------------------------------------------------------------
+#------------------------FUNCIONALIDAD: CHATBOT--------------------------
+#------------------------------------------------------------------------
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    data = request.get_json()
+    user_message = data.get('message')
+
+    try:
+        response = openai.ChatCompletion.create(
+            model='gpt-4',
+            messages=[{'role': 'user', 'content': user_message}]
+        )
+        bot_message = response.choices[0].message['content']
+        return jsonify({'reply': bot_message})
+    except Exception as e:
+        print(e)
+        return jsonify({'reply': 'Lo siento, ha ocurrido un error.'}), 500
+    
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: CARRITO--------------------------
 #------------------------------------------------------------------------

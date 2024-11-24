@@ -62,23 +62,146 @@ body {
     color: #ffffff !important; /* Texto blanco en estado activo */
 }
 
-/* Botón de Contacto en Navbar */
-.navbar .btn-contact {
-    color: #333333 !important; /* Texto oscuro */
-    background-color: #e67e22 !important; /* Fondo naranja */
-    border: 2px solid #e67e22 !important;
-    border-radius: 25px !important;
-    padding: 10px 20px !important;
-    font-size: 16px !important;
-    font-weight: bold !important;
-    text-transform: uppercase !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
+/* styles.css */
+
+/* Chatbot Widget */
+#chatbot {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    max-height: 500px;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    border-radius: 15px;
+    overflow: hidden;
+    animation: slideIn 0.5s forwards;
 }
 
-.navbar .btn-contact:hover {
-    color: #ffffff !important; /* Texto blanco en hover */
-    background-color: #cc6b1f !important; /* Fondo naranja más oscuro en hover */
-    border-color: #cc6b1f !important;
+/* Animación para el Chatbot */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para el Contenido del Chat */
+#chat-content {
+    background-color: #f8f9fa;
+    padding: 10px;
+    height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilos para Mensajes */
+.message {
+    margin-bottom: 15px;
+    display: flex;
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.bot {
+    justify-content: flex-start;
+}
+
+.message-text {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.message.user .message-text {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.message.bot .message-text {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+/* Botón Flotante */
+#openChatBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+#openChatBtn:hover {
+    transform: scale(1.1);
+}
+
+/* Responsividad */
+@media (max-width: 576px) {
+    #chatbot {
+        width: 90%;
+        right: 5%;
+        bottom: 80px;
+    }
+}
+
+/* Sección de Suscripción a la Newsletter */
+.newsletter-section {
+    background-color: #6c757d; /* Gris oscuro */
+    color: white;
+}
+
+.newsletter-section h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.newsletter-section p.lead {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.newsletter-section form {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.newsletter-section input[type="email"] {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.newsletter-section button[type="submit"] {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #0d6efd; /* Azul Bootstrap */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.newsletter-section button[type="submit"]:hover {
+    background-color: #0b5ed7;
 }
 
 /* Separador en Navbar */
