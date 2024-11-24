@@ -1,0 +1,363 @@
+/* Tipografía Global */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #ffffff; /* Fondo blanco */
+    color: #333333; /* Texto en color oscuro */
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #e67e22 !important; /* Naranja */
+}
+
+.navbar-nav .nav-link {
+    color: #333333 !important; /* Gris oscuro */
+    font-weight: 500;
+    margin-left: 20px;
+    transition: color 0.3s ease;
+    padding: 10px 20px; /* Mantener el padding consistente */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #e67e22 !important; /* Naranja al pasar el cursor */
+}
+
+/* Dropdown Menus */
+.nav-item.dropdown-hover:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+    position: absolute;
+}
+
+.dropdown-menu {
+    background-color: #f8f9fa; /* Fondo claro para el dropdown */
+    border: none;
+    padding: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    min-width: 200px;
+}
+
+.dropdown-item {
+    color: #333333; /* Texto oscuro */
+    padding: 15px 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0 10px; /* Espaciado entre elementos */
+    border-radius: 4px;
+}
+
+.dropdown-item:hover {
+    background-color: #e67e22 !important; /* Fondo naranja en hover */
+    color: #ffffff !important; /* Texto blanco en hover para mejor contraste */
+}
+
+.dropdown-item:active {
+    background-color: #cc6b1f !important; /* Fondo naranja más oscuro en estado activo */
+    color: #ffffff !important; /* Texto blanco en estado activo */
+}
+
+/* Botón de Contacto en Navbar */
+.navbar .btn-contact {
+    color: #333333 !important; /* Texto oscuro */
+    background-color: #e67e22 !important; /* Fondo naranja */
+    border: 2px solid #e67e22 !important;
+    border-radius: 25px !important;
+    padding: 10px 20px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+.navbar .btn-contact:hover {
+    color: #ffffff !important; /* Texto blanco en hover */
+    background-color: #cc6b1f !important; /* Fondo naranja más oscuro en hover */
+    border-color: #cc6b1f !important;
+}
+
+/* Separador en Navbar */
+.navbar-separator {
+    height: 20px;
+    width: 1px;
+    background-color: #333333; /* Separador oscuro */
+    margin: auto 15px;
+    display: inline-block;
+}
+
+/* Sección Hero */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #333333; /* Texto oscuro */
+}
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.8; /* Reducir opacidad para mejor legibilidad */
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ffffff; /* Texto oscuro */
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-top: 20px;
+    color: #ffffff; /* Texto oscuro */
+}
+
+.btn-custom {
+    background-color: #e67e22; /* Naranja */
+    color: #333333; /* Texto oscuro */
+    border: none;
+    border-radius: 25px;
+    padding: 10px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #cc6b1f; /* Naranja oscuro */
+    color: #ffffff; /* Texto blanco en hover */
+}
+
+/* Sección de Servicios */
+.services-section {
+    padding: 60px 0;
+    background-color: #f8f9fa; /* Fondo gris claro */
+}
+
+.service-card {
+    border: none;
+    background: transparent;
+    transition: transform 0.3s;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+.service-card .fa {
+    font-size: 3rem;
+    color: #e67e22; /* Naranja */
+    margin-bottom: 20px;
+}
+
+/* Sección de Portfolio */
+.portfolio-section {
+    padding: 60px 0;
+    background-color: #f8f9fa; /* Fondo gris claro */
+}
+
+.portfolio-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.portfolio-item:hover img {
+    transform: scale(1.1);
+}
+
+.portfolio-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(230, 126, 34, 0.8); /* Naranja semi-transparente */
+    color: #333333; /* Gris oscuro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+}
+
+/* Carrusel de Videos de Clientes Mejorado */
+.video-carousel {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.video-carousel h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.video-carousel p.lead {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.video-carousel .carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 500px; /* Ajusta según tus necesidades */
+    position: relative;
+}
+
+.video-carousel video {
+    max-height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Estilo para los captions del carrusel */
+.video-carousel .carousel-caption {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.video-carousel .carousel-caption h5,
+.video-carousel .carousel-caption p {
+    color: #fff;
+}
+
+/* Estilo para los indicadores del carrusel */
+.video-carousel .carousel-indicators [data-bs-target] {
+    background-color: #000;
+    opacity: 0.5;
+}
+
+.video-carousel .carousel-indicators .active {
+    background-color: #007bff;
+    opacity: 1;
+}
+
+/* Controles del Carrusel */
+.video-carousel .carousel-control-prev-icon,
+.video-carousel .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 10px;
+}
+
+.video-carousel .carousel-control-prev-icon:hover,
+.video-carousel .carousel-control-next-icon:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+    .video-carousel .carousel-item {
+        height: auto;
+    }
+
+    .video-carousel video {
+        width: 100%;
+        height: auto;
+    }
+
+    .video-carousel .carousel-caption {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
+
+/* Footer */
+.footer {
+    background-color: #333333; /* Gris oscuro */
+    color: #ffffff; /* Texto blanco */
+    padding: 40px 0;
+}
+
+.footer a {
+    color: #e67e22; /* Naranja para enlaces */
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsividad General */
+@media (min-width: 1160px) {
+    .offcanvas {
+        position: static;
+        visibility: visible !important;
+        background-color: transparent !important;
+        border: none;
+        justify-content: flex-end;
+    }
+
+    .offcanvas-body {
+        display: flex;
+        flex-grow: 0;
+        padding: 0;
+        overflow-y: visible;
+    }
+
+    .navbar-nav {
+        flex-direction: row;
+    }
+
+    .nav-item {
+        margin-left: 1rem;
+    }
+}
+
+/* Estilo para la Imagen del Idioma */
+.language-switch .flag {
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.language-switch .flag:hover {
+    transform: scale(1.1); /* Efecto de hover para las banderas */
+}
+
+/* Asegurar que el Logo No Demasiado Grande en Pantallas Pequeñas */
+.navbar-brand img {
+    height: 60px;
+}
+
+@media (min-width: 992px) {
+    .navbar-brand img {
+        height: 80px;
+    }
+}

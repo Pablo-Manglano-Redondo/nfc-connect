@@ -1,0 +1,25 @@
+{% extends "app.html" %}
+
+{% block title %}{{ product.name }} - V1CE{% endblock %}
+
+{% block content %}
+<main>
+    <section class="product-detail-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6" data-aos="fade-right">
+                    <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="img-fluid" alt="{{ product.name }}">
+                </div>
+                <div class="col-md-6" data-aos="fade-left">
+                    <h2>{{ product.name }}</h2>
+                    <p class="lead">{{ product.description }}</p>
+                    <p><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                        <button type="submit" class="btn btn-custom">{{ _('Añadir al Carrito') }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

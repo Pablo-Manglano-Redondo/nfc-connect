@@ -1,0 +1,129 @@
+{% extends "app.html" %}
+
+{% block title %}Sobre Nosotros{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .about-section {
+        padding: 60px 0;
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .about-header h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .about-header p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .about-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .about-content img {
+        max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .about-text {
+        max-width: 600px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .mission-section,
+    .team-section {
+        margin-top: 60px;
+    }
+
+    .mission-section h3,
+    .team-section h3 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .team-section .team-member {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .team-section .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-bottom: 15px;
+    }
+
+    .team-section .team-member h4 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    .team-section .team-member p {
+        font-size: 1rem;
+        color: #777;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="about-section">
+  <div class="container">
+    <div class="about-header">
+      <h2>Sobre Nosotros</h2>
+      <p>Descubre la historia detrás de nuestra casa rural y el equipo que la hace posible.</p>
+    </div>
+    <div class="about-content">
+      <div class="about-text">
+        <p>La Casa del Sol es una casa rural ubicada en el pintoresco pueblo de Campillo de Ranas, Guadalajara. Con más de 50 años de historia, nuestra casa ha sido testigo de innumerables momentos de felicidad, descanso y conexión con la naturaleza.</p>
+        <p>Nuestra misión es ofrecer a nuestros huéspedes una experiencia única de descanso y confort, en un entorno natural incomparable. Nos esforzamos por mantener el equilibrio perfecto entre la tradición y la modernidad, ofreciendo instalaciones cómodas y servicios de alta calidad, sin perder el encanto rural que nos caracteriza.</p>
+      </div>
+      <div class="about-image">
+        <img src="{{ url_for('static', filename='img/about_us.jpg') }}" alt="Casa Rural La Casa del Sol">
+      </div>
+    </div>
+
+    <div class="mission-section">
+      <h3>Nuestra Misión</h3>
+      <p>Nuestro objetivo es que cada uno de nuestros huéspedes se sienta como en casa. Nos comprometemos a proporcionar un entorno acogedor y familiar, donde se pueda disfrutar de la tranquilidad y belleza del paisaje rural, al mismo tiempo que se disfruta de todas las comodidades modernas. Queremos que cada visita a La Casa del Sol sea una experiencia memorable, llena de paz, relajación y buenos recuerdos.</p>
+    </div>
+
+    <div class="team-section">
+      <h3>Conoce a Nuestro Equipo</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-4 team-member">
+          <img src="{{ url_for('static', filename='img/team_member_1.jpg') }}" alt="Carolina Callejo">
+          <h4>Carolina Callejo</h4>
+          <p>Propietaria y Gerente</p>
+        </div>
+        <div class="col-md-4 team-member">
+          <img src="{{ url_for('static', filename='img/team_member_2.jpg') }}" alt="Juan Pérez">
+          <h4>Juan Pérez</h4>
+          <p>Encargado de Reservas</p>
+        </div>
+        <div class="col-md-4 team-member">
+          <img src="{{ url_for('static', filename='img/team_member_3.jpg') }}" alt="Ana González">
+          <h4>Ana González</h4>
+          <p>Servicio al Cliente</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

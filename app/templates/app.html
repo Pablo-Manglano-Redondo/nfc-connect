@@ -1,0 +1,89 @@
+<!doctype html>
+<html class="h-100" lang="{{ g.lang_code }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="description" content="A well made and handcrafted Bootstrap 5 template">
+    
+    <!-- Enlace al Archivo CSS Personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Iconos y Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/logo-web.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/logo-web.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='img/logo-web.png') }}">
+    <meta name="HandheldFriendly" content="true">
+    
+    <!-- Título de la Página -->
+    <title>{% block title %}NFC Connect{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    
+    <!-- FontAwesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    {% block styles %}
+    <!-- Bloque para Estilos Adicionales si es Necesario -->
+    {% endblock %}
+</head>
+
+<body class="bg-white text-dark mt-0" data-bs-spy="scroll" data-bs-target="#navScroll">
+
+    <!-- Navbar -->
+    {% include 'layout/navbar.html' %}
+
+    <!-- Flash messages -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div>
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Content -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    {% block footer %}
+        {% include 'layout/footer.html' %}
+    {% endblock %}
+    
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/aos.js') }}"></script>
+    <script>
+        AOS.init({
+            duration: 800, // valores de 0 a 3000, con pasos de 50ms
+            once: true
+        });
+    </script>
+    <script>
+        let scrollpos = window.scrollY;
+        const header = document.querySelector(".navbar");
+        const header_height = header.offsetHeight;
+
+        const add_class_on_scroll = () => header.classList.add("scrolled", "shadow-sm");
+        const remove_class_on_scroll = () => header.classList.remove("scrolled", "shadow-sm");
+
+        window.addEventListener('scroll', function () {
+            scrollpos = window.scrollY;
+
+            if (scrollpos >= header_height) { add_class_on_scroll(); }
+            else { remove_class_on_scroll(); }
+        })
+    </script>
+
+    <!-- Page-specific scripts -->
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

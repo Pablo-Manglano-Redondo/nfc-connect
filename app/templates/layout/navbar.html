@@ -1,0 +1,75 @@
+<nav id="navScroll" class="navbar navbar-light bg-light fixed-top navbar-expand-lg" tabindex="0">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <!-- Logo de la Empresa -->
+        <a class="navbar-brand pe-md-4 fs-4 col-md-auto text-center" href="{{ url_for_locale('index', g.lang_code) }}">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="80" class="d-inline-block align-top">
+        </a>
+
+        <!-- Botón Toggler para Offcanvas (Visible en Pantallas Pequeñas) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Offcanvas para Menú en Pantallas Pequeñas -->
+        <div class="offcanvas offcanvas-end bg-light" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header d-lg-none">
+                <h5 class="offcanvas-title text-dark" id="offcanvasNavbarLabel">NFC Connect</h5>
+                <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <!-- Enlaces de Navegación -->
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 text-dark" href="{{ url_for_locale('about', lang=g.lang_code) }}" aria-label="About">
+                            {{ _('About') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 text-dark" href="{{ url_for_locale('store', lang=g.lang_code) }}" aria-label="Tienda">
+                            {{ _('Tienda') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 text-dark" href="{{ url_for_locale('how_it_works', lang=g.lang_code) }}" aria-label="Cómo Funciona">
+                            {{ _('Cómo Funciona') }}
+                        </a>
+                    </li>
+                    <!-- Cambio de Idioma -->
+                    <li class="nav-item">
+                        <span class="language-text">
+                            {% if g.lang_code == 'es' %}
+                                <a class="nav-link fs-5 text-dark language-switch" href="{{ toggle_lang_url() }}" aria-label="Cambiar a Inglés" title="Cambiar a Inglés">
+                                    <img src="{{ url_for('static', filename='svg/uk.svg') }}" height="40px" width="auto" alt="English" class="flag">
+                                </a>
+                            {% else %}
+                                <a class="nav-link fs-5 text-dark language-switch" href="{{ toggle_lang_url() }}" aria-label="Cambiar a Español" title="Cambiar a Español">
+                                    <img src="{{ url_for('static', filename='svg/spain.svg') }}" height="40px" width="auto" alt="Spanish" class="flag">
+                                </a>
+                            {% endif %}
+                        </span>
+                    </li>
+                    </ul>
+                    <!-- Botones de Login y Carrito (Visible en Pantallas Grandes) -->
+                    <div class="d-none d-lg-flex">
+                        <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for('login') }}" aria-label="Login">
+                            {{ _('Login') }}
+                        </a>
+                        <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for('cart_view') }}" aria-label="Carrito de Compras">
+                            {{ _('Carrito') }}
+                        </a>
+                    </div>
+                </ul>
+
+                <!-- Botones de Login y Carrito (Visible en Pantallas Pequeñas) -->
+                <div class="d-lg-none mt-3">
+                    <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for('login') }}" aria-label="Login">
+                        {{ _('Login') }}
+                    </a>
+                    <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for('cart_view') }}" aria-label="Carrito de Compras">
+                        {{ _('Carrito') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

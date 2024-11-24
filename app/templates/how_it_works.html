@@ -1,0 +1,44 @@
+{% extends "app.html" %}
+
+{% block title %}{{ _('Cómo Funciona') }} - V1CE{% endblock %}
+
+{% block content %}
+<main>
+    <section class="how-it-works-section">
+        <div class="container">
+            <div class="row mb-5 text-center">
+                <div class="col-12">
+                    <h2>{{ _('Cómo Funciona') }}</h2>
+                    <p class="lead">{{ _('Aprende cómo nuestras soluciones tecnológicas pueden transformar tu negocio.') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Paso 1 -->
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="step-card">
+                        <i class="fas fa-clipboard-list fa-3x text-orange"></i>
+                        <h4 class="mt-3">{{ _('Paso 1') }}</h4>
+                        <p>{{ _('Consulta inicial para entender tus necesidades.') }}</p>
+                    </div>
+                </div>
+                <!-- Paso 2 -->
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-card">
+                        <i class="fas fa-cogs fa-3x text-orange"></i>
+                        <h4 class="mt-3">{{ _('Paso 2') }}</h4>
+                        <p>{{ _('Desarrollo de soluciones personalizadas.') }}</p>
+                    </div>
+                </div>
+                <!-- Paso 3 -->
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-card">
+                        <i class="fas fa-rocket fa-3x text-orange"></i>
+                        <h4 class="mt-3">{{ _('Paso 3') }}</h4>
+                        <p>{{ _('Implementación y seguimiento continuo.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

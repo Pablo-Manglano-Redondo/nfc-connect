@@ -1,0 +1,35 @@
+{% extends "app.html" %}
+
+{% block title %}{{ _('Tienda') }} - V1CE{% endblock %}
+
+{% block content %}
+<main>
+    <section class="store-section py-5">
+        <div class="container">
+            <div class="row mb-5 text-center">
+                <div class="col-12">
+                    <h2>{{ _('Nuestra Tienda') }}</h2>
+                    <p class="lead">{{ _('Explora nuestros productos y servicios diseñados para impulsar tu negocio.') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                                <button type="submit" class="btn btn-custom mt-auto">{{ _('Añadir al Carrito') }}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

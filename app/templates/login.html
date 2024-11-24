@@ -1,0 +1,47 @@
+{% extends "app.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block styles %}
+<style>
+.container-top {
+  margin-top: 6rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #3c41469a;
+  padding: 2rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-top">
+  {% if current_user.is_authenticated %}
+    <h1>You are already logged in as {{ current_user.username }}</h1>
+    <form method="POST" action="{{ url_for('logout') }}">
+      {{ logout_form.hidden_tag() }}
+      <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+    <form method="POST" action="{{ url_for('delete_account') }}" style="margin-top: 10px;">
+      {{ delete_account_form.hidden_tag() }}
+      <button type="submit" class="btn btn-warning">Delete Account</button>
+    </form>
+  {% else %}
+    <h1>Login</h1>
+    <form method="POST" action="{{ url_for('login') }}">
+      {{ form.hidden_tag() }}
+      <div class="mb-3-top">
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+      </div>
+      <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+      </div>
+      <div class="mb-3">
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

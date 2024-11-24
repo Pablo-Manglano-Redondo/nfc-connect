@@ -1,0 +1,203 @@
+{% extends "app.html" %}
+
+{% block title %}
+    {{ super() }} - Better business
+{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Consentimiento de Cookies -->
+    <div id="cookieConsent">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <p>Este sitio web utiliza cookies para mejorar la experiencia del usuario. Al utilizar nuestro sitio web, aceptas todas las cookies de acuerdo con nuestra política de cookies. <a href="/cookies">Más información</a>.</p>
+                </div>
+                <div class="col-md-4 text-md-end text-center">
+                    <button id="acceptCookies" class="btn btn-custom">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Hero -->
+    <section class="hero-section">
+        <video class="video-background" autoplay muted loop>
+            <source src="{{ url_for('static', filename='video/nfc-connect-video.mp4') }}" type="video/mp4">
+            Tu navegador no soporta el video.
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content container">
+            <h1>{{ _('Innovación y Tecnología para el Futuro') }}</h1>
+            <p>{{ _('Descubre soluciones avanzadas que transforman tu negocio') }}</p>
+            <a href="#services" class="btn-custom">{{ _('Nuestros Servicios') }}</a>
+        </div>
+    </section>
+
+    <!-- Sección de Servicios -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <div class="row mb-5 text-center">
+                <div class="col-12">
+                    <h2>{{ _('Nuestros Servicios') }}</h2>
+                    <p class="lead">{{ _('En V1CE, ofrecemos una variedad de servicios para asegurar que tu negocio se mantenga a la vanguardia de la tecnología.') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Servicio 1 -->
+                <div class="col-md-4 text-center mb-4" data-aos="fade-up">
+                    <div class="service-card">
+                        <i class="fas fa-cogs"></i>
+                        <h4 class="mt-3">{{ _('Desarrollo de Software') }}</h4>
+                        <p>{{ _('Creamos soluciones personalizadas que se adaptan a las necesidades específicas de tu negocio.') }}</p>
+                        <a href="/servicios/desarrollo-de-software" class="btn btn-custom">Explorar</a>
+                    </div>
+                </div>
+                <!-- Servicio 2 -->
+                <div class="col-md-4 text-center mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4 class="mt-3">{{ _('Seguridad Informática') }}</h4>
+                        <p>{{ _('Protegemos tu infraestructura tecnológica contra amenazas y vulnerabilidades.') }}</p>
+                        <a href="/servicios/seguridad-informatica" class="btn btn-custom">Descubrir</a>
+                    </div>
+                </div>
+                <!-- Servicio 3 -->
+                <div class="col-md-4 text-center mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card">
+                        <i class="fas fa-cloud"></i>
+                        <h4 class="mt-3">{{ _('Soluciones en la Nube') }}</h4>
+                        <p>{{ _('Implementamos y gestionamos servicios en la nube para optimizar tus operaciones.') }}</p>
+                        <a href="/servicios/soluciones-en-la-nube" class="btn btn-custom">Saber Más</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Carrusel de Videos de Clientes Mejorado -->
+    <section class="video-carousel">
+        <div class="container">
+            <div class="row mb-5 text-center">
+                <div class="col-12">
+                    <h2>{{ _('Nuestros Clientes Agradecen') }}</h2>
+                    <p class="lead">{{ _('Mira lo que nuestros clientes tienen para decir sobre sus experiencias con nosotros.') }}</p>
+                </div>
+            </div>
+            <div id="videoCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <!-- Video 1 -->
+                    <div class="carousel-item active">
+                        <video class="d-block w-100" controls>
+                            <source src="{{ url_for('static', filename='videos/cliente1.mp4') }}" type="video/mp4">
+                            Tu navegador no soporta el video.
+                        </video>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>{{ _('Cliente 1') }}</h5>
+                            <p>{{ _('Descripción breve del testimonio del cliente 1.') }}</p>
+                        </div>
+                    </div>
+                    <!-- Video 2 -->
+                    <div class="carousel-item">
+                        <video class="d-block w-100" controls>
+                            <source src="{{ url_for('static', filename='videos/cliente2.mp4') }}" type="video/mp4">
+                            Tu navegador no soporta el video.
+                        </video>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>{{ _('Cliente 2') }}</h5>
+                            <p>{{ _('Descripción breve del testimonio del cliente 2.') }}</p>
+                        </div>
+                    </div>
+                    <!-- Video 3 -->
+                    <div class="carousel-item">
+                        <video class="d-block w-100" controls>
+                            <source src="{{ url_for('static', filename='videos/cliente3.mp4') }}" type="video/mp4">
+                            Tu navegador no soporta el video.
+                        </video>
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>{{ _('Cliente 3') }}</h5>
+                            <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                        </div>
+                    </div>
+                    <!-- Agrega más videos según sea necesario -->
+                </div>
+                <!-- Indicadores del Carrusel -->
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#videoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Cliente 1"></button>
+                    <button type="button" data-bs-target="#videoCarousel" data-bs-slide-to="1" aria-label="Cliente 2"></button>
+                    <button type="button" data-bs-target="#videoCarousel" data-bs-slide-to="2" aria-label="Cliente 3"></button>
+                    <!-- Agrega más indicadores según sea necesario -->
+                </div>
+                <!-- Controles del Carrusel -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#videoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#videoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- AOS Animation Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JBCL2JXVXN"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-JBCL2JXVXN');
+</script>
+
+<!-- Script para Consentimiento de Cookies -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!getCookie('cookiesAccepted')) {
+            document.getElementById('cookieConsent').style.display = 'block';
+        }
+
+        document.getElementById('acceptCookies').addEventListener('click', function() {
+            setCookie('cookiesAccepted', 'true', 365);
+            document.getElementById('cookieConsent').style.display = 'none';
+        });
+    });
+
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+</script>
+{% endblock %}
