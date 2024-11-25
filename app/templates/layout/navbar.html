@@ -35,6 +35,11 @@
                             {{ _('Cómo Funciona') }}
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 text-dark" href="{{ url_for_locale('contact_page', lang=g.lang_code) }}" aria-label="Contactanos">
+                            {{ _('Contactanos') }}
+                        </a>
+                    </li>
                     <!-- Cambio de Idioma -->
                     <li class="nav-item">
                         <span class="language-text">
@@ -61,6 +66,10 @@
                         <!-- Formulario de Logout -->
                         <form action="{{ url_for_locale('logout', g.lang_code) }}" method="POST" style="display: inline;">
                             {{ logout_form.hidden_tag() }}
+                            <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for_locale('cart_view', g.lang_code) }}" aria-label="Carrito de Compras" title="Carrito de Compras">
+                                <!-- Icono de Carrito -->
+                                <i class="bi bi-cart4" style="font-size: 1.5rem;"></i>
+                            </a>
                             <button type="submit" class="btn btn-contact fs-5 text-dark border-dark" aria-label="Logout" title="Logout">
                                 <!-- Icono de Logout -->
                                 <i class="bi bi-box-arrow-right" style="font-size: 1.5rem;"></i>

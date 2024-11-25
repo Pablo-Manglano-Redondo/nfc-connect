@@ -21,8 +21,9 @@
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
-                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                                <button type="submit" class="btn btn-custom mt-auto">{{ _('Añadir al Carrito') }}</button>
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
+                                {{ add_to_cart_form.hidden_tag() }}
+                                <button type="submit" class="btn btn-custom" onclick="handleAddToCart(event, '{{ product.id }}')">{{ _('Añadir al Carrito') }}</button>
                             </form>
                         </div>
                     </div>
@@ -31,5 +32,67 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Producto añadido al carrito</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Qué deseas hacer?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
+                    <a href="{{ url_for('cart_view') }}" class="btn btn-custom">Ir al carrito</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+<!-- Chatbot Script Mejorado -->
+<script>
+    // Función para manejar el añadir al carrito
+    function handleAddToCart(event, productId) {
+        event.preventDefault();
+        const form = event.target.closest('form');
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errData => {
+                    throw new Error(errData.error || 'Error desconocido');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if(data.success) {
+                // Mostrar el modal de confirmación
+                var modal = new bootstrap.Modal(document.getElementById('cartModal'));
+                modal.show();
+            } else {
+                // Manejar errores específicos
+                alert(data.error || 'Error al añadir al carrito.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error al procesar tu solicitud.');
+        });
+    }
+</script>
 {% endblock %}

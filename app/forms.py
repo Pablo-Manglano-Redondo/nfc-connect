@@ -85,3 +85,6 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('Ese correo electrónico ya está en uso. Por favor, elige otro.')
+
+class AddToCartForm(FlaskForm):
+    submit = SubmitField('Añadir al Carrito')

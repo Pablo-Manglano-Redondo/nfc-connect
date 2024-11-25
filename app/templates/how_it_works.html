@@ -1,41 +1,115 @@
+<!-- templates/how_it_works.html -->
+
 {% extends "app.html" %}
 
-{% block title %}{{ _('Cómo Funciona') }} - V1CE{% endblock %}
+{% block title %}{{ _('Cómo Funciona') }} - NFC Connect{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <!-- Puedes agregar estilos específicos para esta página si es necesario -->
+{% endblock %}
 
 {% block content %}
 <main>
-    <section class="how-it-works-section">
+    <section class="how-it-works-section py-5">
         <div class="container">
+            <!-- Título de la Sección -->
             <div class="row mb-5 text-center">
                 <div class="col-12">
-                    <h2>{{ _('Cómo Funciona') }}</h2>
-                    <p class="lead">{{ _('Aprende cómo nuestras soluciones tecnológicas pueden transformar tu negocio.') }}</p>
+                    <h2 class="section-title">{{ _('Cómo Funciona') }}</h2>
+                    <p class="lead">{{ _('Descubre cómo nuestras tarjetas NFC personalizadas pueden transformar la forma en que compartes tus servicios.') }}</p>
                 </div>
             </div>
+
+            <!-- Descripción General -->
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <p class="section-description">
+                        {{ _('Nuestras tarjetas NFC son dispositivos inteligentes que, al ser escaneados con un teléfono compatible, redirigen a tus clientes a un Linktree personalizado. Este Linktree contiene enlaces directos a todos tus servicios, redes sociales y plataformas esenciales, facilitando el acceso y mejorando la interacción con tu audiencia.') }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pasos Detallados -->
             <div class="row">
-                <!-- Paso 1 -->
+                <!-- Paso 1: Diseño Personalizado -->
                 <div class="col-md-4 mb-4" data-aos="fade-up">
-                    <div class="step-card">
-                        <i class="fas fa-clipboard-list fa-3x text-orange"></i>
-                        <h4 class="mt-3">{{ _('Paso 1') }}</h4>
-                        <p>{{ _('Consulta inicial para entender tus necesidades.') }}</p>
+                    <div class="step-card text-center p-4 h-100">
+                        <i class="fas fa-paint-brush fa-3x text-orange mb-3"></i>
+                        <h4 class="mt-2">{{ _('Paso 1: Diseño Personalizado') }}</h4>
+                        <p>{{ _('Elige entre una variedad de diseños y materiales para crear una tarjeta que refleje la identidad de tu marca. Desde elegantes acabados metálicos hasta materiales ecológicos, personalizamos cada detalle para ti.') }}</p>
                     </div>
                 </div>
-                <!-- Paso 2 -->
+                <!-- Paso 2: Integración NFC -->
                 <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="step-card">
-                        <i class="fas fa-cogs fa-3x text-orange"></i>
-                        <h4 class="mt-3">{{ _('Paso 2') }}</h4>
-                        <p>{{ _('Desarrollo de soluciones personalizadas.') }}</p>
+                    <div class="step-card text-center p-4 h-100">
+                        <i class="fas fa-microchip fa-3x text-orange mb-3"></i>
+                        <h4 class="mt-2">{{ _('Paso 2: Integración NFC') }}</h4>
+                        <p>{{ _('Cada tarjeta está equipada con tecnología NFC de última generación, asegurando una conexión rápida y segura. Simplemente escanea la tarjeta con tu smartphone para acceder instantáneamente a tu Linktree personalizado.') }}</p>
                     </div>
                 </div>
-                <!-- Paso 3 -->
+                <!-- Paso 3: Gestión y Análisis -->
                 <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="step-card">
-                        <i class="fas fa-rocket fa-3x text-orange"></i>
-                        <h4 class="mt-3">{{ _('Paso 3') }}</h4>
-                        <p>{{ _('Implementación y seguimiento continuo.') }}</p>
+                    <div class="step-card text-center p-4 h-100">
+                        <i class="fas fa-chart-line fa-3x text-orange mb-3"></i>
+                        <h4 class="mt-2">{{ _('Paso 3: Gestión y Análisis') }}</h4>
+                        <p>{{ _('Monitorea el rendimiento de tus enlaces con nuestras herramientas analíticas integradas. Obtén insights valiosos sobre la interacción de tus clientes y optimiza tu estrategia de marketing en consecuencia.') }}</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- Público Objetivo -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h3 class="mb-4">{{ _('Público Objetivo') }}</h3>
+                    <p class="section-description">
+                        {{ _('NFC Connect está diseñado para profesionales y empresas que buscan una manera innovadora de compartir sus servicios y potenciar su presencia digital. Nuestro producto es ideal para:') }}
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-3 mb-3 text-center">
+                    <i class="fas fa-briefcase fa-2x text-orange mb-2"></i>
+                    <h5>{{ _('Profesionales Autónomos') }}</h5>
+                    <p>{{ _('Consultores, diseñadores, y otros profesionales que desean facilitar el acceso a sus servicios y portfolio.') }}</p>
+                </div>
+                <div class="col-md-3 mb-3 text-center">
+                    <i class="fas fa-store fa-2x text-orange mb-2"></i>
+                    <h5>{{ _('Comercios y Negocios') }}</h5>
+                    <p>{{ _('Tiendas físicas y online que buscan mejorar la interacción con sus clientes y aumentar las ventas a través de enlaces directos.') }}</p>
+                </div>
+                <div class="col-md-3 mb-3 text-center">
+                    <i class="fas fa-users fa-2x text-orange mb-2"></i>
+                    <h5>{{ _('Eventos y Conferencias') }}</h5>
+                    <p>{{ _('Organizadores que desean ofrecer a los asistentes una manera fácil de acceder a información relevante y recursos.') }}</p>
+                </div>
+            </div>
+
+            <!-- Testimonios -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h3 class="mb-4">{{ _('Lo Que Dicen Nuestros Clientes') }}</h3>
+                </div>
+                <div class="col-md-6 mb-4" data-aos="fade-up">
+                    <div class="testimonial p-4 shadow rounded">
+                        <p class="mb-3">"Las tarjetas NFC de NFC Connect han revolucionado la forma en que comparto mi portfolio con clientes potenciales. Es rápido, eficiente y altamente profesional."</p>
+                        <h5 class="mb-0">- Laura Gómez</h5>
+                        <small>{{ _('Diseñadora Gráfica') }}</small>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial p-4 shadow rounded">
+                        <p class="mb-3">"Implementar las tarjetas NFC en nuestro negocio ha mejorado significativamente la experiencia de nuestros clientes, permitiéndoles acceder fácilmente a nuestras ofertas y servicios."</p>
+                        <h5 class="mb-0">- Carlos Ruiz</h5>
+                        <small>{{ _('Propietario de Tienda') }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Llamado a la Acción -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <a href="{{ url_for('contact_page') }}" class="btn btn-custom btn-lg">{{ _('Contacta con Nosotros') }}</a>
                 </div>
             </div>
         </div>

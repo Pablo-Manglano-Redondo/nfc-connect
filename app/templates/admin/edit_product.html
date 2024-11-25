@@ -23,7 +23,7 @@
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
-                            <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}" method="POST">
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
                                 {{ csrf_token() }}
                                 <button type="submit" class="btn btn-custom mt-auto">{{ _('Añadir al Carrito') }}</button>
                             </form>

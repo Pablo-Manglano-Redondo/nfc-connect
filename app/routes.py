@@ -8,7 +8,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CSRFProtect
 from app import app, mail, db
 from app.models import Cart, CartItem, NewsletterSubscription, User, Product, UserLink  
-from app.forms import ContactForm, NewsletterForm, ProductForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm, UserLinkForm
+from app.forms import ContactForm, NewsletterForm, ProductForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm, UserLinkForm, AddToCartForm
 from app.utils import url_for_locale, admin_required  # Asegúrate de tener admin_required en utils.py
 from flask_dance.contrib.google import google
 from werkzeug.utils import secure_filename
@@ -52,7 +52,10 @@ def index(lang_code=None):
         # Agrega más videos según sea necesario
     ]
     
-    return render_template('index.html', videos=videos)
+    products = Product.query.all()
+    add_to_cart_form = AddToCartForm()
+    
+    return render_template('index.html', videos=videos, products=products, add_to_cart_form=add_to_cart_form)
 
 @app.route('/about')
 @app.route('/<lang_code>/about')
@@ -133,26 +136,26 @@ def subscribe():
 #------------------------FUNCIONALIDAD: CHATBOT--------------------------
 #------------------------------------------------------------------------
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/api_chat', methods=['POST'])
+@csrf.exempt  # Exime esta ruta de la protección CSRF
 def api_chat():
     data = request.get_json()
-    user_message = data.get('message')
+    if not data or 'message' not in data:
+        return jsonify({'error': 'Datos inválidos'}), 400
 
-    try:
-        response = openai.ChatCompletion.create(
-            model='gpt-4',
-            messages=[{'role': 'user', 'content': user_message}]
-        )
-        bot_message = response.choices[0].message['content']
-        return jsonify({'reply': bot_message})
-    except Exception as e:
-        print(e)
-        return jsonify({'reply': 'Lo siento, ha ocurrido un error.'}), 500
+    user_message = data['message']
+    # Aquí puedes integrar la lógica de tu chatbot o usar una API externa
+
+    # Respuesta de ejemplo
+    reply = f'Recibí tu mensaje: "{user_message}". ¿En qué más puedo ayudarte?'
+
+    return jsonify({'reply': reply}), 200
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: CARRITO--------------------------
 #------------------------------------------------------------------------
 
+# Ruta para ver el carrito
 @app.route('/cart')
 @app.route('/<lang_code>/cart')
 @login_required
@@ -166,45 +169,73 @@ def cart_view(lang_code=None):
     total_price = sum(item.product.price * item.quantity for item in cart_items)
     return render_template('cart.html', cart_items=cart_items, total_price=total_price)
 
+# Ruta para añadir al carrito
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_cart(product_id):
-    product = Product.query.get_or_404(product_id)
-    cart = current_user.cart
-    if not cart:
-        cart = Cart(user_id=current_user.id)
-        db.session.add(cart)
+    form = AddToCartForm()
+    if form.validate_on_submit():
+        product = Product.query.get_or_404(product_id)
+        cart = current_user.cart
+        if not cart:
+            cart = Cart(user_id=current_user.id)
+            db.session.add(cart)
+            db.session.commit()
+        
+        cart_item = CartItem.query.filter_by(cart_id=cart.id, product_id=product.id).first()
+        if cart_item:
+            cart_item.quantity += 1
+        else:
+            cart_item = CartItem(cart_id=cart.id, product_id=product.id, quantity=1)
+            db.session.add(cart_item)
+        
         db.session.commit()
-    
-    cart_item = CartItem.query.filter_by(cart_id=cart.id, product_id=product.id).first()
-    if cart_item:
-        cart_item.quantity += 1
+        flash(f'Has añadido {product.name} al carrito.', 'success')
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': f'Has añadido {product.name} al carrito.'}), 200
+        else:
+            return redirect(request.referrer or url_for('store'))
     else:
-        cart_item = CartItem(cart_id=cart.id, product_id=product.id, quantity=1)
-        db.session.add(cart_item)
-    
-    db.session.commit()
-    flash(f'Has añadido {product.name} al carrito.', 'success')
-    return redirect(request.referrer or url_for('store'))
+        flash('Error al añadir el producto al carrito. Por favor, intenta de nuevo.', 'danger')
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'error': 'Formulario inválido.'}), 400
+        else:
+            return redirect(request.referrer or url_for('store'))
 
+# Ruta para eliminar del carrito
 @app.route('/remove_from_cart/<int:product_id>', methods=['POST'])
+@csrf.exempt
 @login_required
 def remove_from_cart(product_id):
     cart = current_user.cart
     if not cart:
         flash('Tu carrito está vacío.', 'info')
-        return redirect(url_for('store'))
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'error': 'El carrito está vacío.'}), 400
+        else:
+            return redirect(url_for('store'))
     
     cart_item = CartItem.query.filter_by(cart_id=cart.id, product_id=product_id).first()
     if cart_item:
         db.session.delete(cart_item)
         db.session.commit()
         flash('Producto eliminado del carrito.', 'success')
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Producto eliminado del carrito.'}), 200
+        else:
+            return redirect(url_for('cart_view'))
     else:
         flash('Producto no encontrado en el carrito.', 'warning')
-    
-    return redirect(url_for('cart_view'))
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'error': 'Producto no encontrado en el carrito.'}), 404
+        else:
+            return redirect(url_for('cart_view'))
 
+# Ruta de checkout
 @app.route('/checkout')
 @login_required
 def checkout():
@@ -320,6 +351,11 @@ def logout():
 def inject_logout_form():
     logout_form = LogoutForm()
     return dict(logout_form=logout_form)
+
+@app.context_processor
+def inject_add_to_cart_form():
+    form = AddToCartForm()
+    return dict(add_to_cart_form=form)
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: OAUTH CON GOOGLE----------------

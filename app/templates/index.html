@@ -30,45 +30,46 @@
         <div class="hero-content container position-relative">
             <h1>{{ _('Innovación y Tecnología para el Futuro') }}</h1>
             <p>{{ _('Descubre soluciones avanzadas que transforman tu negocio') }}</p>
-            <a href="#services" class="btn btn-custom">{{ _('Nuestros Servicios') }}</a>
+            <a href="/store" class="btn btn-custom btn-lg">{{ _('Visita Nuestra Tienda') }}</a>
         </div>
     </section>
 
-    <!-- Sección de Servicios -->
+    <!-- Sección de Servicios para NFC Connect -->
     <section id="services" class="services-section py-5">
         <div class="container">
+            <!-- Título de la Sección -->
             <div class="row mb-5 text-center">
                 <div class="col-12">
                     <h2>{{ _('Nuestros Servicios') }}</h2>
-                    <p class="lead">{{ _('En V1CE, ofrecemos una variedad de servicios para asegurar que tu negocio se mantenga a la vanguardia de la tecnología.') }}</p>
+                    <p class="lead">{{ _('En NFC Connect, ofrecemos una variedad de servicios para asegurar que tu negocio se mantenga a la vanguardia de la tecnología NFC.') }}</p>
                 </div>
             </div>
             <div class="row">
-                <!-- Servicio 1 -->
+                <!-- Servicio 1: Diseño Personalizado de Tarjetas NFC -->
                 <div class="col-md-4 text-center mb-4" data-aos="fade-up">
-                    <div class="service-card">
-                        <i class="fas fa-cogs fa-3x text-primary"></i>
-                        <h4 class="mt-3">{{ _('Desarrollo de Software') }}</h4>
-                        <p>{{ _('Creamos soluciones personalizadas que se adaptan a las necesidades específicas de tu negocio.') }}</p>
-                        <a href="/servicios/desarrollo-de-software" class="btn btn-custom">Explorar</a>
+                    <div class="service-card p-4 shadow rounded">
+                        <i class="fas fa-paint-brush fa-3x text-primary mb-3"></i>
+                        <h4 class="mt-3">{{ _('Diseño Personalizado') }}</h4>
+                        <p>{{ _('Creamos tarjetas NFC completamente personalizadas que reflejan la identidad de tu marca. Elige entre una amplia gama de diseños, colores y materiales para destacar en cada interacción.') }}</p>
+                        <a href="/servicios/diseno-personalizado" class="btn btn-custom">Explorar</a>
                     </div>
                 </div>
-                <!-- Servicio 2 -->
+                <!-- Servicio 2: Integración con Linktree -->
                 <div class="col-md-4 text-center mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-card">
-                        <i class="fas fa-shield-alt fa-3x text-primary"></i>
-                        <h4 class="mt-3">{{ _('Seguridad Informática') }}</h4>
-                        <p>{{ _('Protegemos tu infraestructura tecnológica contra amenazas y vulnerabilidades.') }}</p>
-                        <a href="/servicios/seguridad-informatica" class="btn btn-custom">Descubrir</a>
+                    <div class="service-card p-4 shadow rounded">
+                        <i class="fas fa-link fa-3x text-primary mb-3"></i>
+                        <h4 class="mt-3">{{ _('Integración con Linktree') }}</h4>
+                        <p>{{ _('Nuestras tarjetas NFC redirigen a tus clientes a un Linktree personalizado, donde pueden acceder fácilmente a todos tus servicios, redes sociales y plataformas esenciales con un simple escaneo.') }}</p>
+                        <a href="/servicios/integracion-linktree" class="btn btn-custom">Descubrir</a>
                     </div>
                 </div>
-                <!-- Servicio 3 -->
+                <!-- Servicio 3: Gestión y Análisis de Enlaces -->
                 <div class="col-md-4 text-center mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-card">
-                        <i class="fas fa-cloud fa-3x text-primary"></i>
-                        <h4 class="mt-3">{{ _('Soluciones en la Nube') }}</h4>
-                        <p>{{ _('Implementamos y gestionamos servicios en la nube para optimizar tus operaciones.') }}</p>
-                        <a href="/servicios/soluciones-en-la-nube" class="btn btn-custom">Saber Más</a>
+                    <div class="service-card p-4 shadow rounded">
+                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                        <h4 class="mt-3">{{ _('Gestión y Análisis') }}</h4>
+                        <p>{{ _('Monitorea el rendimiento de tus enlaces con nuestras herramientas analíticas integradas. Obtén insights valiosos sobre la interacción de tus clientes y optimiza tu estrategia de marketing en consecuencia.') }}</p>
+                        <a href="/servicios/gestion-analisis" class="btn btn-custom">Saber Más</a>
                     </div>
                 </div>
             </div>
@@ -159,8 +160,9 @@
                             <h5 class="card-title">{{ product.name }}</h5>
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
-                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                                <button type="submit" class="btn btn-custom mt-auto">{{ _('Añadir al Carrito') }}</button>
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
+                                {{ add_to_cart_form.hidden_tag() }}
+                                <button type="submit" class="btn btn-custom" data-product-id="{{ product.id }}" onclick="handleAddToCart(event, this.dataset.productId)">{{ _('Añadir al Carrito') }}</button>
                             </form>
                         </div>
                     </div>
@@ -169,6 +171,25 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Producto añadido al carrito</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Qué deseas hacer?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
+                    <a href="{{ url_for('cart_view') }}" class="btn btn-custom">Ir al carrito</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Sección de Preguntas Frecuentes (FAQ) -->
     <section id="faq" class="faq-section py-5 bg-light">
@@ -216,7 +237,7 @@
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         {% endif %}
                         <input type="email" name="email" class="form-control me-2" placeholder="{{ _('Tu correo electrónico') }}" required>
-                        <button type="submit" class="btn btn-light">{{ _('Suscribirse') }}</button>
+                        <button type="submit" class="btn btn-custom">{{ _('Suscribirse') }}</button>
                     </form>
                 </div>
             </div>
@@ -224,18 +245,21 @@
     </section>
 
     <!-- Chatbot Widget Mejorado -->
-    <div id="chatbot" class="card shadow-lg" style="display: none;">
+    <div id="chatbot" class="card shadow-lg chatbot-card" style="display: none;">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <span>Chatbot NFC Connect</span>
             <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" onclick="toggleChat()"></button>
         </div>
         <div id="chat-content" class="card-body overflow-auto">
             <!-- Conversación -->
+            <div class="message bot">
+                <div class="message-text">¡Hola! Soy el Chatbot de NFC Connect. ¿En qué puedo ayudarte hoy?</div>
+            </div>
         </div>
         <div class="card-footer">
             <div class="input-group">
                 <input type="text" id="user-input" class="form-control" placeholder="Escribe tu mensaje..." aria-label="Mensaje">
-                <button class="btn btn-primary" type="button" onclick="sendMessage()">
+                <button class="btn btn-custom" type="button" onclick="sendMessage()">
                     <i class="bi bi-send-fill"></i>
                 </button>
             </div>
@@ -243,7 +267,7 @@
     </div>
 
     <!-- Botón Flotante para abrir el Chatbot -->
-    <button id="openChatBtn" class="btn btn-primary rounded-circle shadow-lg" title="Abrir Chatbot" onclick="toggleChat()">
+    <button id="openChatBtn" class="btn btn-primary rounded-circle shadow-lg chatbot-open-btn" title="Abrir Chatbot" onclick="toggleChat()">
         <i class="bi bi-chat-dots-fill"></i>
     </button>
 </main>
@@ -281,7 +305,7 @@
 
         // Enviar mensaje al servidor
         try {
-            const response = await fetch('{{ url_for("api_chat") }}', {  // Asegúrate de tener una ruta Flask llamada 'api_chat'
+            const response = await fetch('{{ url_for("api_chat") }}', {  
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -289,9 +313,17 @@
                 body: JSON.stringify({ message: message }),
             });
 
+            if (!response.ok) {  // Verifica si la respuesta no es OK
+                const errorText = await response.text();
+                throw new Error(`Error ${response.status}: ${response.statusText}\n${errorText}`);
+            }
+
             const data = await response.json();
             if (data.reply) {
                 appendMessage('bot', data.reply);
+                scrollToBottom();
+            } else if (data.error) {
+                appendMessage('bot', data.error);
                 scrollToBottom();
             }
         } catch (error) {
@@ -308,7 +340,7 @@
         messageElement.classList.add('message', sender);
 
         const messageText = document.createElement('div');
-        messageText.classList.add('message-text', sender === 'user' ? 'bg-primary text-white align-self-end' : 'bg-light text-dark align-self-start');
+        messageText.classList.add('message-text', sender === 'user' ? 'user-message' : 'bot-message');
         messageText.textContent = message;
 
         messageElement.appendChild(messageText);
@@ -335,5 +367,41 @@
             sendMessage();
         }
     });
+
+    // Función para manejar el añadir al carrito
+    function handleAddToCart(event, productId) {
+        event.preventDefault();
+        const form = event.target.closest('form');
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errData => {
+                    throw new Error(errData.error || 'Error desconocido');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if(data.success) {
+                // Mostrar el modal de confirmación
+                var modal = new bootstrap.Modal(document.getElementById('cartModal'));
+                modal.show();
+            } else {
+                // Manejar errores específicos
+                alert(data.error || 'Error al añadir al carrito.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ha ocurrido un error al procesar tu solicitud.');
+        });
+    }
 </script>
 {% endblock %}

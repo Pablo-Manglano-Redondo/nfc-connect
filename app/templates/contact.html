@@ -1,156 +1,68 @@
+<!-- templates/contact.html -->
+
 {% extends 'app.html' %}
 
-{% block title %}Contacto{% endblock %}
+{% block title %}Contacto - NFC Connect{% endblock %}
 
 {% block content %}
-<style>
-body {
-    padding-top: 70px;
-    background-color: #f8f9fa;
-    color: #ffffff;
-}
-
-.navbar {
-    z-index: 10;
-    background-color: #ffffff;
-}
-
-.header-section {
-    position: relative;
-    text-align: center;
-    color: #333;
-    height: 100vh; /* Hace que la sección ocupe el 100% de la altura de la ventana */
-    overflow: hidden;
-}
-
-.header-section .background-image {
-    width: 100%;
-    height: 100%; /* Hace que la imagen ocupe el 100% de la altura de la sección */
-    object-fit: cover;
-    filter: brightness(60%); /* Oscurece la imagen para que el formulario sea más visible */
-}
-
-.header-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2; /* Asegura que el formulario esté sobre la imagen */
-    width: 100%;
-    max-width: 600px; /* Controla el ancho máximo del formulario */
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); /* Fondo semitransparente para el formulario */
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra para destacar el formulario */
-}
-
-.header-content h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.header-content p {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 20px;
-}
-
-.form-control {
-    border-radius: 0.25rem;
-    color: #333;
-    background-color: #ffffff;
-    border-color: #cccccc;
-}
-
-.form-control:focus {
-    color: #333;
-    background-color: #f8f9fa;
-    border-color: #f1c40f;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, .25);
-}
-
-.form-label {
-    color: #333;
-}
-
-.btn-primary {
-    background-color: #f1c40f;
-    border-color: #f1c40f;
-    color: #333;
-}
-
-.btn-primary:hover {
-    background-color: #d4ac0d;
-    border-color: #b7950b;
-}
-
-.form-select {
-    color: #333;
-    background-color: #ffffff;
-    border-color: #cccccc;
-}
-
-.form-select:focus {
-    color: #333;
-    background-color: #f8f9fa;
-    border-color: #f1c40f;
-}
-</style>
-
-<div class="header-section">
-  <img src="{{ url_for('static', filename='img/casa_rural.jpg') }}" alt="Contact Image" class="background-image">
-  <div class="header-content">
-    <h1>Contáctanos</h1>
-    <p>¿Tienes alguna pregunta? ¡Estamos aquí para ayudarte!</p>
-    <form method="POST" action="{{ url_for('contact_page') }}" class="row g-3 needs-validation" novalidate>
-      {{ form.hidden_tag() }}
-      <div class="col-md-6 mb-3">
-        {{ form.subject.label(class="form-label") }}
-        {{ form.subject(class_="form-select form-select-lg") }}
-        <div class="invalid-feedback">
-          Por favor, selecciona un asunto.
+<div class="contact-section">
+    <div class="background-image-wrapper">
+        <img src="{{ url_for('static', filename='img/casa_rural.jpg') }}" alt="Contact Image" class="background-image">
+        <div class="overlay"></div>
+    </div>
+    <div class="contact-form-wrapper">
+        <div class="form-container">
+            <h1 class="form-title">Contáctanos</h1>
+            <p class="form-subtitle">¿Tienes alguna pregunta? ¡Estamos aquí para ayudarte!</p>
+            <form method="POST" action="{{ url_for('contact_page') }}" class="row g-3 needs-validation" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="col-md-6">
+                    <label for="subject" class="form-label">{{ form.subject.label.text }}</label>
+                    {{ form.subject(class_="form-select form-select-lg", id="subject") }}
+                    <div class="invalid-feedback">
+                        Por favor, selecciona un asunto.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="name" class="form-label">{{ form.name.label.text }}</label>
+                    {{ form.name(class_="form-control form-control-lg", id="name", placeholder="Tu nombre") }}
+                    <div class="invalid-feedback">
+                        Por favor, ingresa tu nombre.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">{{ form.email.label.text }}</label>
+                    {{ form.email(class_="form-control form-control-lg", id="email", placeholder="Tu correo electrónico") }}
+                    <div class="form-text">Nunca compartiremos tu email con nadie más.</div>
+                    <div class="invalid-feedback">
+                        Por favor, ingresa una dirección de correo válida.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">{{ form.phone.label.text }}</label>
+                    {{ form.phone(class_="form-control form-control-lg", id="phone", placeholder="Tu número de teléfono") }}
+                    <div class="invalid-feedback">
+                        Por favor, ingresa un número de teléfono válido.
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label for="message" class="form-label">{{ form.message.label.text }}</label>
+                    {{ form.message(class_="form-control form-control-lg", id="message", rows="4", placeholder="Tu mensaje") }}
+                    <div class="invalid-feedback">
+                        Por favor, ingresa tu mensaje.
+                    </div>
+                </div>
+                <div class="col-12 text-center">
+                    {{ form.submit(class_="btn btn-custom btn-lg") }}
+                </div>
+            </form>
         </div>
-      </div>
-      <div class="col-md-6 mb-3">
-        {{ form.name.label(class="form-label") }}
-        {{ form.name(class_="form-control form-control-lg") }}
-        <div class="invalid-feedback">
-          Por favor, ingresa tu nombre.
-        </div>
-      </div>
-      <div class="col-md-6 mb-3">
-        {{ form.email.label(class="form-label") }}
-        {{ form.email(class_="form-control form-control-lg", **{'aria-describedby': 'emailHelp'}) }}
-        <div id="emailHelp" class="form-text">Nunca compartiremos tu email con nadie más.</div>
-        <div class="invalid-feedback">
-          Por favor, ingresa una dirección de correo válida.
-        </div>
-      </div>
-      <div class="col-md-6 mb-3">
-        {{ form.phone.label(class="form-label") }}
-        {{ form.phone(class_="form-control form-control-lg") }}
-        <div class="invalid-feedback">
-          Por favor, ingresa un número de teléfono válido.
-        </div>
-      </div>
-      <div class="col-12 mb-3">
-        {{ form.message.label(class="form-label") }}
-        {{ form.message(class_="form-control form-control-lg", rows="4") }}
-        <div class="invalid-feedback">
-          Por favor, ingresa tu mensaje.
-        </div>
-      </div>
-      <div class="col-12 text-center">
-        {{ form.submit(class_="btn btn-primary btn-lg mb-4") }}
-      </div>
-    </form>
-  </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+{{ super() }}
 <script>
   (function () {
     'use strict'

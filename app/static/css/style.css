@@ -62,8 +62,6 @@ body {
     color: #ffffff !important; /* Texto blanco en estado activo */
 }
 
-/* styles.css */
-
 /* Chatbot Widget */
 #chatbot {
     position: fixed;
@@ -125,7 +123,7 @@ body {
 }
 
 .message.user .message-text {
-    background-color: #0d6efd;
+    background-color: #e67e22;
     color: white;
 }
 
@@ -190,20 +188,6 @@ body {
     border-radius: 5px;
 }
 
-.newsletter-section button[type="submit"] {
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    background-color: #0d6efd; /* Azul Bootstrap */
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.newsletter-section button[type="submit"]:hover {
-    background-color: #0b5ed7;
-}
-
 /* Separador en Navbar */
 .navbar-separator {
     height: 20px;
@@ -221,7 +205,6 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: #333333; /* Texto oscuro */
 }
 
 .video-background {
@@ -232,7 +215,7 @@ body {
     height: 100%;
     object-fit: cover;
     z-index: -1;
-    opacity: 0.8; /* Reducir opacidad para mejor legibilidad */
+    /* opacity: 0.8; Reducir opacidad para mejor legibilidad */
 }
 
 .hero-overlay {
@@ -263,7 +246,7 @@ body {
 
 .btn-custom {
     background-color: #e67e22; /* Naranja */
-    color: #333333; /* Texto oscuro */
+    color: #ffffff; /* Texto blanco */
     border: none;
     border-radius: 25px;
     padding: 10px 30px;
@@ -485,51 +468,6 @@ body {
     }
 }
 
-/* Estilos para la Página de Login */
-.container-top {
-    margin-top: 6rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    background-color: #3c41469a; /* Semitransparente */
-    padding: 2rem;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    color: white;
-}
-
-.container-top h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-}
-
-.container-top .form-group label {
-    font-weight: bold;
-    color: #aaaaaa;
-}
-
-.container-top .form-control {
-    background-color: #2a2a2a;
-    border: none;
-    color: white;
-}
-
-.container-top .form-control:focus {
-    background-color: #2a2a2a;
-    color: white;
-    box-shadow: none;
-}
-
-.container-top .btn-primary {
-    background-color: #007bff;
-    border: none;
-}
-
-.container-top .btn-primary:hover {
-    background-color: #0056b3;
-}
-
 /* Estilos para Botones de Redes Sociales */
 .btn-social {
     display: flex;
@@ -557,27 +495,6 @@ body {
 
 .btn-danger:hover {
     background-color: #c23321;
-}
-
-/* Botón de GitHub (si lo agregas en el futuro) */
-.btn-dark {
-    background-color: #333333;
-}
-
-.btn-dark:hover {
-    background-color: #242424;
-}
-
-/* Responsividad para .container-top */
-@media (max-width: 576px) {
-    .container-top {
-        margin-top: 3rem;
-        padding: 1.5rem;
-    }
-
-    .container-top h1 {
-        font-size: 1.75rem;
-    }
 }
 
 /* Estilos para la Página de Registro */
@@ -614,15 +531,6 @@ body {
     box-shadow: none;
 }
 
-.register-container .btn-primary {
-    background-color: #007bff;
-    border: none;
-}
-
-.register-container .btn-primary:hover {
-    background-color: #0056b3;
-}
-
 /* Estilos para Botones de Redes Sociales */
 .register-container .btn-social {
     display: flex;
@@ -652,14 +560,6 @@ body {
     background-color: #c23321;
 }
 
-/* Botón de GitHub (si lo agregas en el futuro) */
-.register-container .btn-dark {
-    background-color: #333333;
-}
-
-.register-container .btn-dark:hover {
-    background-color: #242424;
-}
 
 /* Responsividad para .register-container */
 @media (max-width: 576px) {
@@ -695,11 +595,300 @@ body {
     width: 100%;
 }
 
-.text-center a {
-    color: #007bff;
-    text-decoration: none;
+/* static/css/style.css */
+
+/* Sección Sobre Nosotros */
+.about-section {
+    background-color: #f8f9fa; /* Color de fondo suave */
+    padding: 60px 0;
 }
 
-.text-center a:hover {
-    text-decoration: underline;
+.about-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.about-header p.lead {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.about-content img {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #343a40;
+}
+
+.mission-section {
+    margin-top: 60px;
+}
+
+.mission-section h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.mission-section p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.team-section {
+    margin-top: 60px;
+}
+
+.team-section h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.team-section p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.team-member img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.team-member h4 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.team-member p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* Sección Cómo Funciona */
+.how-it-works-section {
+    background-color: #ffffff;
+    padding: 60px 0;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.section-description {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.step-card {
+    background-color: #f8f9fa;
+    border: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.step-card i {
+    color: #ff7f50; /* Color naranja */
+}
+
+.section-description {
+    font-size: 1.1rem;
+    color: #555555;
+}
+
+/* Público Objetivo */
+.team-section h3,
+.mission-section h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.team-section p,
+.mission-section p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.team-member h5 {
+    font-size: 1.2rem;
+    color: #333333;
+}
+
+.team-member p {
+    font-size: 0.95rem;
+    color: #6c757d;
+}
+
+/* Testimonios */
+.testimonial {
+    background-color: #f8f9fa;
+    border-left: 5px solid #ff7f50;
+}
+
+.testimonial p {
+    font-style: italic;
+    color: #555555;
+}
+
+.testimonial h5 {
+    font-size: 1.1rem;
+    color: #333333;
+}
+
+.testimonial small {
+    color: #6c757d;
+}
+
+/* Animaciones AOS */
+[data-aos] {
+    opacity: 0;
+    transition-property: opacity, transform;
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+}
+
+/* Sección de Contacto */
+.contact-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Imagen de Fondo */
+.background-image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(50%);
+}
+
+/* Superposición para Mejorar la Legibilidad */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    z-index: 2;
+}
+
+/* Contenedor del Formulario */
+.contact-form-wrapper {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 600px;
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Títulos del Formulario */
+.form-title {
+    font-size: 2rem;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.form-subtitle {
+    font-size: 1.1rem;
+    color: #666666;
+    margin-bottom: 30px;
+}
+
+/* Estilos de los Formularios */
+.form-control {
+    border-radius: 0.5rem;
+    border: 1px solid #cccccc;
+    color: #333333;
+    background-color: #ffffff;
+}
+
+.form-control:focus {
+    border-color: #f1c40f;
+    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.25);
+}
+
+.form-label {
+    color: #333333;
+    font-weight: 600;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 30px;
+    }
+    
+    .form-title {
+        font-size: 1.75rem;
+    }
+    
+    .form-subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-container {
+        padding: 20px;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-subtitle {
+        font-size: 0.95rem;
+    }
+}
+
+/* Estilos Adicionales para Mejora Visual */
+.invalid-feedback {
+    display: none;
+}
+
+.was-validated .form-control:invalid ~ .invalid-feedback {
+    display: block;
+}
+
+.was-validated .form-select:invalid ~ .invalid-feedback {
+    display: block;
 }
