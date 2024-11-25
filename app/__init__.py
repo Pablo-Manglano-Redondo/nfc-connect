@@ -1,3 +1,4 @@
+# app/__init__.py
 from flask import Flask, g, request
 from flask_mail import Mail
 from flask_babel import Babel
@@ -11,10 +12,13 @@ from dotenv import load_dotenv
 
 # Cargar variables de entorno desde el archivo .env
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+load_dotenv(os.path.join(basedir, '..', '.env'))  # Ajusta la ruta si es necesario
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Crear la carpeta de subida si no existe
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Definir la función get_locale antes de inicializar Babel
 def get_locale():
@@ -25,13 +29,10 @@ def get_locale():
 # Inicializar extensiones
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
-mail = Mail(app)
-babel = Babel(app, locale_selector=get_locale)
-csrf = CSRFProtect(app)
-
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+mail = Mail(app)
+babel = Babel(app, locale_selector=lambda: g.get('lang_code', 'en'))
 
 from app import routes, utils, models
 
@@ -42,3 +43,19 @@ app.jinja_env.globals.update(url_for_locale=utils.url_for_locale)
 @login_manager.user_loader
 def load_user(user_id):
     return models.User.query.get(int(user_id))
+
+#------------------------------------------------------------------------
+#------------------------FUNCIONALIDAD: OAUTH CON FLASK-DANCE-------------
+#------------------------------------------------------------------------
+
+from flask_dance.contrib.google import make_google_blueprint, google
+
+# Crear el blueprint de Google OAuth
+google_bp = make_google_blueprint(
+    client_id=app.config['GOOGLE_OAUTH_CLIENT_ID'],
+    client_secret=app.config['GOOGLE_OAUTH_CLIENT_SECRET'],
+    scope=["profile", "email"],
+    redirect_url="/login/google/authorized"  # Debe coincidir con el URI de redirección configurado en Google
+)
+
+app.register_blueprint(google_bp, url_prefix="/login")

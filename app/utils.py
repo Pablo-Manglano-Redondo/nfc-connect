@@ -1,8 +1,10 @@
 import secrets
-from flask import app, request, url_for, g
+from flask import app, flash, redirect, request, url_for, g
 import os
 from PIL import Image
+from functools import wraps
 from flask import current_app
+from flask_login import current_user
 from flask_mail import Message
 from app import mail
 
@@ -42,26 +44,35 @@ def url_for_locale(url, lang):
     
     return out
 
-def save_picture(form_picture, folder='img'):
-    try:
-        random_hex = secrets.token_hex(8)
-        _, f_ext = os.path.splitext(form_picture.filename)
-        picture_fn = random_hex + f_ext
-        picture_path = os.path.join(current_app.root_path, 'static', folder, picture_fn)
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('Acceso denegado. Se requieren privilegios de administrador.', 'danger')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
-        # Ensure the directory exists
-        if not os.path.exists(os.path.join(current_app.root_path, 'static', folder)):
-            os.makedirs(os.path.join(current_app.root_path, 'static', folder))
-            print(f"Directory created: {os.path.join(current_app.root_path, 'static', folder)}")
+# def save_picture(form_picture, folder='img'):
+#     try:
+#         random_hex = secrets.token_hex(8)
+#         _, f_ext = os.path.splitext(form_picture.filename)
+#         picture_fn = random_hex + f_ext
+#         picture_path = os.path.join(current_app.root_path, 'static', folder, picture_fn)
 
-        # Resize image if necessary
-        output_size = (500, 500)
-        i = Image.open(form_picture)
-        i.thumbnail(output_size)
-        i.save(picture_path)
+#         # Ensure the directory exists
+#         if not os.path.exists(os.path.join(current_app.root_path, 'static', folder)):
+#             os.makedirs(os.path.join(current_app.root_path, 'static', folder))
+#             print(f"Directory created: {os.path.join(current_app.root_path, 'static', folder)}")
 
-        print(f"Picture saved at: {picture_path}")  # Debugging line
-        return picture_fn
-    except Exception as e:
-        print(f"Error saving picture: {e}")
-        return None
+#         # Resize image if necessary
+#         output_size = (500, 500)
+#         i = Image.open(form_picture)
+#         i.thumbnail(output_size)
+#         i.save(picture_path)
+
+#         print(f"Picture saved at: {picture_path}")  # Debugging line
+#         return picture_fn
+#     except Exception as e:
+#         print(f"Error saving picture: {e}")
+#         return None

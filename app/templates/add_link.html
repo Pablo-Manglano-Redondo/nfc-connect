@@ -1,0 +1,44 @@
+<!-- templates/add_link.html -->
+{% extends "app.html" %}
+
+{% block title %}Agregar Enlace{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Agregar Nuevo Enlace</h2>
+    <form method="POST" action="{{ url_for('add_link') }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.title.label(class="form-label") }}
+            {{ form.title(class="form-control") }}
+            {% for error in form.title.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.url.label(class="form-label") }}
+            {{ form.url(class="form-control") }}
+            {% for error in form.url.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.icon.label(class="form-label") }}
+            {{ form.icon(class="form-control") }}
+            <small class="form-text text-muted">Opcional. Ejemplo para Font Awesome: "fab fa-twitter"</small>
+            {% for error in form.icon.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control") }}
+            {% for error in form.description.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

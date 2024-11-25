@@ -1,46 +1,7 @@
+<!-- templates/register.html -->
 {% extends "app.html" %}
 
 {% block title %}Register{% endblock %}
-
-{% block styles %}
-{{ super() }}
-<style>
-  .register-container {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #1f1f1f;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: white;
-  }
-  .register-container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-  }
-  .form-group label {
-    font-weight: bold;
-    color: #aaaaaa;
-  }
-  .form-control {
-    background-color: #2a2a2a;
-    border: none;
-    color: white;
-  }
-  .form-control:focus {
-    background-color: #2a2a2a;
-    color: white;
-  }
-  .btn-primary {
-    background-color: #007bff;
-    border: none;
-  }
-  .btn-primary:hover {
-    background-color: #0056b3;
-  }
-</style>
-{% endblock %}
 
 {% block content %}
 <div class="register-container">
@@ -50,27 +11,47 @@
     <div class="form-group">
       {{ form.username.label(class="form-control-label") }}
       {{ form.username(class="form-control") }}
+      {% for error in form.username.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
     </div>
     <div class="form-group">
       {{ form.email.label(class="form-control-label") }}
       {{ form.email(class="form-control") }}
+      {% for error in form.email.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
     </div>
     <div class="form-group">
       {{ form.password.label(class="form-control-label") }}
       {{ form.password(class="form-control") }}
+      {% for error in form.password.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
     </div>
     <div class="form-group">
       {{ form.confirm_password.label(class="form-control-label") }}
       {{ form.confirm_password(class="form-control") }}
+      {% for error in form.confirm_password.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
     </div>
     <div class="form-group">
       {{ form.profile_image.label(class="form-control-label") }}
       {{ form.profile_image(class="form-control-file") }}
+      {% for error in form.profile_image.errors %}
+        <div class="text-danger">{{ error }}</div>
+      {% endfor %}
+      <small class="form-text text-muted">Opcional. Deja en blanco para usar la imagen predeterminada.</small>
     </div>
     <button type="submit" class="btn btn-primary btn-block">Register</button>
   </form>
+  
   <div class="text-center mt-3">
     <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    <p>Or</p>
+    <a href="{{ url_for('login_google') }}" class="btn btn-danger btn-social"><i class="fab fa-google"></i> Register with Google</a>
+    <!-- Si agregas más proveedores en el futuro, puedes añadir más botones aquí -->
   </div>
 </div>
 {% endblock %}

@@ -141,6 +141,65 @@
         </div>
     </section>
 
+    <!-- Sección de Productos -->
+    <section id="products" class="products-section py-5">
+        <div class="container">
+            <div class="row mb-5 text-center">
+                <div class="col-12">
+                    <h2>{{ _('Nuestros Productos') }}</h2>
+                    <p class="lead">{{ _('Descubre nuestros productos diseñados para facilitar tu experiencia y potenciar tu negocio.') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4" data-aos="fade-up">
+                    <div class="card h-100">
+                        <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                                <button type="submit" class="btn btn-custom mt-auto">{{ _('Añadir al Carrito') }}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Preguntas Frecuentes (FAQ) -->
+    <section id="faq" class="faq-section py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5 text-center">
+                <div class="col-12">
+                    <h2>{{ _('Preguntas Frecuentes') }}</h2>
+                    <p class="lead">{{ _('Encuentra respuestas a las preguntas más comunes sobre nuestros servicios y productos.') }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6" data-aos="fade-up">
+                    <h5>{{ _('¿Cómo puedo realizar un pedido?') }}</h5>
+                    <p>{{ _('Selecciona tus productos favoritos, agrégalos al carrito y finaliza tu compra siguiendo las instrucciones.') }}</p>
+                </div>
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <h5>{{ _('¿Ofrecen soporte técnico?') }}</h5>
+                    <p>{{ _('Sí, ofrecemos soporte técnico para todos nuestros productos y servicios. Puedes contactarnos en cualquier momento.') }}</p>
+                </div>
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <h5>{{ _('¿Cuáles son las formas de pago aceptadas?') }}</h5>
+                    <p>{{ _('Aceptamos tarjetas de crédito, PayPal, y transferencias bancarias.') }}</p>
+                </div>
+                <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <h5>{{ _('¿Puedo obtener un reembolso?') }}</h5>
+                    <p>{{ _('Sí, puedes solicitar un reembolso dentro de los primeros 30 días si no estás satisfecho con tu compra.') }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sección de Suscripción a la Newsletter -->
     <section id="newsletter" class="newsletter-section py-5 bg-secondary text-white">
         <div class="container">

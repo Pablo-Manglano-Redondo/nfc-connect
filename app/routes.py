@@ -1,13 +1,17 @@
+# app/routes.py
+
 import os
 import openai
-from flask import current_app, jsonify, render_template, request, redirect, flash, url_for, g
+from flask import abort, current_app, jsonify, render_template, request, redirect, flash, url_for, g
 from flask_mail import Message
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CSRFProtect
 from app import app, mail, db
-from app.models import Cart, CartItem, NewsletterSubscription, User, Product  # Asegúrate de tener el modelo Product
-from app.forms import ContactForm, NewsletterForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm
-from app.utils import url_for_locale
+from app.models import Cart, CartItem, NewsletterSubscription, User, Product, UserLink  
+from app.forms import ContactForm, NewsletterForm, ProductForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm, UserLinkForm
+from app.utils import url_for_locale, admin_required  # Asegúrate de tener admin_required en utils.py
+from flask_dance.contrib.google import google
+from werkzeug.utils import secure_filename
 
 # Configura tu clave de API de OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -67,28 +71,41 @@ def store(lang_code=None):
 def how_it_works(lang_code=None):
     return render_template('how_it_works.html')
 
-@app.route('/contact')
-@app.route('/<lang_code>/contact')
-def contact(lang_code=None):
-    return render_template('contact.html')
-
 @app.route('/privacy')
 @app.route('/<lang_code>/privacy')
 def privacy(lang_code=None):
     return render_template('privacy_policy.html')
 
-@app.route('/cart')
-@app.route('/<lang_code>/cart')
-@login_required
-def cart_view(lang_code=None):
-    cart = current_user.cart
-    if not cart or not cart.cart_items:
-        flash('Tu carrito está vacío.', 'info')
-        return render_template('cart.html', cart_items=[], total_price=0)
-    
-    cart_items = cart.cart_items
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+#------------------------------------------------------------------------
+#------------------------FUNCIONALIDAD: CONTACTO-------------------------
+#------------------------------------------------------------------------
+
+@app.route('/contact', methods=['GET', 'POST'])
+@app.route('/<lang_code>/contact', methods=['GET', 'POST'])
+def contact_page(lang_code=None):
+    form = ContactForm()
+    if form.validate_on_submit():
+        subject = form.subject.data
+        name = form.name.data
+        email = form.email.data
+        message = form.message.data
+        phone = form.phone.data
+
+        msg = Message(
+            subject=f"New Contact Form Submission: {subject}",
+            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[current_app.config['MAIL_DEFAULT_SENDER']]
+        )
+        msg.body = f"Name: {name}\nEmail: {email}\nPhone: {phone}\n\nMessage:\n{message}"
+
+        try:
+            mail.send(msg)
+            flash('Your message has been sent successfully!', 'success')
+            return redirect(url_for_locale('contact_page', lang=g.lang_code))
+        except Exception as e:
+            flash('There\'s been an error sending your message. Please try again later.', 'danger')
+            current_app.logger.error('Error sending mail: %s', e)
+    return render_template('contact.html', form=form)
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: SUSCRIPCIÓN NEWSLETTER------------
@@ -131,10 +148,23 @@ def api_chat():
     except Exception as e:
         print(e)
         return jsonify({'reply': 'Lo siento, ha ocurrido un error.'}), 500
-    
+
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: CARRITO--------------------------
 #------------------------------------------------------------------------
+
+@app.route('/cart')
+@app.route('/<lang_code>/cart')
+@login_required
+def cart_view(lang_code=None):
+    cart = current_user.cart
+    if not cart or not cart.cart_items:
+        flash('Tu carrito está vacío.', 'info')
+        return render_template('cart.html', cart_items=[], total_price=0)
+    
+    cart_items = cart.cart_items
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
 
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 @login_required
@@ -182,6 +212,70 @@ def checkout():
     flash('Proceso de pago no implementado aún.', 'info')
     return redirect(url_for('cart_view'))
 
+#------------------------------------------------------------------------
+#------------------------FUNCIONALIDAD: PRODUCTOS------------------------
+#------------------------------------------------------------------------
+
+@app.route('/admin/productos', methods=['GET'])
+@login_required
+@admin_required  # Asegúrate de implementar este decorador
+def list_products():
+    products = Product.query.all()
+    return render_template('admin/list_products.html', products=products)
+
+@app.route('/admin/productos/agregar', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def add_product():
+    form = ProductForm()
+    if form.validate_on_submit():
+        if form.image.data:
+            image_file = save_image(form.image.data)
+        else:
+            image_file = 'default_product.jpg'
+        product = Product(
+            name=form.name.data,
+            description=form.description.data,
+            price=form.price.data,
+            image_file=image_file
+        )
+        db.session.add(product)
+        db.session.commit()
+        flash('Producto agregado exitosamente!', 'success')
+        return redirect(url_for('list_products'))
+    return render_template('admin/add_product.html', form=form)
+
+@app.route('/admin/productos/editar/<int:product_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    form = ProductForm()
+    if form.validate_on_submit():
+        if form.image.data:
+            image_file = save_image(form.image.data)
+            product.image_file = image_file
+        product.name = form.name.data
+        product.description = form.description.data
+        product.price = form.price.data
+        db.session.commit()
+        flash('Producto actualizado exitosamente!', 'success')
+        return redirect(url_for('list_products'))
+    elif request.method == 'GET':
+        form.name.data = product.name
+        form.description.data = product.description
+        form.price.data = product.price
+    return render_template('admin/edit_product.html', form=form, product=product)
+
+@app.route('/admin/productos/eliminar/<int:product_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash('Producto eliminado exitosamente!', 'success')
+    return redirect(url_for('list_products'))
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: AUTENTICACIÓN--------------------
@@ -196,7 +290,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!', 'success')
+        flash('¡Felicidades, ahora eres un usuario registrado!', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -208,45 +302,128 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid email or password', 'danger')
+            flash('Correo electrónico o contraseña inválidos', 'danger')
             return redirect(url_for('login'))
         login_user(user)
+        flash('Has iniciado sesión exitosamente.', 'success')
         return redirect(url_for('index'))
     return render_template('login.html', title='Login', form=form, logout_form=logout_form, delete_account_form=delete_account_form)
 
 @app.route('/logout', methods=['POST'])
+@login_required
 def logout():
     logout_user()
+    flash('Has cerrado sesión.', 'info')
     return redirect(url_for('index'))
 
+@app.context_processor
+def inject_logout_form():
+    logout_form = LogoutForm()
+    return dict(logout_form=logout_form)
+
 #------------------------------------------------------------------------
-#------------------------FUNCIONALIDAD: CONTACTO-------------------------
+#------------------------FUNCIONALIDAD: OAUTH CON GOOGLE----------------
 #------------------------------------------------------------------------
 
-@app.route('/contact', methods=['GET', 'POST'])
-def contact_page():
-    form = ContactForm()
+@app.route("/login/google")
+def login_google():
+    if not google.authorized:
+        return redirect(url_for("google.login"))
+    resp = google.get("/oauth2/v2/userinfo")
+    if not resp.ok:
+        flash("Failed to fetch user info from Google.", "danger")
+        return redirect(url_for("login"))
+    
+    user_info = resp.json()
+    email = user_info["email"]
+    name = user_info.get("name", email.split("@")[0])
+    picture = user_info.get("picture", "default.jpg")
+
+    # Buscar si el usuario ya existe
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        # Crear un nuevo usuario
+        user = User(username=name, email=email, profile_image=picture)
+        user.set_password(os.urandom(16).hex())  # Generar una contraseña aleatoria
+        db.session.add(user)
+        db.session.commit()
+    
+    # Iniciar sesión al usuario
+    login_user(user)
+    flash("Has iniciado sesión exitosamente con Google.", "success")
+    return redirect(url_for("index"))
+
+#------------------------------------------------------------------------
+#------------------------FUNCIONALIDAD: DASHBOARD -----------------------
+#------------------------------------------------------------------------
+
+# Ruta del Dashboard del Usuario
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    user_links = UserLink.query.filter_by(owner=current_user).all()
+    return render_template('dashboard.html', title='Dashboard', links=user_links)
+
+# Ruta para Agregar un Nuevo Enlace
+@app.route('/dashboard/add_link', methods=['GET', 'POST'])
+@login_required
+def add_link():
+    form = UserLinkForm()
     if form.validate_on_submit():
-        subject = form.subject.data
-        name = form.name.data
-        email = form.email.data
-        message = form.message.data
-        phone = form.phone.data
+        link = UserLink(
+            title=form.title.data,
+            url=form.url.data,
+            icon=form.icon.data,
+            description=form.description.data,
+            owner=current_user
+        )
+        db.session.add(link)
+        db.session.commit()
+        flash('Enlace añadido exitosamente!', 'success')
+        return redirect(url_for('dashboard'))
+    return render_template('add_link.html', title='Agregar Enlace', form=form)
 
-        msg = Message(
-            subject=f"New Contact Form Submission: {subject}",
-            sender=current_app.config['MAIL_DEFAULT_SENDER'],
-            recipients=[current_app.config['MAIL_DEFAULT_SENDER']])
-        msg.body = f"Name: {name}\nEmail: {email}\nPhone: {phone}\n\nMessage:\n{message}"
+# Ruta para Editar un Enlace
+@app.route('/dashboard/edit_link/<int:link_id>', methods=['GET', 'POST'])
+@login_required
+def edit_link(link_id):
+    link = UserLink.query.get_or_404(link_id)
+    if link.owner != current_user:
+        abort(403)
+    form = UserLinkForm()
+    if form.validate_on_submit():
+        link.title = form.title.data
+        link.url = form.url.data
+        link.icon = form.icon.data
+        link.description = form.description.data
+        db.session.commit()
+        flash('Enlace actualizado exitosamente!', 'success')
+        return redirect(url_for('dashboard'))
+    elif request.method == 'GET':
+        form.title.data = link.title
+        form.url.data = link.url
+        form.icon.data = link.icon
+        form.description.data = link.description
+    return render_template('edit_link.html', title='Editar Enlace', form=form, link=link)
 
-        try:
-            mail.send(msg)
-            flash('Your message has been sent successfully!', 'success')
-            return redirect(url_for_locale('contact_page', lang=g.lang_code))
-        except Exception as e:
-            flash('There\'s been an error sending your message. Please try again later.', 'danger')
-            current_app.logger.error('Error sending mail: %s', e)
-    return render_template('contact.html', form=form)
+# Ruta para Eliminar un Enlace
+@app.route('/dashboard/delete_link/<int:link_id>', methods=['POST'])
+@login_required
+def delete_link(link_id):
+    link = UserLink.query.get_or_404(link_id)
+    if link.owner != current_user:
+        abort(403)
+    db.session.delete(link)
+    db.session.commit()
+    flash('Enlace eliminado exitosamente!', 'success')
+    return redirect(url_for('dashboard'))
+
+# Ruta para la Página Pública de Enlaces (Clon de Linktree)
+@app.route('/<string:username>')
+def user_links_page(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    links = UserLink.query.filter_by(owner=user).all()
+    return render_template('user_links.html', user=user, links=links)
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: UTILIDADES-----------------------
@@ -259,3 +436,15 @@ def save_picture(form_picture, folder='profile_pics'):
     picture_path = os.path.join(app.root_path, 'static/img', picture_fn)
     form_picture.save(picture_path)
     return picture_fn
+
+def save_image(form_image):
+    if form_image:
+        filename = secure_filename(form_image.filename)
+        # Generar un nombre único para evitar conflictos
+        _, f_ext = os.path.splitext(filename)
+        unique_filename = os.urandom(8).hex() + f_ext
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        form_image.save(image_path)
+        return unique_filename
+    return 'default_product.jpg'
+

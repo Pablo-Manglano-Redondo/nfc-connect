@@ -1,3 +1,4 @@
+<!-- templates/navbar.html -->
 <nav id="navScroll" class="navbar navbar-light bg-light fixed-top navbar-expand-lg" tabindex="0">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <!-- Logo de la Empresa -->
@@ -50,30 +51,59 @@
                     </li>
                 </ul>
 
-                <!-- Botones de Login y Carrito (Visible en Pantallas Grandes) -->
-                <div class="d-none d-lg-flex">
-                    <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for('login') }}" aria-label="Login">
-                        <!-- Icono de Login -->
-                        <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
-                    </a>
-                    <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for('cart_view') }}" aria-label="Carrito de Compras">
-                        <!-- Icono de Carrito -->
-                        <i class="bi bi-cart4" style="font-size: 1.5rem;"></i>
-                    </a>
+                <!-- Botones de Login, Dashboard, Logout y Carrito (Visible en Pantallas Grandes) -->
+                <div class="d-none d-lg-flex align-items-center">
+                    {% if current_user.is_authenticated %}
+                        <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for_locale('dashboard', g.lang_code) }}" aria-label="Dashboard" title="Dashboard">
+                            <!-- Icono de Dashboard -->
+                            <i class="bi bi-speedometer2" style="font-size: 1.5rem;"></i>
+                        </a>
+                        <!-- Formulario de Logout -->
+                        <form action="{{ url_for_locale('logout', g.lang_code) }}" method="POST" style="display: inline;">
+                            {{ logout_form.hidden_tag() }}
+                            <button type="submit" class="btn btn-contact fs-5 text-dark border-dark" aria-label="Logout" title="Logout">
+                                <!-- Icono de Logout -->
+                                <i class="bi bi-box-arrow-right" style="font-size: 1.5rem;"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for_locale('login', g.lang_code) }}" aria-label="Login" title="Login">
+                            <!-- Icono de Login -->
+                            <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+                        </a>
+                        <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for_locale('cart_view', g.lang_code) }}" aria-label="Carrito de Compras" title="Carrito de Compras">
+                            <!-- Icono de Carrito -->
+                            <i class="bi bi-cart4" style="font-size: 1.5rem;"></i>
+                        </a>
+                    {% endif %}
                 </div>
 
-                <!-- Botones de Login y Carrito (Visible en Pantallas Pequeñas) -->
+                <!-- Botones de Login, Dashboard, Logout y Carrito (Visible en Pantallas Pequeñas) -->
                 <div class="d-lg-none mt-3">
-                    <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for('login') }}" aria-label="Login">
-                        <!-- Icono de Login -->
-                        <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
-                    </a>
-                    <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for('cart_view') }}" aria-label="Carrito de Compras">
-                        <!-- Icono de Carrito -->
-                        <i class="bi bi-cart4" style="font-size: 1.5rem;"></i>
-                    </a>
+                    {% if current_user.is_authenticated %}
+                        <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for_locale('dashboard', g.lang_code) }}" aria-label="Dashboard" title="Dashboard">
+                            <!-- Icono de Dashboard -->
+                            <i class="bi bi-speedometer2" style="font-size: 1.5rem;"></i>
+                        </a>
+                        <!-- Formulario de Logout -->
+                        <form action="{{ url_for_locale('logout', g.lang_code) }}" method="POST" style="display: inline;">
+                            {{ logout_form.hidden_tag() }}
+                            <button type="submit" class="btn btn-contact fs-5 text-dark border-dark" aria-label="Logout" title="Logout">
+                                <!-- Icono de Logout -->
+                                <i class="bi bi-box-arrow-right" style="font-size: 1.5rem;"></i>
+                            </button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-contact fs-5 text-dark border-dark me-2" href="{{ url_for_locale('login', g.lang_code) }}" aria-label="Login" title="Login">
+                            <!-- Icono de Login -->
+                            <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+                        </a>
+                        <a class="btn btn-contact fs-5 text-dark border-dark" href="{{ url_for_locale('cart_view', g.lang_code) }}" aria-label="Carrito de Compras" title="Carrito de Compras">
+                            <!-- Icono de Carrito -->
+                            <i class="bi bi-cart4" style="font-size: 1.5rem;"></i>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>

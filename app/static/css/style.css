@@ -484,3 +484,222 @@ body {
         height: 80px;
     }
 }
+
+/* Estilos para la Página de Login */
+.container-top {
+    margin-top: 6rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background-color: #3c41469a; /* Semitransparente */
+    padding: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+}
+
+.container-top h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.container-top .form-group label {
+    font-weight: bold;
+    color: #aaaaaa;
+}
+
+.container-top .form-control {
+    background-color: #2a2a2a;
+    border: none;
+    color: white;
+}
+
+.container-top .form-control:focus {
+    background-color: #2a2a2a;
+    color: white;
+    box-shadow: none;
+}
+
+.container-top .btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.container-top .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para Botones de Redes Sociales */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 250px;
+    margin: 0.5rem auto;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-social i {
+    margin-right: 10px;
+}
+
+/* Botón de Google */
+.btn-danger {
+    background-color: #db4437;
+}
+
+.btn-danger:hover {
+    background-color: #c23321;
+}
+
+/* Botón de GitHub (si lo agregas en el futuro) */
+.btn-dark {
+    background-color: #333333;
+}
+
+.btn-dark:hover {
+    background-color: #242424;
+}
+
+/* Responsividad para .container-top */
+@media (max-width: 576px) {
+    .container-top {
+        margin-top: 3rem;
+        padding: 1.5rem;
+    }
+
+    .container-top h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Estilos para la Página de Registro */
+.register-container {
+    max-width: 500px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+.register-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.register-container .form-group label {
+    font-weight: bold;
+    color: #aaaaaa;
+}
+
+.register-container .form-control {
+    background-color: #2a2a2a;
+    border: none;
+    color: white;
+}
+
+.register-container .form-control:focus {
+    background-color: #2a2a2a;
+    color: white;
+    box-shadow: none;
+}
+
+.register-container .btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.register-container .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para Botones de Redes Sociales */
+.register-container .btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 250px;
+    margin: 0.5rem auto;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.register-container .btn-social i {
+    margin-right: 10px;
+}
+
+/* Botón de Google */
+.register-container .btn-danger {
+    background-color: #db4437;
+}
+
+.register-container .btn-danger:hover {
+    background-color: #c23321;
+}
+
+/* Botón de GitHub (si lo agregas en el futuro) */
+.register-container .btn-dark {
+    background-color: #333333;
+}
+
+.register-container .btn-dark:hover {
+    background-color: #242424;
+}
+
+/* Responsividad para .register-container */
+@media (max-width: 576px) {
+    .register-container {
+        margin: 3rem auto;
+        padding: 1.5rem;
+    }
+
+    .register-container h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Estilos Globales para Formularios */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control-file {
+    padding: 0.375rem 0.75rem;
+    background-color: #2a2a2a;
+    border: none;
+    color: white;
+}
+
+.form-control-file:focus {
+    background-color: #2a2a2a;
+    color: white;
+    box-shadow: none;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.text-center a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.text-center a:hover {
+    text-decoration: underline;
+}
