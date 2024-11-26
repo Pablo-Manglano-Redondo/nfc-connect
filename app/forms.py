@@ -1,7 +1,7 @@
 # app/forms.py
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FloatField, SelectField, FileField, URLField
+from wtforms import DecimalField, MultipleFileField, StringField, PasswordField, SubmitField, TextAreaField, FloatField, SelectField, FileField, URLField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length, NumberRange, Length, URL, Optional
 from flask_wtf.file import FileAllowed
 from app.models import User
@@ -42,8 +42,7 @@ class NewsletterForm(FlaskForm):
 class ContactForm(FlaskForm):
     subject = SelectField('Asunto', choices=[
         ('special_request', 'Solicitud especial'),
-        ('feedback', 'Dejar una opinión'),
-        ('directions', 'Cómo llegar'),
+        ('feedback', 'Dejar una reseña'),
         ('other', 'Otros')
     ], validators=[DataRequired()])
     name = StringField('Nombre', validators=[DataRequired(), Length(max=150)])
@@ -53,11 +52,13 @@ class ContactForm(FlaskForm):
     submit = SubmitField('Enviar')
 
 class ProductForm(FlaskForm):
-    name = StringField('Nombre', validators=[DataRequired(), Length(min=2, max=150)])
-    description = TextAreaField('Descripción', validators=[DataRequired(), Length(min=10)])
-    price = FloatField('Precio', validators=[DataRequired(), NumberRange(min=0.0)])
-    image = FileField('Imagen del Producto', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Solo imágenes JPG, PNG, JPEG son permitidas.')])
+    name = StringField('Nombre', validators=[DataRequired(), Length(min=2, max=100)])
+    description = TextAreaField('Descripción', validators=[DataRequired()])
+    price = DecimalField('Precio', validators=[DataRequired(), NumberRange(min=0)])
+    image = FileField('Imagen Principal del Producto', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Solo se permiten imágenes JPG y PNG.')])
+    additional_images = MultipleFileField('Imágenes Adicionales', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Solo se permiten imágenes JPG y PNG.')])
     submit = SubmitField('Guardar Producto')
+    features = StringField('Características (separadas por comas)', validators=[Length(max=500)])
 
 class UserLinkForm(FlaskForm):
     title = StringField('Título del Enlace', validators=[DataRequired(), Length(min=2, max=150)])
@@ -88,3 +89,10 @@ class UpdateAccountForm(FlaskForm):
 
 class AddToCartForm(FlaskForm):
     submit = SubmitField('Añadir al Carrito')
+
+class CustomizeForm(FlaskForm):
+    background_image = FileField('Imagen de Fondo', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
+    background_video = FileField('Video de Fondo', validators=[Optional(), FileAllowed(['mp4', 'webm', 'ogg'])])
+    profile_image = FileField('Imagen de Perfil', validators=[Optional(), FileAllowed(['jpg', 'jpeg', 'png', 'gif'])])
+    bio = TextAreaField('Biografía', validators=[Optional()])
+    submit = SubmitField('Guardar Cambios')

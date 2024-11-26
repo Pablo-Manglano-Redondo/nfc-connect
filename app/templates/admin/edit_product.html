@@ -1,42 +1,95 @@
-<!-- app/templates/store.html -->
-{% extends "app.html" %}
+<!-- app/templates/admin/edit_product.html -->
+{% extends "admin/admin_base.html" %}
 
-{% block title %}{{ _('Tienda') }} - V1CE{% endblock %}
+{% block title %}Editar Producto{% endblock %}
 
 {% block content %}
-<main>
-    <!-- Sección de Productos -->
-    <section id="products" class="products-section py-5">
-        <div class="container">
-            <div class="row mb-5 text-center">
-                <div class="col-12">
-                    <h2>{{ _('Nuestros Productos') }}</h2>
-                    <p class="lead">{{ _('Descubre nuestros productos diseñados para facilitar tu experiencia y potenciar tu negocio.') }}</p>
-                </div>
-            </div>
-            <div class="row">
-                {% for product in products %}
-                <div class="col-md-4 mb-4" data-aos="fade-up">
-                    <div class="card h-100">
-                        <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
-                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                                {{ csrf_token() }}
-                                <button type="submit" class="btn btn-custom mt-auto">{{ _('Añadir al Carrito') }}</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="col-12 text-center">
-                    <p>{{ _('No hay productos disponibles en este momento.') }}</p>
-                </div>
-                {% endfor %}
-            </div>
+<div class="mt-4">
+    <h2 class="mb-4">Editar Producto</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <!-- Campo: Nombre del Producto -->
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", placeholder="Ingresa el nombre del producto") }}
+            {% for error in form.name.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
         </div>
-    </section>
-</main>
+        
+        <!-- Campo: Descripción del Producto -->
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control", rows=5, placeholder="Ingresa una descripción detallada del producto") }}
+            {% for error in form.description.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        
+        <!-- Campo: Precio del Producto -->
+        <div class="mb-3">
+            {{ form.price.label(class="form-label") }}
+            {{ form.price(class="form-control", placeholder="Ingresa el precio del producto") }}
+            {% for error in form.price.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        
+        <!-- Campo: Imagen Principal del Producto -->
+        <div class="mb-3">
+            {{ form.image.label(class="form-label") }}
+            {{ form.image(class="form-control") }}
+            {% if product.image_file != 'default_product.jpg' %}
+                <div class="mt-2">
+                    <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" alt="{{ product.name }}" class="img-thumbnail" width="200">
+                </div>
+            {% endif %}
+            {% for error in form.image.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text">Deja en blanco para mantener la imagen actual.</div>
+        </div>
+        
+        <!-- Campo: Imágenes Adicionales del Producto -->
+        <div class="mb-3">
+            {{ form.additional_images.label(class="form-label") }}
+            {{ form.additional_images(class="form-control", multiple=True) }}
+            {% for error in form.additional_images.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text">Puedes subir nuevas imágenes adicionales (JPG, JPEG, PNG).</div>
+            
+            <!-- Mostrar Imágenes Adicionales Existentes -->
+            {% if product.images %}
+            <div class="mt-3">
+                <h5>Imágenes Adicionales Actuales</h5>
+                <div class="row">
+                    {% for image in product.images %}
+                    <div class="col-4 mb-3">
+                        <img src="{{ url_for('static', filename='img/product_images/' ~ image.image_file) }}" class="img-fluid img-thumbnail" alt="{{ product.name }}">
+                        <!-- Opcional: Botón para Eliminar la Imagen -->
+                        <!-- Podrías implementar una ruta para eliminar imágenes adicionales si lo deseas -->
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Campo: Características del Producto -->
+        <div class="mb-3">
+            {{ form.features.label(class="form-label") }}
+            {{ form.features(class="form-control", placeholder="Ingresa características separadas por comas") }}
+            {% for error in form.features.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text">Ejemplo: Resistente al agua, Batería de larga duración, Garantía de 2 años.</div>
+        </div>
+        
+        <!-- Botones de Acción -->
+        <button type="submit" class="btn btn-success">{{ form.submit.label.text }}</button>
+        <a href="{{ url_for('list_products') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

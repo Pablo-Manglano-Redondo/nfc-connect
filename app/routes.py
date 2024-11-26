@@ -1,14 +1,15 @@
 # app/routes.py
 
 import os
+import secrets
 import openai
-from flask import abort, current_app, jsonify, render_template, request, redirect, flash, url_for, g
+from flask import abort, current_app, json, jsonify, render_template, request, redirect, flash, url_for, g
 from flask_mail import Message
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_wtf.csrf import CSRFProtect
 from app import app, mail, db
-from app.models import Cart, CartItem, NewsletterSubscription, User, Product, UserLink  
-from app.forms import ContactForm, NewsletterForm, ProductForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm, UserLinkForm, AddToCartForm
+from app.models import Cart, CartItem, NewsletterSubscription, ProductImage, User, Product, UserLink  
+from app.forms import ContactForm, CustomizeForm, NewsletterForm, ProductForm, RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm, UserLinkForm, AddToCartForm
 from app.utils import url_for_locale, admin_required  # Asegúrate de tener admin_required en utils.py
 from flask_dance.contrib.google import google
 from werkzeug.utils import secure_filename
@@ -42,20 +43,10 @@ def parse_url():
 @app.route('/')
 @app.route('/<lang_code>')
 def index(lang_code=None):    
-    # Lista de videos: Puedes obtenerlos desde la base de datos o definirlos manualmente
-    videos = [
-        {'filename': 'cliente1.mp4', 'title': 'Cliente 1', 'description': 'Descripción breve del testimonio del cliente 1.'},
-        {'filename': 'cliente2.mp4', 'title': 'Cliente 2', 'description': 'Descripción breve del testimonio del cliente 2.'},
-        {'filename': 'cliente3.mp4', 'title': 'Cliente 3', 'description': 'Descripción breve del testimonio del cliente 3.'},
-        {'filename': 'cliente4.mp4', 'title': 'Cliente 4', 'description': 'Descripción breve del testimonio del cliente 4.'},
-        {'filename': 'cliente5.mp4', 'title': 'Cliente 5', 'description': 'Descripción breve del testimonio del cliente 5.'},
-        # Agrega más videos según sea necesario
-    ]
-    
-    products = Product.query.all()
+    products = Product.query.order_by(Product.date_added.desc()).limit(6).all()
     add_to_cart_form = AddToCartForm()
     
-    return render_template('index.html', videos=videos, products=products, add_to_cart_form=add_to_cart_form)
+    return render_template('index.html', products=products, add_to_cart_form=add_to_cart_form)
 
 @app.route('/about')
 @app.route('/<lang_code>/about')
@@ -78,6 +69,18 @@ def how_it_works(lang_code=None):
 @app.route('/<lang_code>/privacy')
 def privacy(lang_code=None):
     return render_template('privacy_policy.html')
+
+@app.route('/servicios/<service_slug>')
+def service_detail(service_slug):
+    if service_slug == 'diseno-personalizado':
+        template = 'diseno_personalizado.html'
+    elif service_slug == 'integracion-linktree':
+        template = 'integracion_linktree.html'
+    elif service_slug == 'gestion-analisis':
+        template = 'gestion_analisis.html'
+    else:
+        abort(404)
+    return render_template(template)
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: CONTACTO-------------------------
@@ -249,29 +252,54 @@ def checkout():
 
 @app.route('/admin/productos', methods=['GET'])
 @login_required
-@admin_required  # Asegúrate de implementar este decorador
+@admin_required
 def list_products():
     products = Product.query.all()
     return render_template('admin/list_products.html', products=products)
 
+@app.route('/producto/<int:product_id>')
+def product_detail(product_id):
+    product = Product.query.get_or_404(product_id)
+    features_list = product.get_features_list()  # Obtener la lista de características
+    return render_template('product_detail.html', product=product, features_list=features_list)
+
 @app.route('/admin/productos/agregar', methods=['GET', 'POST'])
 @login_required
-@admin_required
+@admin_required  # Asegúrate de tener este decorador
 def add_product():
     form = ProductForm()
     if form.validate_on_submit():
+        # Manejar la imagen principal
         if form.image.data:
             image_file = save_image(form.image.data)
         else:
             image_file = 'default_product.jpg'
+        
+        # Crear el producto
         product = Product(
             name=form.name.data,
             description=form.description.data,
             price=form.price.data,
             image_file=image_file
         )
+        
+        # Establecer las características
+        features_input = form.features.data  # Suponiendo que es una cadena separada por comas
+        features_list = [feature.strip() for feature in features_input.split(',') if feature.strip()]
+        product.set_features_list(features_list)  # Serializar y asignar
+        
         db.session.add(product)
         db.session.commit()
+        
+        # Manejar imágenes adicionales
+        if form.additional_images.data:
+            for file in form.additional_images.data:
+                if file:
+                    additional_image = save_image(file)
+                    product_image = ProductImage(image_file=additional_image, product_id=product.id)
+                    db.session.add(product_image)
+            db.session.commit()
+        
         flash('Producto agregado exitosamente!', 'success')
         return redirect(url_for('list_products'))
     return render_template('admin/add_product.html', form=form)
@@ -283,19 +311,40 @@ def edit_product(product_id):
     product = Product.query.get_or_404(product_id)
     form = ProductForm()
     if form.validate_on_submit():
+        # Manejar la imagen principal
         if form.image.data:
             image_file = save_image(form.image.data)
             product.image_file = image_file
+        
+        # Actualizar otros campos
         product.name = form.name.data
         product.description = form.description.data
         product.price = form.price.data
+        
+        # Actualizar las características
+        features_input = form.features.data
+        features_list = [feature.strip() for feature in features_input.split(',') if feature.strip()]
+        product.set_features_list(features_list)
+        
         db.session.commit()
+        
+        # Manejar imágenes adicionales
+        if form.additional_images.data:
+            for file in form.additional_images.data:
+                if file:
+                    additional_image = save_image(file, folder='product_images')
+                    product_image = ProductImage(image_file=additional_image, product_id=product.id)
+                    db.session.add(product_image)
+            db.session.commit()
+        
         flash('Producto actualizado exitosamente!', 'success')
         return redirect(url_for('list_products'))
     elif request.method == 'GET':
         form.name.data = product.name
         form.description.data = product.description
         form.price.data = product.price
+        # Convertir la lista de características a una cadena separada por comas para el formulario
+        form.features.data = ', '.join(product.get_features_list())
     return render_template('admin/edit_product.html', form=form, product=product)
 
 @app.route('/admin/productos/eliminar/<int:product_id>', methods=['POST'])
@@ -337,7 +386,7 @@ def login():
             return redirect(url_for('login'))
         login_user(user)
         flash('Has iniciado sesión exitosamente.', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
     return render_template('login.html', title='Login', form=form, logout_form=logout_form, delete_account_form=delete_account_form)
 
 @app.route('/logout', methods=['POST'])
@@ -387,7 +436,7 @@ def login_google():
     # Iniciar sesión al usuario
     login_user(user)
     flash("Has iniciado sesión exitosamente con Google.", "success")
-    return redirect(url_for("index"))
+    return redirect(url_for("dashboard"))
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: DASHBOARD -----------------------
@@ -397,13 +446,77 @@ def login_google():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    user_links = UserLink.query.filter_by(owner=current_user).all()
+    user_links = current_user.user_links.order_by(UserLink.order).all()
     return render_template('dashboard.html', title='Dashboard', links=user_links)
 
-# Ruta para Agregar un Nuevo Enlace
-@app.route('/dashboard/add_link', methods=['GET', 'POST'])
+@app.route('/dashboard/customize', methods=['GET', 'POST'])
 @login_required
-def add_link():
+def customize():
+    form = CustomizeForm()
+    if form.validate_on_submit():
+        # Manejar la imagen de fondo
+        if form.background_image.data:
+            image_file = save_background(form.background_image.data, 'img/backgrounds')
+            current_user.background_image = image_file
+
+        # Manejar el video de fondo
+        if form.background_video.data:
+            video_file = save_background(form.background_video.data, 'video/backgrounds')
+            current_user.background_video = video_file
+
+        # Manejar la imagen de perfil
+        if form.profile_image.data:
+            profile_image_file = save_background(form.profile_image.data, 'img/profile_pics')
+            current_user.profile_image = profile_image_file
+
+        # Manejar la biografía
+        bio = request.form.get('bio')
+        if bio is not None:
+            current_user.bio = bio
+
+        db.session.commit()
+        flash('Personalización actualizada exitosamente!', 'success')
+        return redirect(url_for('dashboard'))
+    else:
+        if request.method == 'POST':
+            print("Formulario inválido:", form.errors)  # Depuración
+    return render_template('customize.html', title='Personalizar Página', form=form)
+
+@app.route('/dashboard/update_background_type', methods=['POST'])
+@login_required
+def update_background_type():
+    data = request.get_json()
+    background_type = data.get('background_type')
+
+    if background_type not in ['image', 'video']:
+        return jsonify({'success': False, 'message': 'Tipo de fondo inválido.'}), 400
+
+    current_user.background_type = background_type
+    db.session.commit()
+
+    return jsonify({'success': True}), 200
+
+@app.route('/dashboard/update_order', methods=['POST'])
+@login_required
+def update_link_order():
+    data = request.get_json()
+    if not data or 'order' not in data:
+        return jsonify({'success': False}), 400
+    order = data['order']  # Lista de IDs de enlaces en el nuevo orden
+    try:
+        for index, link_id in enumerate(order):
+            link = UserLink.query.filter_by(id=int(link_id), owner=current_user).first()
+            if link:
+                link.order = index
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False}), 500
+    
+@app.route('/dashboard/add_link_ajax', methods=['POST'])
+@login_required
+def add_link_ajax():
     form = UserLinkForm()
     if form.validate_on_submit():
         link = UserLink(
@@ -415,51 +528,48 @@ def add_link():
         )
         db.session.add(link)
         db.session.commit()
-        flash('Enlace añadido exitosamente!', 'success')
-        return redirect(url_for('dashboard'))
-    return render_template('add_link.html', title='Agregar Enlace', form=form)
-
-# Ruta para Editar un Enlace
-@app.route('/dashboard/edit_link/<int:link_id>', methods=['GET', 'POST'])
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'success': False, 'errors': form.errors}), 400
+    
+@app.route('/dashboard/edit_link_ajax', methods=['POST'])
 @login_required
-def edit_link(link_id):
+def edit_link_ajax():
+    form = UserLinkForm()
+    link_id = request.form.get('link_id')
     link = UserLink.query.get_or_404(link_id)
     if link.owner != current_user:
         abort(403)
-    form = UserLinkForm()
     if form.validate_on_submit():
         link.title = form.title.data
         link.url = form.url.data
         link.icon = form.icon.data
         link.description = form.description.data
         db.session.commit()
-        flash('Enlace actualizado exitosamente!', 'success')
-        return redirect(url_for('dashboard'))
-    elif request.method == 'GET':
-        form.title.data = link.title
-        form.url.data = link.url
-        form.icon.data = link.icon
-        form.description.data = link.description
-    return render_template('edit_link.html', title='Editar Enlace', form=form, link=link)
+        return jsonify({'success': True}), 200
+    else:
+        return jsonify({'success': False, 'errors': form.errors}), 400
 
-# Ruta para Eliminar un Enlace
-@app.route('/dashboard/delete_link/<int:link_id>', methods=['POST'])
+@app.route('/dashboard/delete_link_ajax', methods=['POST'])
 @login_required
-def delete_link(link_id):
+def delete_link_ajax():
+    data = request.get_json()
+    link_id = data.get('link_id')
     link = UserLink.query.get_or_404(link_id)
     if link.owner != current_user:
         abort(403)
     db.session.delete(link)
     db.session.commit()
-    flash('Enlace eliminado exitosamente!', 'success')
-    return redirect(url_for('dashboard'))
+    return jsonify({'success': True}), 200
 
-# Ruta para la Página Pública de Enlaces (Clon de Linktree)
-@app.route('/<string:username>')
+
+# Ruta para la Página Pública de Enlaces con Prefijo /user/
+@app.route('/user/<username>')
 def user_links_page(username):
     user = User.query.filter_by(username=username).first_or_404()
-    links = UserLink.query.filter_by(owner=user).all()
+    links = UserLink.query.filter_by(owner=user).order_by(UserLink.order).all()
     return render_template('user_links.html', user=user, links=links)
+
 
 #------------------------------------------------------------------------
 #------------------------FUNCIONALIDAD: UTILIDADES-----------------------
@@ -479,8 +589,29 @@ def save_image(form_image):
         # Generar un nombre único para evitar conflictos
         _, f_ext = os.path.splitext(filename)
         unique_filename = os.urandom(8).hex() + f_ext
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        image_path = os.path.join(app.root_path, 'static/img/', unique_filename)
         form_image.save(image_path)
         return unique_filename
     return 'default_product.jpg'
 
+def save_file(form_file, folder_name):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_file.filename)
+    filename = random_hex + f_ext
+    file_path = os.path.join(current_app.root_path, 'static', folder_name, filename)
+
+    form_file.save(file_path)
+    return filename
+
+def save_background(form_file, folder_name):
+    _, f_ext = os.path.splitext(form_file.filename)
+    if f_ext.lower() in ['.jpg', '.jpeg', '.png', '.gif']:
+        filename = f"{current_user.username}-foto{f_ext}"
+    elif f_ext.lower() in ['.mp4', '.mov', '.avi']:
+        filename = f"{current_user.username}-video{f_ext}"
+    else:
+        filename = f"{current_user.username}-profile_picture{f_ext}"
+    file_path = os.path.join(current_app.root_path, 'static', folder_name, filename)
+
+    form_file.save(file_path)
+    return filename

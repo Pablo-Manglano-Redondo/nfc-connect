@@ -1,7 +1,9 @@
+<!-- templates/store.html -->
 {% extends "app.html" %}
 
-{% block title %}{{ _('Tienda') }} - V1CE{% endblock %}
-
+{% block title %}
+    {{ super() }} - Store
+{% endblock %}
 {% block content %}
 <main>
     <section class="store-section py-5">
@@ -16,14 +18,29 @@
                 {% for product in products %}
                 <div class="col-md-4 mb-4" data-aos="fade-up">
                     <div class="card h-100">
-                        <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        </a>
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ product.name }}</h5>
+                            <h5 class="card-title">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
                             <p class="card-text">{{ product.description }}</p>
+                            <ul class="list-unstyled mt-3">
+                                {% if product.features %}
+                                {% for feature in product.features.split(',') %}
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>{{ feature.strip().strip('"[]') }}</li>
+                                {% endfor %}
+                                {% endif %}
+                            </ul>
                             <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
                             <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
                                 {{ add_to_cart_form.hidden_tag() }}
-                                <button type="submit" class="btn btn-custom" onclick="handleAddToCart(event, '{{ product.id }}')">{{ _('Añadir al Carrito') }}</button>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-custom" onclick="handleAddToCart(event, '{{ product.id }}')">{{ _('Añadir al Carrito') }}</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -33,24 +50,33 @@
         </div>
     </section>
 
-    <!-- Modal de Confirmación -->
+    <!-- Modal de Confirmación Mejorado -->
     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLabel">Producto añadido al carrito</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title" id="cartModalLabel">
+                        <i class="fas fa-check-circle me-2"></i>¡Producto añadido correctamente!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    ¿Qué deseas hacer?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
-                    <a href="{{ url_for('cart_view') }}" class="btn btn-custom">Ir al carrito</a>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                        <p class="lead">¿Qué te gustaría hacer ahora?</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('cart_view') }}" class="btn btn-custom btn-lg">
+                            <i class="fas fa-shopping-cart me-2"></i>Ver carrito
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">
+                            <i class="fas fa-store me-2"></i>Seguir comprando
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div></button>
 </main>
 {% endblock %}
 

@@ -1,5 +1,6 @@
 # app/models.py
 from datetime import datetime
+from flask import json
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login_manager
@@ -15,10 +16,23 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     profile_image = db.Column(db.String(20), nullable=True, default='default.jpg')
+    background_image = db.Column(db.String(50), nullable=True, default=None)
+    background_video = db.Column(db.String(50), nullable=True, default=None)
+    background_type = db.Column(db.String(10), nullable=False, default='image')  # Nuevo campo
+    bio = db.Column(db.Text, nullable=True)
     date_joined = db.Column(db.DateTime, default=datetime.utcnow)
     is_admin = db.Column(db.Boolean, default=False)
     cart = db.relationship('Cart', backref='user', uselist=False, cascade="all, delete-orphan")
-    user_links = db.relationship('UserLink', backref='owner', lazy=True, cascade="all, delete-orphan")
+    user_links = db.relationship('UserLink', back_populates='owner', lazy='dynamic')
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return f"<User {self.username}>"
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -34,10 +48,11 @@ class UserLink(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     url = db.Column(db.String(255), nullable=False)
-    icon = db.Column(db.String(50), nullable=True)  # Opcional: para iconos de Font Awesome, por ejemplo
-    description = db.Column(db.String(255), nullable=True)  # Opcional
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    icon = db.Column(db.String(150), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    order = db.Column(db.Integer, nullable=False, default=0)
+    owner = db.relationship('User', back_populates='user_links')
 
     def __repr__(self):
         return f"<UserLink {self.title} - {self.url}>"
@@ -57,9 +72,29 @@ class Product(db.Model):
     image_file = db.Column(db.String(20), nullable=True, default='default_product.jpg')
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     cart_items = db.relationship('CartItem', backref='product', lazy=True)
+    images = db.relationship('ProductImage', backref='product', lazy=True)
+    features = db.Column(db.Text, nullable=True)  
+
+    def get_features_list(self):
+        """Devuelve las características como una lista de Python."""
+        if self.features:
+            try:
+                return json.loads(self.features)
+            except json.JSONDecodeError:
+                return []
+        return []
+
+    def set_features_list(self, features_list):
+        """Establece las características desde una lista de Python."""
+        self.features = json.dumps(features_list)
 
     def __repr__(self):
         return f"Product('{self.name}', '${self.price}')"
+    
+class ProductImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image_file = db.Column(db.String(20), nullable=False, default='default_product.jpg')
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
 
 class Cart(db.Model):
     __tablename__ = 'cart'

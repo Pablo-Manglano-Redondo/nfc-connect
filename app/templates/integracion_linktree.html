@@ -1,0 +1,32 @@
+<!-- templates/integracion_linktree.html -->
+{% extends "app.html" %}
+
+{% block title %}{{ _('Integración con Linktree') }} - NFC Connect{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Sección de Detalle del Servicio -->
+    <section class="service-detail-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Imagen o Ilustración -->
+                <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
+                    <img src="{{ url_for('static', filename='img/services/integracion_linktree.jpg') }}" class="img-fluid" alt="{{ _('Integración con Linktree') }}">
+                </div>
+                <!-- Contenido del Servicio -->
+                <div class="col-md-6" data-aos="fade-left">
+                    <h2>{{ _('Integración con Linktree') }}</h2>
+                    <p class="lead">{{ _('Conecta a tus clientes con todas tus plataformas a través de un solo enlace.') }}</p>
+                    <p>{{ _('Nuestras tarjetas NFC redirigen a un Linktree personalizado, facilitando a tus clientes el acceso a tus redes sociales, sitio web, contacto y más con un simple toque.') }}</p>
+                    <ul>
+                        <li>{{ _('Configuración y personalización de tu Linktree') }}</li>
+                        <li>{{ _('Actualización en tiempo real de tus enlaces') }}</li>
+                        <li>{{ _('Estadísticas sobre las interacciones de los usuarios') }}</li>
+                    </ul>
+                    <a href="{{ url_for('contact_page') }}" class="btn btn-custom mt-3">{{ _('Empieza ahora') }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

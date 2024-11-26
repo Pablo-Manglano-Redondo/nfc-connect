@@ -52,27 +52,3 @@ def admin_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-
-# def save_picture(form_picture, folder='img'):
-#     try:
-#         random_hex = secrets.token_hex(8)
-#         _, f_ext = os.path.splitext(form_picture.filename)
-#         picture_fn = random_hex + f_ext
-#         picture_path = os.path.join(current_app.root_path, 'static', folder, picture_fn)
-
-#         # Ensure the directory exists
-#         if not os.path.exists(os.path.join(current_app.root_path, 'static', folder)):
-#             os.makedirs(os.path.join(current_app.root_path, 'static', folder))
-#             print(f"Directory created: {os.path.join(current_app.root_path, 'static', folder)}")
-
-#         # Resize image if necessary
-#         output_size = (500, 500)
-#         i = Image.open(form_picture)
-#         i.thumbnail(output_size)
-#         i.save(picture_path)
-
-#         print(f"Picture saved at: {picture_path}")  # Debugging line
-#         return picture_fn
-#     except Exception as e:
-#         print(f"Error saving picture: {e}")
-#         return None

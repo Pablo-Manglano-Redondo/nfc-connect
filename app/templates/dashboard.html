@@ -5,43 +5,575 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Bienvenido, {{ current_user.username }}</h1>
-    <a href="{{ url_for('add_link') }}" class="btn btn-success mb-3">Agregar Nuevo Enlace</a>
+    <!-- Encabezado con Foto de Perfil y Biografía -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <!-- Foto de Perfil del Usuario -->
+            {% if current_user.profile_image %}
+                <img src="{{ url_for('static', filename='img/profile_pics/' ~ current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Picture" class="profile-picture me-3">
+            {% else %}
+                <img src="{{ url_for('static', filename='img/profile_pics/default.jpg') }}" alt="Default Profile Picture" class="profile-picture me-3">
+            {% endif %}
+            <div>
+                <h1 class="dashboard-title mb-0">Hola, {{ current_user.username }}</h1>
+                <!-- Mostrar Biografía del Usuario -->
+                {% if current_user.bio %}
+                    <p class="bio-text mt-2">{{ current_user.bio }}</p>
+                {% else %}
+                    <p class="bio-text mt-2 text-muted">No has agregado una biografía aún.</p>
+                {% endif %}
+                <!-- Botón para Editar Biografía -->
+                <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
+                    <i class="fas fa-edit"></i> Editar Biografía
+                </button>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap">
+            <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-outline-primary me-2 mb-2" target="_blank">
+                <i class="fas fa-eye"></i> Ver Perfil Público
+            </a>
+            <button type="button" class="btn btn-custom me-2 mb-2" data-bs-toggle="modal" data-bs-target="#addLinkModal">
+                <i class="fas fa-plus"></i> Agregar Enlace
+            </button>
+            <button type="button" class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
+                <i class="fas fa-paint-brush"></i> Personalizar Fondo
+            </button>
+            <button type="button" class="btn btn-info mb-2" data-bs-toggle="modal" data-bs-target="#changeProfilePicModal">
+                <i class="fas fa-camera"></i> Cambiar Foto de Perfil
+            </button>
+        </div>
+    </div>
+
+    <!-- Slider para Seleccionar Tipo de Fondo -->
+    <div class="d-flex justify-content-end mb-4">
+        <label class="form-check-label">Foto de fondo</label>
+        <div class="mx-2"></div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="backgroundTypeSwitch">
+            <label class="form-check-label" for="backgroundTypeSwitch">Video de Fondo</label>
+        </div>
+    </div>
+
+    <!-- Lista de Enlaces del Usuario -->
     {% if links %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>URL</th>
-                    <th>Icono</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
+    <div class="card shadow-sm mb-5">
+        <div class="card-body">
+            <div id="sortable" class="list-group">
                 {% for link in links %}
-                <tr>
-                    <td>{{ link.title }}</td>
-                    <td><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></td>
-                    <td>
+                <div class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ link.id }}">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-arrows-alt handle me-3 text-muted"></i>
                         {% if link.icon %}
-                            <i class="{{ link.icon }}"></i>
+                        <i class="{{ link.icon }} me-2"></i>
+                        {% else %}
+                        <i class="fas fa-link me-2"></i>
                         {% endif %}
-                    </td>
-                    <td>{{ link.description }}</td>
-                    <td>
-                        <a href="{{ url_for('edit_link', link_id=link.id) }}" class="btn btn-primary btn-sm">Editar</a>
-                        <form action="{{ url_for('delete_link', link_id=link.id) }}" method="POST" style="display:inline;">
-                            {{ csrf_token() }}
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este enlace?');">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
+                        <div>
+                            <div class="link-title">{{ link.title }}</div>
+                            <a href="{{ link.url }}" target="_blank" class="link-url">{{ link.url }}</a>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-primary me-2" onclick="openEditModal({{ link.id }}, '{{ link.title|escape }}', '{{ link.url|escape }}', '{{ link.icon|escape }}', '{{ link.description|escape }}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ link.id|safe }}')">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+            <button id="saveOrderBtn" class="btn btn-primary mt-3">Guardar Orden</button>
+        </div>
+    </div>
     {% else %}
+    <div class="alert alert-info text-center">
         <p>No has agregado ningún enlace aún.</p>
+        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#addLinkModal">
+            <i class="fas fa-plus"></i> Agregar tu Primer Enlace
+        </button>
+    </div>
     {% endif %}
 </div>
+
+<!-- Modal para Agregar Enlace -->
+<div class="modal fade" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addLinkForm" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLinkModalLabel">Agregar Nuevo Enlace</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Campos del formulario -->
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" name="title" id="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL</label>
+                        <input type="url" name="url" id="url" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="icon" class="form-label">Icono (clase FontAwesome)</label>
+                        <input type="text" name="icon" id="icon" class="form-control" placeholder="Ejemplo: fas fa-globe">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-custom">Agregar Enlace</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Enlace -->
+<div class="modal fade" id="editLinkModal" tabindex="-1" aria-labelledby="editLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editLinkForm" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="link_id" id="edit_link_id">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editLinkModalLabel">Editar Enlace</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Campos del formulario -->
+                    <div class="mb-3">
+                        <label for="edit_title" class="form-label">Título</label>
+                        <input type="text" name="title" id="edit_title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_url" class="form-label">URL</label>
+                        <input type="url" name="url" id="edit_url" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_icon" class="form-label">Icono (clase FontAwesome)</label>
+                        <input type="text" name="icon" id="edit_icon" class="form-control" placeholder="Ejemplo: fas fa-globe">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label">Descripción</label>
+                        <textarea name="description" id="edit_description" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-custom">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Cambiar Foto de Perfil -->
+<div class="modal fade" id="changeProfilePicModal" tabindex="-1" aria-labelledby="changeProfilePicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="changeProfilePicForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeProfilePicModalLabel">Cambiar Foto de Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Campo para subir nueva foto de perfil -->
+                    <div class="mb-3">
+                        <label for="profile_image" class="form-label">Nueva Foto de Perfil</label>
+                        <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*" required>
+                        {% if current_user.profile_image %}
+                            <small class="form-text text-muted">Foto actual: {{ current_user.profile_image }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Cambiar Foto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Personalizar Fondo -->
+<div class="modal fade" id="customizeModal" tabindex="-1" aria-labelledby="customizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="customizeForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customizeModalLabel">Personalizar Fondo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Campo para subir Imagen de Fondo -->
+                    <div class="mb-3">
+                        <label for="background_image" class="form-label">Imagen de Fondo</label>
+                        <input type="file" name="background_image" id="background_image" class="form-control" accept="image/*">
+                        {% if current_user.background_image %}
+                            <small class="form-text text-muted">Imagen actual: {{ current_user.background_image }}</small>
+                        {% endif %}
+                    </div>
+                    <!-- Campo para subir Video de Fondo -->
+                    <div class="mb-3">
+                        <label for="background_video" class="form-label">Video de Fondo</label>
+                        <input type="file" name="background_video" id="background_video" class="form-control" accept="video/*">
+                        {% if current_user.background_video %}
+                            <small class="form-text text-muted">Video actual: {{ current_user.background_video }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Biografía -->
+<div class="modal fade" id="editBioModal" tabindex="-1" aria-labelledby="editBioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editBioForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBioModalLabel">Editar Biografía</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Campo para editar la biografía -->
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Biografía</label>
+                        <textarea name="bio" id="bio" class="form-control" rows="4" placeholder="Escribe tu biografía aquí...">{{ current_user.bio }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Biografía</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Incluir Bootstrap JS y SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<!-- Scripts Personalizados -->
+<script>
+    // Definir las URLs de fondo
+    var backgroundImageURL = "{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) if current_user.background_image else '' }}";
+    var backgroundVideoURL = "{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) if current_user.background_video else '' }}";
+    
+    // Mostrar las URLs en la consola para depuración
+    console.log('Background Image URL:', backgroundImageURL);
+    console.log('Background Video URL:', backgroundVideoURL);
+    
+    // Inicializar SortableJS
+    var sortable = new Sortable(document.getElementById('sortable'), {
+        animation: 150,
+        handle: '.handle',
+        ghostClass: 'sortable-ghost'
+    });
+
+    // Guardar Orden de Enlaces
+    document.getElementById('saveOrderBtn').addEventListener('click', function() {
+        var order = Array.from(document.querySelectorAll('#sortable .list-group-item')).map(function(item) {
+            return item.getAttribute('data-id');
+        });
+        var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
+
+        fetch("{{ url_for('update_link_order') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({order: order})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Mostrar notificación
+                showToast('Orden guardado correctamente.', 'success');
+            } else {
+                showToast('Error al guardar el orden.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error al guardar el orden.', 'danger');
+        });
+    });
+
+    // Manejar el envío del formulario de agregar enlace
+    document.getElementById('addLinkForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
+
+        fetch("{{ url_for('add_link_ajax') }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrf_token
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Cerrar el modal
+                var addModal = bootstrap.Modal.getInstance(document.getElementById('addLinkModal'));
+                addModal.hide();
+                // Recargar la página o actualizar la lista de enlaces
+                location.reload();
+            } else {
+                showToast('Error al agregar el enlace.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error al agregar el enlace.', 'danger');
+        });
+    });
+
+    // Función para abrir el modal de editar enlace
+    function openEditModal(id, title, url, icon, description) {
+        document.getElementById('edit_link_id').value = id;
+        document.getElementById('edit_title').value = title;
+        document.getElementById('edit_url').value = url;
+        document.getElementById('edit_icon').value = icon;
+        document.getElementById('edit_description').value = description;
+
+        var editModal = new bootstrap.Modal(document.getElementById('editLinkModal'));
+        editModal.show();
+    }
+
+    // Manejar el envío del formulario de editar enlace
+    document.getElementById('editLinkForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        var csrf_token = document.querySelector('#editLinkForm input[name="csrf_token"]').value;
+
+        fetch("{{ url_for('edit_link_ajax') }}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrf_token
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Cerrar el modal
+                var editModal = bootstrap.Modal.getInstance(document.getElementById('editLinkModal'));
+                editModal.hide();
+                // Recargar la página o actualizar la lista de enlaces
+                location.reload();
+            } else {
+                showToast('Error al actualizar el enlace.', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error al actualizar el enlace.', 'danger');
+        });
+    });
+
+    // Confirmar eliminación de enlace
+    function confirmDelete(linkId) {
+        if(confirm('¿Estás seguro de eliminar este enlace?')) {
+            var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
+            fetch("{{ url_for('delete_link_ajax') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrf_token
+                },
+                body: JSON.stringify({link_id: linkId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Recargar la página o actualizar la lista de enlaces
+                    location.reload();
+                } else {
+                    showToast('Error al eliminar el enlace.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error al eliminar el enlace.', 'danger');
+            });
+        }
+    }
+
+    // Función para mostrar notificaciones
+    function showToast(message, type) {
+        var toastEl = document.createElement('div');
+        toastEl.className = 'toast align-items-center text-white bg-' + type + ' border-0';
+        toastEl.role = 'alert';
+        toastEl.ariaLive = 'assertive';
+        toastEl.ariaAtomic = 'true';
+        toastEl.style.position = 'fixed';
+        toastEl.style.top = '20px';
+        toastEl.style.right = '20px';
+        toastEl.style.zIndex = '1055';
+
+        var toastBody = document.createElement('div');
+        toastBody.className = 'd-flex';
+        toastBody.innerHTML = '<div class="toast-body">' + message + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>';
+
+        toastEl.appendChild(toastBody);
+        document.body.appendChild(toastEl);
+
+        var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        toast.show();
+
+        toastEl.addEventListener('hidden.bs.toast', function () {
+            toastEl.remove();
+        });
+    }
+
+    // Manejar el slider de tipo de fondo
+    document.getElementById('backgroundTypeSwitch').addEventListener('change', function() {
+        var selectedType = this.checked ? 'video' : 'image';
+        var csrf_token = "{{ csrf_token() }}"; // Asegúrate de que el token CSRF está disponible
+
+        fetch("{{ url_for('update_background_type') }}", { // Asegúrate de tener esta ruta en tu backend
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({ background_type: selectedType })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Actualizar el fondo de la página sin recargar
+                updateBackground(selectedType);
+                showToast('Tipo de fondo actualizado correctamente.', 'success');
+            } else {
+                showToast('Error al actualizar el tipo de fondo.', 'danger');
+                // Revertir el switch en caso de error
+                this.checked = !this.checked;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error al actualizar el tipo de fondo.', 'danger');
+            // Revertir el switch en caso de error
+            this.checked = !this.checked;
+        });
+    });
+
+    // Función para actualizar el fondo de la página
+    function updateBackground(type) {
+        console.log('Actualizando fondo a:', type);
+        var body = document.body;
+
+        // Remover clases de fondo anteriores
+        body.classList.remove('background-image', 'background-video');
+
+        if(type === 'image' && backgroundImageURL) {
+            console.log('Aplicando imagen de fondo:', backgroundImageURL);
+            body.classList.add('background-image');
+            body.style.backgroundImage = "url('" + backgroundImageURL + "')";
+            body.style.backgroundSize = 'cover';
+            body.style.backgroundRepeat = 'no-repeat';
+            body.style.backgroundPosition = 'center';
+            
+            // Remover cualquier video de fondo existente
+            var existingVideo = document.getElementById('background-video-element');
+            if(existingVideo) {
+                existingVideo.remove();
+                console.log('Video de fondo eliminado.');
+            }
+        } else if(type === 'video' && backgroundVideoURL) {
+            console.log('Aplicando video de fondo:', backgroundVideoURL);
+            body.classList.add('background-video');
+            
+            // Remover cualquier video de fondo existente antes de agregar uno nuevo
+            var existingVideo = document.getElementById('background-video-element');
+            if(existingVideo) {
+                existingVideo.remove();
+                console.log('Video de fondo existente eliminado.');
+            }
+            
+            // Crear un nuevo elemento de video
+            var video = document.createElement('video');
+            video.id = 'background-video-element';
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.style.position = 'fixed';
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.objectFit = 'cover';
+            video.style.zIndex = '-1';
+
+            var source = document.createElement('source');
+            source.src = backgroundVideoURL;
+            source.type = 'video/mp4'; // Ajusta el tipo MIME según el formato de tu video
+
+            video.appendChild(source);
+            document.body.appendChild(video);
+            
+            console.log('Video de fondo agregado.');
+        } else {
+            console.log('Removiendo fondo.');
+            body.style.backgroundImage = '';
+            var existingVideo = document.getElementById('background-video-element');
+            if(existingVideo) {
+                existingVideo.remove();
+                console.log('Video de fondo eliminado.');
+            }
+        }
+    }
+
+    // Inicializar el fondo al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        var selectedType = "{{ current_user.background_type }}" || 'image';
+        var switchElem = document.getElementById('backgroundTypeSwitch');
+
+        if(selectedType === 'video' && backgroundVideoURL) {
+            switchElem.checked = true;
+        } else {
+            switchElem.checked = false;
+        }
+
+        updateBackground(selectedType);
+    });
+</script>
+
+<style>
+    /* Estilos para la foto de perfil en el dashboard */
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #e67e22;
+    }
+
+    /* Estilos para la biografía */
+    .bio-text {
+        font-size: 1rem;
+        max-width: 400px;
+    }
+</style>
 {% endblock %}

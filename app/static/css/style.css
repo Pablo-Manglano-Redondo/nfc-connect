@@ -1,7 +1,7 @@
 /* Tipografía Global */
 body {
     margin: 0;
-    padding: 0;
+    padding-top: 9rem;
     overflow-x: hidden;
     background-color: #ffffff; /* Fondo blanco */
     color: #333333; /* Texto en color oscuro */
@@ -322,86 +322,61 @@ body {
     opacity: 1;
 }
 
-/* Carrusel de Videos de Clientes Mejorado */
-.video-carousel {
-    padding: 60px 0;
-    background-color: #f9f9f9;
+/* Estilos para Swiper.js */
+.swiper-container {
+    width: 100%;
+    padding-bottom: 50px; /* Espacio para la paginación */
 }
 
-.video-carousel h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-}
-
-.video-carousel p.lead {
-    font-size: 1.2rem;
-    color: #555;
-}
-
-.video-carousel .carousel-item {
+.swiper-slide {
+    width: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 500px; /* Ajusta según tus necesidades */
+}
+
+.video-card {
+    width: 100%;
+    max-width: 350px;
     position: relative;
 }
 
-.video-carousel video {
-    max-height: 100%;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.video-feed-item {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    overflow: hidden;
 }
 
-/* Estilo para los captions del carrusel */
-.video-carousel .carousel-caption {
-    background: rgba(0, 0, 0, 0.5);
-    padding: 15px;
-    border-radius: 5px;
-}
-
-.video-carousel .carousel-caption h5,
-.video-carousel .carousel-caption p {
+.video-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
     color: #fff;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
 }
 
-/* Estilo para los indicadores del carrusel */
-.video-carousel .carousel-indicators [data-bs-target] {
-    background-color: #000;
-    opacity: 0.5;
+.video-caption h5 {
+    margin: 0;
+    font-size: 1.2rem;
 }
 
-.video-carousel .carousel-indicators .active {
-    background-color: #007bff;
-    opacity: 1;
+.video-caption p {
+    margin: 0;
+    font-size: 0.9rem;
 }
 
-/* Controles del Carrusel */
-.video-carousel .carousel-control-prev-icon,
-.video-carousel .carousel-control-next-icon {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    padding: 10px;
-}
-
-.video-carousel .carousel-control-prev-icon:hover,
-.video-carousel .carousel-control-next-icon:hover {
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-/* Ajustes Responsivos */
+/* Ajustes para dispositivos móviles */
 @media (max-width: 768px) {
-    .video-carousel .carousel-item {
-        height: auto;
+    .video-card {
+        max-width: 300px;
     }
+}
 
-    .video-carousel video {
-        width: 100%;
-        height: auto;
-    }
-
-    .video-carousel .carousel-caption {
-        font-size: 0.9rem;
-        padding: 10px;
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+    .video-card {
+        max-width: 300px;
     }
 }
 
@@ -769,11 +744,11 @@ body {
 /* Sección de Contacto */
 .contact-section {
     position: relative;
-    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 3rem;
+    padding-top: 3rem;
 }
 
 /* Imagen de Fondo */
@@ -891,4 +866,119 @@ body {
 
 .was-validated .form-select:invalid ~ .invalid-feedback {
     display: block;
+}
+
+/* Estilos para el Dashboard */
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.btn-custom {
+    background-color: #e67e22;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #cc6b1f;
+    color: #ffffff;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card .card-body {
+    padding: 0;
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 15px 20px;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.link-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333333;
+}
+
+.link-url {
+    font-size: 0.9rem;
+    color: #888888;
+    text-decoration: none;
+}
+
+.link-url:hover {
+    text-decoration: underline;
+}
+
+.handle {
+    cursor: move;
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+}
+
+.btn-sm {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+}
+
+.alert-info {
+    background-color: #f8f9fa;
+    color: #333333;
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1055;
+}
+
+.toast .toast-body {
+    font-size: 1rem;
+}
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-header, .modal-footer {
+    border: none;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333333;
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+}
+
+.form-control:focus {
+    border-color: #e67e22;
+    box-shadow: none;
+}
+
+.btn-close {
+    background: none;
+    border: none;
 }

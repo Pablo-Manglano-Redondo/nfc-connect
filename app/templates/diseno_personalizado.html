@@ -1,0 +1,32 @@
+<!-- templates/diseno_personalizado.html -->
+{% extends "app.html" %}
+
+{% block title %}{{ _('Diseño Personalizado') }} - NFC Connect{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Sección de Detalle del Servicio -->
+    <section class="service-detail-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Imagen o Ilustración -->
+                <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
+                    <img src="{{ url_for('static', filename='img/services/diseno_personalizado.jpg') }}" class="img-fluid" alt="{{ _('Diseño Personalizado') }}">
+                </div>
+                <!-- Contenido del Servicio -->
+                <div class="col-md-6" data-aos="fade-left">
+                    <h2>{{ _('Diseño Personalizado') }}</h2>
+                    <p class="lead">{{ _('Creamos tarjetas NFC completamente personalizadas que reflejan la identidad de tu marca.') }}</p>
+                    <p>{{ _('Nuestro equipo de diseñadores trabajará contigo para crear una tarjeta única que destaque en cada interacción. Desde la elección de materiales hasta el diseño gráfico, todo se adapta a tus necesidades.') }}</p>
+                    <ul>
+                        <li>{{ _('Selección de materiales premium') }}</li>
+                        <li>{{ _('Diseños gráficos a medida') }}</li>
+                        <li>{{ _('Opciones de acabado: mate, brillante, relieve') }}</li>
+                    </ul>
+                    <a href="{{ url_for('contact_page') }}" class="btn btn-custom mt-3">{{ _('Contáctanos para más información') }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

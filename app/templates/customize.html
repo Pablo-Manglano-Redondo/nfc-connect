@@ -1,0 +1,28 @@
+<!-- templates/customize.html -->
+{% extends "app.html" %}
+
+{% block title %}Personalizar Fondo{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Personalizar Fondo</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.background_image.label(class="form-label") }}
+            {{ form.background_image(class="form-control") }}
+            {% if current_user.background_image %}
+                <small class="form-text text-muted">Imagen actual: {{ current_user.background_image }}</small>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.background_video.label(class="form-label") }}
+            {{ form.background_video(class="form-control") }}
+            {% if current_user.background_video %}
+                <small class="form-text text-muted">Video actual: {{ current_user.background_video }}</small>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+</div>
+{% endblock %}

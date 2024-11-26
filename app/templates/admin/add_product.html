@@ -8,27 +8,35 @@
     <h2 class="mb-4">Agregar Nuevo Producto</h2>
     <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
+        
+        <!-- Campo: Nombre del Producto -->
         <div class="mb-3">
             {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control") }}
+            {{ form.name(class="form-control", placeholder="Ingresa el nombre del producto") }}
             {% for error in form.name.errors %}
                 <div class="text-danger">{{ error }}</div>
             {% endfor %}
         </div>
+        
+        <!-- Campo: Descripción del Producto -->
         <div class="mb-3">
             {{ form.description.label(class="form-label") }}
-            {{ form.description(class="form-control", rows=5) }}
+            {{ form.description(class="form-control", rows=5, placeholder="Ingresa una descripción detallada del producto") }}
             {% for error in form.description.errors %}
                 <div class="text-danger">{{ error }}</div>
             {% endfor %}
         </div>
+        
+        <!-- Campo: Precio del Producto -->
         <div class="mb-3">
             {{ form.price.label(class="form-label") }}
-            {{ form.price(class="form-control") }}
+            {{ form.price(class="form-control", placeholder="Ingresa el precio del producto") }}
             {% for error in form.price.errors %}
                 <div class="text-danger">{{ error }}</div>
             {% endfor %}
         </div>
+        
+        <!-- Campo: Imagen Principal del Producto -->
         <div class="mb-3">
             {{ form.image.label(class="form-label") }}
             {{ form.image(class="form-control") }}
@@ -37,6 +45,28 @@
             {% endfor %}
             <div class="form-text">Deja en blanco para usar la imagen predeterminada.</div>
         </div>
+        
+        <!-- Campo: Imágenes Adicionales del Producto -->
+        <div class="mb-3">
+            {{ form.additional_images.label(class="form-label") }}
+            {{ form.additional_images(class="form-control", multiple=True) }}
+            {% for error in form.additional_images.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text">Puedes subir múltiples imágenes adicionales (JPG, JPEG, PNG).</div>
+        </div>
+        
+        <!-- Campo: Características del Producto -->
+        <div class="mb-3">
+            {{ form.features.label(class="form-label") }}
+            {{ form.features(class="form-control", placeholder="Ingresa características separadas por comas") }}
+            {% for error in form.features.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            <div class="form-text">Ejemplo: Resistente al agua, Batería de larga duración, Garantía de 2 años.</div>
+        </div>
+        
+        <!-- Botones de Acción -->
         <button type="submit" class="btn btn-success">{{ form.submit.label.text }}</button>
         <a href="{{ url_for('list_products') }}" class="btn btn-secondary">Cancelar</a>
     </form>

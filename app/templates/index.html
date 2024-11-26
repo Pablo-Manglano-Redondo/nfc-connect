@@ -21,8 +21,8 @@
     </div>
 
     <!-- Sección Hero -->
-    <section class="hero-section position-relative">
-        <video class="video-background w-100" autoplay muted loop>
+    <section class="hero-section position-relative min-vh-100">
+        <video class="video-background w-100 h-100 object-fit-cover" autoplay muted loop>
             <source src="{{ url_for('static', filename='video/nfc-connect-video.mp4') }}" type="video/mp4">
             Tu navegador no soporta el video.
         </video>
@@ -51,7 +51,7 @@
                         <i class="fas fa-paint-brush fa-3x text-primary mb-3"></i>
                         <h4 class="mt-3">{{ _('Diseño Personalizado') }}</h4>
                         <p>{{ _('Creamos tarjetas NFC completamente personalizadas que reflejan la identidad de tu marca. Elige entre una amplia gama de diseños, colores y materiales para destacar en cada interacción.') }}</p>
-                        <a href="/servicios/diseno-personalizado" class="btn btn-custom">Explorar</a>
+                        <a href="{{ url_for('service_detail', service_slug='diseno-personalizado') }}" class="btn btn-custom">Explorar</a>
                     </div>
                 </div>
                 <!-- Servicio 2: Integración con Linktree -->
@@ -60,7 +60,8 @@
                         <i class="fas fa-link fa-3x text-primary mb-3"></i>
                         <h4 class="mt-3">{{ _('Integración con Linktree') }}</h4>
                         <p>{{ _('Nuestras tarjetas NFC redirigen a tus clientes a un Linktree personalizado, donde pueden acceder fácilmente a todos tus servicios, redes sociales y plataformas esenciales con un simple escaneo.') }}</p>
-                        <a href="/servicios/integracion-linktree" class="btn btn-custom">Descubrir</a>
+                        <a href="{{ url_for('service_detail', service_slug='integracion-linktree') }}" class="btn btn-custom">Descubrir</a>
+
                     </div>
                 </div>
                 <!-- Servicio 3: Gestión y Análisis de Enlaces -->
@@ -69,129 +70,206 @@
                         <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
                         <h4 class="mt-3">{{ _('Gestión y Análisis') }}</h4>
                         <p>{{ _('Monitorea el rendimiento de tus enlaces con nuestras herramientas analíticas integradas. Obtén insights valiosos sobre la interacción de tus clientes y optimiza tu estrategia de marketing en consecuencia.') }}</p>
-                        <a href="/servicios/gestion-analisis" class="btn btn-custom">Saber Más</a>
+                        <a href="{{ url_for('service_detail', service_slug='gestion-analisis') }}" class="btn btn-custom">Saber Más</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Sección de Carrusel de Videos de Clientes Mejorado -->
+    <!-- Sección de Videos con Swiper.js -->
     <section class="video-carousel py-5 bg-light">
         <div class="container">
-            <div class="row mb-5 text-center">
+            <div class="row mb-4 text-center">
                 <div class="col-12">
                     <h2>{{ _('Nuestros Clientes Agradecen') }}</h2>
                     <p class="lead">{{ _('Mira lo que nuestros clientes tienen para decir sobre sus experiencias con nosotros.') }}</p>
                 </div>
             </div>
-            <div id="videoCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
+            <!-- Swiper -->
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
                     <!-- Video 1 -->
-                    <div class="carousel-item active">
-                        <video class="d-block w-100" controls>
-                            <source src="{{ url_for('static', filename='videos/cliente1.mp4') }}" type="video/mp4">
-                            Tu navegador no soporta el video.
-                        </video>
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>{{ _('Cliente 1') }}</h5>
-                            <p>{{ _('Descripción breve del testimonio del cliente 1.') }}</p>
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 1') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 1.') }}</p>
+                            </div>
                         </div>
                     </div>
                     <!-- Video 2 -->
-                    <div class="carousel-item">
-                        <video class="d-block w-100" controls>
-                            <source src="{{ url_for('static', filename='videos/cliente2.mp4') }}" type="video/mp4">
-                            Tu navegador no soporta el video.
-                        </video>
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>{{ _('Cliente 2') }}</h5>
-                            <p>{{ _('Descripción breve del testimonio del cliente 2.') }}</p>
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 2') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 2.') }}</p>
+                            </div>
                         </div>
                     </div>
                     <!-- Video 3 -->
-                    <div class="carousel-item">
-                        <video class="d-block w-100" controls>
-                            <source src="{{ url_for('static', filename='videos/cliente3.mp4') }}" type="video/mp4">
-                            Tu navegador no soporta el video.
-                        </video>
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>{{ _('Cliente 3') }}</h5>
-                            <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 3') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                            </div>
                         </div>
                     </div>
-                    <!-- Agrega más videos según sea necesario -->
+                    <!-- Video 4 -->
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 3') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 5 -->
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 3') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 6 -->
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 3') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 7 -->
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 3') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Video 8 -->
+                    <div class="swiper-slide">
+                        <div class="video-card">
+                            <video class="video-feed-item" controls muted loop playsinline>
+                                <source src="{{ url_for('static', filename='video/cliente1.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                            <div class="video-caption">
+                                <h5>{{ _('Cliente 3') }}</h5>
+                                <p>{{ _('Descripción breve del testimonio del cliente 3.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Agrega más slides según sea necesario -->
                 </div>
-                <!-- Indicadores del Carrusel -->
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#videoCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Cliente 1"></button>
-                    <button type="button" data-bs-target="#videoCarousel" data-bs-slide-to="1" aria-label="Cliente 2"></button>
-                    <button type="button" data-bs-target="#videoCarousel" data-bs-slide-to="2" aria-label="Cliente 3"></button>
-                    <!-- Agrega más indicadores según sea necesario -->
-                </div>
-                <!-- Controles del Carrusel -->
-                <button class="carousel-control-prev" type="button" data-bs-target="#videoCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Anterior</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#videoCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Siguiente</span>
-                </button>
             </div>
         </div>
     </section>
 
     <!-- Sección de Productos -->
-    <section id="products" class="products-section py-5">
+    <section class="store-section py-5">
         <div class="container">
             <div class="row mb-5 text-center">
                 <div class="col-12">
-                    <h2>{{ _('Nuestros Productos') }}</h2>
-                    <p class="lead">{{ _('Descubre nuestros productos diseñados para facilitar tu experiencia y potenciar tu negocio.') }}</p>
+                    <h2>{{ _('Nuestra Tienda') }}</h2>
+                    <p class="lead">{{ _('Explora nuestros productos y servicios diseñados para impulsar tu negocio.') }}</p>
                 </div>
             </div>
             <div class="row">
                 {% for product in products %}
                 <div class="col-md-4 mb-4" data-aos="fade-up">
                     <div class="card h-100">
-                        <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                            <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
+                        </a>
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ product.name }}</h5>
+                            <h5 class="card-title">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
                             <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
                                 {{ add_to_cart_form.hidden_tag() }}
-                                <button type="submit" class="btn btn-custom" data-product-id="{{ product.id }}" onclick="handleAddToCart(event, this.dataset.productId)">{{ _('Añadir al Carrito') }}</button>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-custom" onclick="handleAddToCart(event, '{{ product.id }}')">{{ _('Añadir al Carrito') }}</button>
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            <!-- Botón para Ver Todos los Productos -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('store') }}" class="btn btn-primary">{{ _('Ver Todos los Productos') }}</a>
+            </div>
         </div>
     </section>
 
-    <!-- Modal de Confirmación -->
+    <!-- Modal de Confirmación Mejorado -->
     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLabel">Producto añadido al carrito</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white border-0">
+                    <h5 class="modal-title" id="cartModalLabel">
+                        <i class="fas fa-check-circle me-2"></i>¡Producto añadido correctamente!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    ¿Qué deseas hacer?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
-                    <a href="{{ url_for('cart_view') }}" class="btn btn-custom">Ir al carrito</a>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                        <p class="lead">¿Qué te gustaría hacer ahora?</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('cart_view') }}" class="btn btn-custom btn-lg">
+                            <i class="fas fa-shopping-cart me-2"></i>Ver carrito
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">
+                            <i class="fas fa-store me-2"></i>Seguir comprando
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div></button>
 
-    <!-- Sección de Preguntas Frecuentes (FAQ) -->
+    <!-- Sección de Preguntas Frecuentes (FAQ) Mejorada -->
     <section id="faq" class="faq-section py-5 bg-light">
         <div class="container">
             <div class="row mb-5 text-center">
@@ -200,22 +278,63 @@
                     <p class="lead">{{ _('Encuentra respuestas a las preguntas más comunes sobre nuestros servicios y productos.') }}</p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-6" data-aos="fade-up">
-                    <h5>{{ _('¿Cómo puedo realizar un pedido?') }}</h5>
-                    <p>{{ _('Selecciona tus productos favoritos, agrégalos al carrito y finaliza tu compra siguiendo las instrucciones.') }}</p>
-                </div>
-                <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <h5>{{ _('¿Ofrecen soporte técnico?') }}</h5>
-                    <p>{{ _('Sí, ofrecemos soporte técnico para todos nuestros productos y servicios. Puedes contactarnos en cualquier momento.') }}</p>
-                </div>
-                <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <h5>{{ _('¿Cuáles son las formas de pago aceptadas?') }}</h5>
-                    <p>{{ _('Aceptamos tarjetas de crédito, PayPal, y transferencias bancarias.') }}</p>
-                </div>
-                <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <h5>{{ _('¿Puedo obtener un reembolso?') }}</h5>
-                    <p>{{ _('Sí, puedes solicitar un reembolso dentro de los primeros 30 días si no estás satisfecho con tu compra.') }}</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- Pregunta 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    {{ _('¿Cómo puedo realizar un pedido?') }}
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{ _('Selecciona tus productos favoritos, agrégalos al carrito y finaliza tu compra siguiendo las instrucciones.') }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pregunta 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    {{ _('¿Ofrecen soporte técnico?') }}
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{ _('Sí, ofrecemos soporte técnico para todos nuestros productos y servicios. Puedes contactarnos en cualquier momento.') }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pregunta 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    {{ _('¿Cuáles son las formas de pago aceptadas?') }}
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{ _('Aceptamos tarjetas de crédito, PayPal, y transferencias bancarias.') }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pregunta 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    {{ _('¿Puedo obtener un reembolso?') }}
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{ _('Sí, puedes solicitar un reembolso dentro de los primeros 30 días si no estás satisfecho con tu compra.') }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Agrega más preguntas según sea necesario -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -403,5 +522,32 @@
             alert('Ha ocurrido un error al procesar tu solicitud.');
         });
     }
+
+    var swiper = new Swiper('.swiper-container', {
+        direction: 'horizontal',
+        loop: true,
+        slidesPerView: 3, // Muestra 3 slides en pantallas grandes
+        spaceBetween: 20,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        grabCursor: true,
+        breakpoints: {
+            992: {
+                slidesPerView: 3,
+            },
+            768: {
+                slidesPerView: 2,
+            },
+            0: {
+                slidesPerView: 1,
+            },
+        },
+    });
 </script>
 {% endblock %}

@@ -1,0 +1,32 @@
+<!-- templates/gestion_analisis.html -->
+{% extends "app.html" %}
+
+{% block title %}{{ _('Gestión y Análisis') }} - NFC Connect{% endblock %}
+
+{% block content %}
+<main>
+    <!-- Sección de Detalle del Servicio -->
+    <section class="service-detail-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Imagen o Ilustración -->
+                <div class="col-md-6 mb-4 mb-md-0" data-aos="fade-right">
+                    <img src="{{ url_for('static', filename='img/services/gestion_analisis.jpg') }}" class="img-fluid" alt="{{ _('Gestión y Análisis') }}">
+                </div>
+                <!-- Contenido del Servicio -->
+                <div class="col-md-6" data-aos="fade-left">
+                    <h2>{{ _('Gestión y Análisis') }}</h2>
+                    <p class="lead">{{ _('Obtén insights detallados sobre el rendimiento de tus enlaces y tarjetas NFC.') }}</p>
+                    <p>{{ _('Nuestra plataforma te permite monitorear cómo interactúan tus clientes con tus tarjetas, brindándote información valiosa para optimizar tus estrategias de marketing y ventas.') }}</p>
+                    <ul>
+                        <li>{{ _('Panel de control intuitivo') }}</li>
+                        <li>{{ _('Estadísticas en tiempo real') }}</li>
+                        <li>{{ _('Informes descargables') }}</li>
+                    </ul>
+                    <a href="{{ url_for('contact_page') }}" class="btn btn-custom mt-3">{{ _('Solicita una demostración') }}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

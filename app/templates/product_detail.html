@@ -1,22 +1,56 @@
+<!-- templates/product_detail.html -->
 {% extends "app.html" %}
 
-{% block title %}{{ product.name }} - V1CE{% endblock %}
+{% block title %}
+    {{ super() }} - Producto: {{ product.name }}
+{% endblock %}
 
 {% block content %}
 <main>
     <section class="product-detail-section py-5">
         <div class="container">
             <div class="row">
+                <!-- Imagen Principal del Producto -->
                 <div class="col-md-6" data-aos="fade-right">
                     <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="img-fluid" alt="{{ product.name }}">
+                    
+                    <!-- Galería de Imágenes Adicionales -->
+                    {% if product.images %}
+                    <div class="mt-3">
+                        <h5>{{ _('Más Imágenes') }}</h5>
+                        <div class="row">
+                            {% for image in product.images %}
+                            <div class="col-4 mb-3">
+                                <img src="{{ url_for('static', filename='img/' ~ image.image_file) }}" class="img-fluid" alt="{{ product.name }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
+                
+                <!-- Información del Producto -->
                 <div class="col-md-6" data-aos="fade-left">
                     <h2>{{ product.name }}</h2>
-                    <p class="lead">{{ product.description }}</p>
-                    <p><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
+                    <p class="lead">{{ _('Precio') }}: ${{ "%.2f"|format(product.price) }}</p>
+                    <p>{{ product.description }}</p>
+                    
+                    <!-- Formulario para Añadir al Carrito -->
                     <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                        <button type="submit" class="btn btn-custom">{{ _('Añadir al Carrito') }}</button>
+                        {{ add_to_cart_form.hidden_tag() }}
+                        <button type="submit" class="btn btn-primary">{{ _('Añadir al Carrito') }}</button>
                     </form>
+                    
+                    <!-- Información Adicional: Características -->
+                    {% if features_list %}
+                    <hr>
+                    <h4>{{ _('Características') }}</h4>
+                    <ul>
+                        {% for feature in features_list %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
             </div>
         </div>
