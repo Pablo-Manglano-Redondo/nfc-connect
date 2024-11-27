@@ -1,33 +1,72 @@
-/* Tipografía Global */
+/* ===================================================
+   Tipografía y Estilos Globales
+=================================================== */
 body {
     margin: 0;
     padding-top: 9rem;
     overflow-x: hidden;
-    background-color: #ffffff; /* Fondo blanco */
-    color: #333333; /* Texto en color oscuro */
+    background-color: var(--bs-white);
+    color: var(--bs-gray-dark);
     font-family: 'Roboto', sans-serif;
 }
 
-/* Navbar */
+/* ===================================================
+   Navbar
+=================================================== */
 .navbar-brand {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    color: #e67e22 !important; /* Naranja */
+    color: var(--bs-orange) !important;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
 }
 
 .navbar-nav .nav-link {
-    color: #333333 !important; /* Gris oscuro */
+    color: var(--bs-gray-dark) !important;
     font-weight: 500;
     margin-left: 20px;
+    padding: 10px 20px;
     transition: color 0.3s ease;
-    padding: 10px 20px; /* Mantener el padding consistente */
 }
 
 .navbar-nav .nav-link:hover {
-    color: #e67e22 !important; /* Naranja al pasar el cursor */
+    color: var(--bs-orange) !important;
 }
 
-/* Dropdown Menus */
+.navbar-separator {
+    height: 20px;
+    width: 1px;
+    background-color: var(--bs-gray-dark);
+    margin: auto 15px;
+    display: inline-block;
+}
+
+/* ===================================================
+   Estilos para el Logo en la Navbar
+=================================================== */
+.navbar-brand .logo-img {
+    margin-left: 3rem; /* Empuja hacia la derecha */
+}
+
+@media (min-width: 992px) {
+    .navbar-brand .logo-img {
+        transform: scale(1); /* Más grande en pantallas grandes */
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand .logo-img {
+        transform: scale(0.5); /* Ajustar tamaño para pantallas pequeñas */
+    }
+}
+
+
+/* ===================================================
+   Dropdown Menus
+=================================================== */
 .nav-item.dropdown-hover:hover .dropdown-menu {
     display: block;
     margin-top: 0;
@@ -35,34 +74,36 @@ body {
 }
 
 .dropdown-menu {
-    background-color: #f8f9fa; /* Fondo claro para el dropdown */
+    background-color: var(--bs-light);
     border: none;
     padding: 10px 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     min-width: 200px;
 }
 
 .dropdown-item {
-    color: #333333; /* Texto oscuro */
+    color: var(--bs-gray-dark);
     padding: 15px 20px;
-    font-size: 16px;
+    font-size: 1rem;
     transition: background-color 0.3s ease, color 0.3s ease;
-    margin: 0 10px; /* Espaciado entre elementos */
-    border-radius: 4px;
+    margin: 0 10px;
+    border-radius: 0.25rem;
 }
 
 .dropdown-item:hover {
-    background-color: #e67e22 !important; /* Fondo naranja en hover */
-    color: #ffffff !important; /* Texto blanco en hover para mejor contraste */
+    background-color: var(--bs-orange) !important;
+    color: var(--bs-white) !important;
 }
 
 .dropdown-item:active {
-    background-color: #cc6b1f !important; /* Fondo naranja más oscuro en estado activo */
-    color: #ffffff !important; /* Texto blanco en estado activo */
+    background-color: #cc6b1f !important; /* Considera definir una variable para este color */
+    color: var(--bs-white) !important;
 }
 
-/* Chatbot Widget */
+/* ===================================================
+   Chatbot Widget
+=================================================== */
 #chatbot {
     position: fixed;
     bottom: 90px;
@@ -72,12 +113,11 @@ body {
     display: none;
     flex-direction: column;
     z-index: 1000;
-    border-radius: 15px;
+    border-radius: 0.9375rem;
     overflow: hidden;
     animation: slideIn 0.5s forwards;
 }
 
-/* Animación para el Chatbot */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -89,9 +129,8 @@ body {
     }
 }
 
-/* Estilos para el Contenido del Chat */
 #chat-content {
-    background-color: #f8f9fa;
+    background-color: var(--bs-light);
     padding: 10px;
     height: 300px;
     overflow-y: auto;
@@ -99,7 +138,6 @@ body {
     flex-direction: column;
 }
 
-/* Estilos para Mensajes */
 .message {
     margin-bottom: 15px;
     display: flex;
@@ -116,23 +154,25 @@ body {
 .message-text {
     max-width: 80%;
     padding: 10px 15px;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     display: inline-block;
     opacity: 0;
     transition: opacity 0.5s;
 }
 
 .message.user .message-text {
-    background-color: #e67e22;
-    color: white;
+    background-color: var(--bs-orange);
+    color: var(--bs-white);
 }
 
 .message.bot .message-text {
-    background-color: #e9ecef;
-    color: #212529;
+    background-color: var(--bs-gray-200);
+    color: var(--bs-gray-dark);
 }
 
-/* Botón Flotante */
+/* ===================================================
+   Botón Flotante
+=================================================== */
 #openChatBtn {
     position: fixed;
     bottom: 20px;
@@ -151,7 +191,9 @@ body {
     transform: scale(1.1);
 }
 
-/* Responsividad */
+/* ===================================================
+   Responsividad General
+=================================================== */
 @media (max-width: 576px) {
     #chatbot {
         width: 90%;
@@ -160,243 +202,6 @@ body {
     }
 }
 
-/* Sección de Suscripción a la Newsletter */
-.newsletter-section {
-    background-color: #6c757d; /* Gris oscuro */
-    color: white;
-}
-
-.newsletter-section h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.newsletter-section p.lead {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-}
-
-.newsletter-section form {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.newsletter-section input[type="email"] {
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-/* Separador en Navbar */
-.navbar-separator {
-    height: 20px;
-    width: 1px;
-    background-color: #333333; /* Separador oscuro */
-    margin: auto 15px;
-    display: inline-block;
-}
-
-/* Sección Hero */
-.hero-section {
-    position: relative;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    /* opacity: 0.8; Reducir opacidad para mejor legibilidad */
-}
-
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
-
-.hero-content h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #ffffff; /* Texto oscuro */
-}
-
-.hero-content p {
-    font-size: 1.25rem;
-    margin-top: 20px;
-    color: #ffffff; /* Texto oscuro */
-}
-
-.btn-custom {
-    background-color: #e67e22; /* Naranja */
-    color: #ffffff; /* Texto blanco */
-    border: none;
-    border-radius: 25px;
-    padding: 10px 30px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.btn-custom:hover {
-    background-color: #cc6b1f; /* Naranja oscuro */
-    color: #ffffff; /* Texto blanco en hover */
-}
-
-/* Sección de Servicios */
-.services-section {
-    padding: 60px 0;
-    background-color: #f8f9fa; /* Fondo gris claro */
-}
-
-.service-card {
-    border: none;
-    background: transparent;
-    transition: transform 0.3s;
-}
-
-.service-card:hover {
-    transform: translateY(-10px);
-}
-
-.service-card .fa {
-    font-size: 3rem;
-    color: #e67e22; /* Naranja */
-    margin-bottom: 20px;
-}
-
-/* Sección de Portfolio */
-.portfolio-section {
-    padding: 60px 0;
-    background-color: #f8f9fa; /* Fondo gris claro */
-}
-
-.portfolio-item {
-    position: relative;
-    overflow: hidden;
-}
-
-.portfolio-item img {
-    width: 100%;
-    height: auto;
-    transition: transform 0.3s;
-}
-
-.portfolio-item:hover img {
-    transform: scale(1.1);
-}
-
-.portfolio-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(230, 126, 34, 0.8); /* Naranja semi-transparente */
-    color: #333333; /* Gris oscuro */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.portfolio-item:hover .portfolio-overlay {
-    opacity: 1;
-}
-
-/* Estilos para Swiper.js */
-.swiper-container {
-    width: 100%;
-    padding-bottom: 50px; /* Espacio para la paginación */
-}
-
-.swiper-slide {
-    width: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.video-card {
-    width: 100%;
-    max-width: 350px;
-    position: relative;
-}
-
-.video-feed-item {
-    width: 100%;
-    height: auto;
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.video-caption {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    color: #fff;
-    text-shadow: 0 0 5px rgba(0,0,0,0.7);
-}
-
-.video-caption h5 {
-    margin: 0;
-    font-size: 1.2rem;
-}
-
-.video-caption p {
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-/* Ajustes para dispositivos móviles */
-@media (max-width: 768px) {
-    .video-card {
-        max-width: 300px;
-    }
-}
-
-/* Ajustes para dispositivos móviles */
-@media (max-width: 768px) {
-    .video-card {
-        max-width: 300px;
-    }
-}
-
-/* Footer */
-.footer {
-    background-color: #333333; /* Gris oscuro */
-    color: #ffffff; /* Texto blanco */
-    padding: 40px 0;
-}
-
-.footer a {
-    color: #e67e22; /* Naranja para enlaces */
-    text-decoration: none;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-/* Responsividad General */
 @media (min-width: 1160px) {
     .offcanvas {
         position: static;
@@ -422,159 +227,242 @@ body {
     }
 }
 
-/* Estilo para la Imagen del Idioma */
-.language-switch .flag {
-    border-radius: 50%;
+/* ===================================================
+   Sección de Suscripción a la Newsletter
+=================================================== */
+.newsletter-section {
+    background-color: var(--bs-gray-dark);
+    color: var(--bs-white);
+    padding: 60px 0;
+}
+
+.newsletter-section h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.newsletter-section p.lead {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.newsletter-section form {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 0.625rem;
+}
+
+.newsletter-section input[type="email"] {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 0.3125rem;
+}
+
+/* ===================================================
+   Sección Hero
+=================================================== */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--bs-white);
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    margin-top: 20px;
+    color: var(--bs-white);
+}
+
+.btn-custom {
+    background-color: var(--bs-orange);
+    color: var(--bs-white);
+    border: none;
+    border-radius: 1.5625rem;
+    padding: 10px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #cc6b1f; /* Considera definir una variable para este color */
+    color: var(--bs-white);
+}
+
+/* ===================================================
+   Sección de Servicios
+=================================================== */
+.services-section {
+    padding: 60px 0;
+    background-color: var(--bs-gray-100);
+}
+
+.service-card {
+    border: none;
+    background: transparent;
     transition: transform 0.3s;
 }
 
-.language-switch .flag:hover {
-    transform: scale(1.1); /* Efecto de hover para las banderas */
+.service-card:hover {
+    transform: translateY(-10px);
 }
 
-/* Asegurar que el Logo No Demasiado Grande en Pantallas Pequeñas */
-.navbar-brand img {
-    height: 60px;
+.service-card .fa {
+    font-size: 3rem;
+    color: var(--bs-orange);
+    margin-bottom: 20px;
 }
 
-@media (min-width: 992px) {
-    .navbar-brand img {
-        height: 80px;
-    }
+/* ===================================================
+   Sección de Portfolio
+=================================================== */
+.portfolio-section {
+    padding: 60px 0;
+    background-color: var(--bs-gray-100);
 }
 
-/* Estilos para Botones de Redes Sociales */
-.btn-social {
+.portfolio-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-item img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.portfolio-item:hover img {
+    transform: scale(1.1);
+}
+
+.portfolio-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(230, 126, 34, 0.8);
+    color: var(--bs-gray-dark);
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.portfolio-item:hover .portfolio-overlay {
+    opacity: 1;
+}
+
+/* ===================================================
+   Swiper.js
+=================================================== */
+.swiper-container {
     width: 100%;
-    max-width: 250px;
-    margin: 0.5rem auto;
-    padding: 10px;
-    border-radius: 5px;
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    padding-bottom: 50px;
 }
 
-.btn-social i {
-    margin-right: 10px;
-}
-
-/* Botón de Google */
-.btn-danger {
-    background-color: #db4437;
-}
-
-.btn-danger:hover {
-    background-color: #c23321;
-}
-
-/* Estilos para la Página de Registro */
-.register-container {
-    max-width: 500px;
-    margin: 5rem auto;
-    padding: 2rem;
-    background-color: #1f1f1f;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    color: white;
-}
-
-.register-container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-}
-
-.register-container .form-group label {
-    font-weight: bold;
-    color: #aaaaaa;
-}
-
-.register-container .form-control {
-    background-color: #2a2a2a;
-    border: none;
-    color: white;
-}
-
-.register-container .form-control:focus {
-    background-color: #2a2a2a;
-    color: white;
-    box-shadow: none;
-}
-
-/* Estilos para Botones de Redes Sociales */
-.register-container .btn-social {
+.swiper-slide {
+    width: auto;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+}
+
+.video-card {
     width: 100%;
-    max-width: 250px;
-    margin: 0.5rem auto;
-    padding: 10px;
-    border-radius: 5px;
+    max-width: 350px;
+    position: relative;
+}
+
+.video-feed-item {
+    width: 100%;
+    height: auto;
+    border-radius: 0.9375rem;
+    overflow: hidden;
+}
+
+.video-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: var(--bs-white);
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+}
+
+.video-caption h5 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.video-caption p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .video-card {
+        max-width: 300px;
+    }
+}
+
+/* ===================================================
+   Footer
+=================================================== */
+.footer {
+    background-color: var(--bs-gray-dark);
+    color: var(--bs-white);
+    padding: 40px 0;
+}
+
+.footer a {
+    color: var(--bs-orange);
     text-decoration: none;
-    color: white;
-    font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.register-container .btn-social i {
-    margin-right: 10px;
+.footer a:hover {
+    text-decoration: underline;
 }
 
-/* Botón de Google */
-.register-container .btn-danger {
-    background-color: #db4437;
-}
-
-.register-container .btn-danger:hover {
-    background-color: #c23321;
-}
-
-
-/* Responsividad para .register-container */
-@media (max-width: 576px) {
-    .register-container {
-        margin: 3rem auto;
-        padding: 1.5rem;
-    }
-
-    .register-container h1 {
-        font-size: 1.75rem;
-    }
-}
-
-/* Estilos Globales para Formularios */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-control-file {
-    padding: 0.375rem 0.75rem;
-    background-color: #2a2a2a;
-    border: none;
-    color: white;
-}
-
-.form-control-file:focus {
-    background-color: #2a2a2a;
-    color: white;
-    box-shadow: none;
-}
-
-.btn-block {
-    width: 100%;
-}
-
-/* static/css/style.css */
-
-/* Sección Sobre Nosotros */
+/* ===================================================
+   Sección Sobre Nosotros
+=================================================== */
 .about-section {
-    background-color: #f8f9fa; /* Color de fondo suave */
+    background-color: var(--bs-gray-100);
     padding: 60px 0;
 }
 
@@ -586,49 +474,38 @@ body {
 
 .about-header p.lead {
     font-size: 1.2rem;
-    color: #6c757d;
+    color: var(--bs-gray);
 }
 
 .about-content img {
     max-width: 100%;
-    border-radius: 10px;
+    border-radius: 0.625rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .about-text p {
     font-size: 1.1rem;
     line-height: 1.6;
-    color: #343a40;
+    color: var(--bs-gray-dark);
 }
 
-.mission-section {
-    margin-top: 60px;
-}
-
-.mission-section h3 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-.mission-section p {
-    font-size: 1rem;
-    color: #6c757d;
-}
-
+.mission-section,
 .team-section {
     margin-top: 60px;
 }
 
+.mission-section h3,
 .team-section h3 {
     font-size: 2rem;
     font-weight: 700;
+    color: var(--bs-gray-dark);
     margin-bottom: 20px;
 }
 
+.mission-section p,
 .team-section p {
     font-size: 1rem;
-    color: #6c757d;
+    color: var(--bs-gray);
 }
 
 .team-member img {
@@ -640,35 +517,39 @@ body {
     margin-bottom: 15px;
 }
 
-.team-member h4 {
+.team-member h4,
+.team-member h5 {
     font-size: 1.5rem;
+    color: var(--bs-gray-dark);
     margin-bottom: 5px;
 }
 
 .team-member p {
-    font-size: 1rem;
-    color: #6c757d;
+    font-size: 0.95rem;
+    color: var(--bs-gray);
 }
 
-/* Sección Cómo Funciona */
+/* ===================================================
+   Sección Cómo Funciona
+=================================================== */
 .how-it-works-section {
-    background-color: #ffffff;
+    background-color: var(--bs-white);
     padding: 60px 0;
 }
 
 .section-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #333333;
+    color: var(--bs-gray-dark);
 }
 
 .section-description {
-    font-size: 1.2rem;
-    color: #6c757d;
+    font-size: 1.1rem;
+    color: var(--bs-gray);
 }
 
 .step-card {
-    background-color: #f8f9fa;
+    background-color: var(--bs-gray-100);
     border: none;
     transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -679,59 +560,36 @@ body {
 }
 
 .step-card i {
-    color: #ff7f50; /* Color naranja */
+    color: #ff7f50; /* Considera definir una variable para este color */
 }
 
-.section-description {
-    font-size: 1.1rem;
-    color: #555555;
-}
-
-/* Público Objetivo */
-.team-section h3,
-.mission-section h3 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #333333;
-}
-
-.team-section p,
-.mission-section p {
-    font-size: 1rem;
-    color: #6c757d;
-}
-
-.team-member h5 {
-    font-size: 1.2rem;
-    color: #333333;
-}
-
-.team-member p {
-    font-size: 0.95rem;
-    color: #6c757d;
-}
-
-/* Testimonios */
+/* ===================================================
+   Testimonios
+=================================================== */
 .testimonial {
-    background-color: #f8f9fa;
-    border-left: 5px solid #ff7f50;
+    background-color: var(--bs-gray-100);
+    border-left: 5px solid #ff7f50; /* Considera definir una variable para este color */
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .testimonial p {
     font-style: italic;
-    color: #555555;
+    color: var(--bs-gray);
 }
 
 .testimonial h5 {
     font-size: 1.1rem;
-    color: #333333;
+    color: var(--bs-gray-dark);
 }
 
 .testimonial small {
-    color: #6c757d;
+    color: var(--bs-gray);
 }
 
-/* Animaciones AOS */
+/* ===================================================
+   Animaciones AOS
+=================================================== */
 [data-aos] {
     opacity: 0;
     transition-property: opacity, transform;
@@ -741,17 +599,17 @@ body {
     opacity: 1;
 }
 
-/* Sección de Contacto */
+/* ===================================================
+   Sección de Contacto
+=================================================== */
 .contact-section {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 3rem;
-    padding-top: 3rem;
 }
 
-/* Imagen de Fondo */
 .background-image-wrapper {
     position: absolute;
     top: 0;
@@ -769,7 +627,6 @@ body {
     filter: brightness(50%);
 }
 
-/* Superposición para Mejorar la Legibilidad */
 .overlay {
     position: absolute;
     top: 0;
@@ -780,7 +637,6 @@ body {
     z-index: 2;
 }
 
-/* Contenedor del Formulario */
 .contact-form-wrapper {
     position: relative;
     z-index: 3;
@@ -791,109 +647,180 @@ body {
 .form-container {
     background-color: rgba(255, 255, 255, 0.95);
     padding: 40px;
-    border-radius: 15px;
+    border-radius: 0.9375rem;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Títulos del Formulario */
 .form-title {
     font-size: 2rem;
-    color: #333333;
+    color: var(--bs-gray-dark);
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .form-subtitle {
     font-size: 1.1rem;
-    color: #666666;
+    color: var(--bs-gray);
     margin-bottom: 30px;
+    text-align: center;
 }
 
-/* Estilos de los Formularios */
-.form-control {
-    border-radius: 0.5rem;
-    border: 1px solid #cccccc;
-    color: #333333;
-    background-color: #ffffff;
-}
-
-.form-control:focus {
-    border-color: #f1c40f;
-    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.25);
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
 .form-label {
-    color: #333333;
     font-weight: 600;
+    color: var(--bs-gray-dark);
 }
 
-/* Responsividad */
-@media (max-width: 768px) {
-    .form-container {
-        padding: 30px;
-    }
-    
-    .form-title {
-        font-size: 1.75rem;
-    }
-    
-    .form-subtitle {
-        font-size: 1rem;
-    }
+.form-control,
+.form-control-file,
+.form-select {
+    border-radius: 0.3125rem;
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-gray-dark);
+    background-color: var(--bs-white);
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-@media (max-width: 576px) {
-    .form-container {
-        padding: 20px;
-    }
-    
-    .form-title {
-        font-size: 1.5rem;
-    }
-    
-    .form-subtitle {
-        font-size: 0.95rem;
-    }
+.form-control:focus,
+.form-control-file:focus,
+.form-select:focus {
+    border-color: var(--bs-warning);
+    box-shadow: none;
 }
 
-/* Estilos Adicionales para Mejora Visual */
+.form-control-file {
+    padding: 0.375rem 0.75rem;
+}
+
+.btn-block {
+    width: 100%;
+}
+
 .invalid-feedback {
     display: none;
 }
 
-.was-validated .form-control:invalid ~ .invalid-feedback {
-    display: block;
-}
-
+.was-validated .form-control:invalid ~ .invalid-feedback,
 .was-validated .form-select:invalid ~ .invalid-feedback {
     display: block;
 }
 
-/* Estilos para el Dashboard */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 250px;
+    margin: 0.5rem auto;
+    padding: 10px;
+    border-radius: 0.3125rem;
+    text-decoration: none;
+    color: var(--bs-white);
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-social i {
+    margin-right: 10px;
+}
+
+.btn-danger {
+    background-color: var(--bs-danger);
+}
+
+.btn-danger:hover {
+    background-color: #c23321; /* Considera definir una variable para este color */
+}
+
+.register-container {
+    max-width: 500px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background-color: #1f1f1f; /* Considera usar una variable si es recurrente */
+    border-radius: 0.625rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    color: var(--bs-white);
+}
+
+.register-container h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--bs-white);
+}
+
+.register-container .form-group label {
+    font-weight: bold;
+    color: #aaaaaa; /* Considera usar una variable si es recurrente */
+}
+
+.register-container .form-control,
+.register-container .form-control-file {
+    background-color: #2a2a2a;
+    border: none;
+    color: var(--bs-white);
+}
+
+.register-container .form-control:focus,
+.register-container .form-control-file:focus {
+    background-color: #2a2a2a;
+    color: var(--bs-white);
+    box-shadow: none;
+}
+
+.register-container .btn-social {
+    background-color: var(--bs-danger);
+}
+
+.register-container .btn-social:hover {
+    background-color: #c23321; /* Considera definir una variable para este color */
+}
+
+@media (max-width: 576px) {
+    .register-container {
+        margin: 3rem auto;
+        padding: 1.5rem;
+    }
+
+    .register-container h1 {
+        font-size: 1.75rem;
+    }
+
+    .register-container .form-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* ===================================================
+   Dashboard
+=================================================== */
 .dashboard-title {
     font-size: 2rem;
     font-weight: 700;
-    color: #333333;
+    color: var(--bs-gray-dark);
 }
 
-.btn-custom {
-    background-color: #e67e22;
-    color: #ffffff;
+.dashboard .btn-custom {
+    background-color: var(--bs-orange);
+    color: var(--bs-white);
     border: none;
-    border-radius: 5px;
+    border-radius: 0.3125rem;
     padding: 8px 20px;
     font-size: 1rem;
     font-weight: 600;
     transition: background-color 0.3s, color 0.3s;
 }
 
-.btn-custom:hover {
-    background-color: #cc6b1f;
-    color: #ffffff;
+.dashboard .btn-custom:hover {
+    background-color: #cc6b1f; /* Considera definir una variable para este color */
+    color: var(--bs-white);
 }
 
 .card {
     border: none;
-    border-radius: 10px;
+    border-radius: 0.625rem;
 }
 
 .card .card-body {
@@ -902,7 +829,7 @@ body {
 
 .list-group-item {
     border: none;
-    border-bottom: 1px solid #f1f1f1;
+    border-bottom: 1px solid var(--bs-gray-300);
     padding: 15px 20px;
 }
 
@@ -913,12 +840,12 @@ body {
 .link-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #333333;
+    color: var(--bs-gray-dark);
 }
 
 .link-url {
     font-size: 0.9rem;
-    color: #888888;
+    color: var(--bs-gray);
     text-decoration: none;
 }
 
@@ -940,8 +867,8 @@ body {
 }
 
 .alert-info {
-    background-color: #f8f9fa;
-    color: #333333;
+    background-color: var(--bs-light);
+    color: var(--bs-gray-dark);
 }
 
 .toast {
@@ -956,29 +883,93 @@ body {
 }
 
 .modal-content {
-    border-radius: 10px;
+    border-radius: 0.625rem;
 }
 
-.modal-header, .modal-footer {
+.modal-header,
+.modal-footer {
     border: none;
-}
-
-.form-label {
-    font-weight: 600;
-    color: #333333;
-}
-
-.form-control {
-    border-radius: 5px;
-    border: 1px solid #cccccc;
-}
-
-.form-control:focus {
-    border-color: #e67e22;
-    box-shadow: none;
 }
 
 .btn-close {
     background: none;
     border: none;
+}
+
+/* ===================================================
+   Estilos para el Selector de Iconos en el Modal
+=================================================== */
+
+/* Estilo para los botones de icono */
+.icon-btn {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 10px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* Estilo para el botón seleccionado */
+.icon-btn.selected {
+    background-color: var(--bs-orange);
+    border-color: var(--bs-orange);
+    color: var(--bs-white);
+}
+
+/* Estilo para el icono seleccionado */
+#displayedIcon {
+    font-size: 2rem;
+    color: var(--bs-orange);
+}
+
+/* ===================================================
+   Estilos Adicionales
+=================================================== */
+.language-switch .flag {
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.language-switch .flag:hover {
+    transform: scale(1.1);
+}
+
+.navbar-brand img {
+    height: 60px;
+}
+
+@media (min-width: 992px) {
+    .navbar-brand img {
+        height: 80px;
+    }
+}
+
+/* ===================================================
+   Responsividad para Formularios
+=================================================== */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 30px;
+    }
+
+    .form-title {
+        font-size: 1.75rem;
+    }
+
+    .form-subtitle {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-container {
+        padding: 20px;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .form-subtitle {
+        font-size: 0.95rem;
+    }
 }

@@ -3,21 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ user.username }}'s Links</title>
+    
+    <title>NFC Connect - {{ user.username }}'s Links</title>
     
     <!-- Incluir Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Incluir Font Awesome para los iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-eNq8Z5Eli7z0jIP+JQx27zABg1KxD8pEQuN3GpFV6GiV0ZKEPtz6Vqc+op+BwS6k" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Estilos Personalizados -->
     <style>
+        /* Definir variables CSS dinámicas */
+        :root {
+            --link-color: {{ user.link_color or '#e94e1b' }};
+        }
+
+        /* Estilos Generales */
         body, html {
             height: 100%;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
         }
         .background-media {
             position: fixed;
@@ -26,104 +35,134 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            z-index: -2;
+            opacity: 0.6; /* Aumenté la opacidad para mejorar el contraste */
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4); /* Añadí un overlay oscuro para mejorar la legibilidad */
             z-index: -1;
-            opacity: 0.3; /* Transparencia para no distraer del contenido */
         }
         .profile-header {
             text-align: center;
-            padding-top: 50px;
-            padding-bottom: 20px;
+            padding-top: 70px;
+            padding-bottom: 30px;
             color: #ffffff;
         }
         .profile-picture {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
             border-radius: 50%;
-            border: 4px solid #e67e22;
-            margin-bottom: 15px;
+            border: 4px solid var(--link-color);
+            margin-bottom: 20px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .profile-picture:hover {
+            transform: scale(1.05);
+            /* border-color: darken(var(--link-color), 10%); */ /* Comentado porque no es válido en CSS puro */
         }
         .username {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
         }
         .bio {
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #dddddd;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         .links-container {
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto;
+            padding-bottom: 50px;
         }
         .link-item {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .link-button {
             width: 100%;
-            padding: 12px 20px;
+            padding: 15px 20px;
             text-align: left;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
             color: #ffffff;
-            font-size: 1rem;
-            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1.1rem;
+            transition: background-color 0.3s, transform 0.2s, filter 0.3s;
             display: flex;
             align-items: center;
-            background-color: #e67e22;
+            background-color: var(--link-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-decoration: none; /* Para quitar el subrayado de los enlaces */
         }
         .link-button i {
-            margin-right: 15px;
-            font-size: 1.2rem;
+            margin-right: 20px;
+            font-size: 2rem; /* Aumentado de 1.5rem a 2rem */
         }
         .link-button:hover {
-            background-color: #cc6b1f;
-            transform: translateY(-3px);
+            filter: brightness(85%); /* Efecto de hover más dinámico */
+            transform: translateY(-5px);
         }
         .watermark {
             position: fixed;
-            bottom: 10px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             z-index: 10;
             pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+        .watermark img {
+            width: 80px;
+            height: auto;
+            margin-right: 10px;
         }
         /* Responsive adjustments */
         @media (max-width: 576px) {
             .profile-header {
-                padding-top: 30px;
-                padding-bottom: 10px;
+                padding-top: 40px;
+                padding-bottom: 15px;
             }
             .profile-picture {
-                width: 90px;
-                height: 90px;
+                width: 100px;
+                height: 100px;
             }
             .username {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
             .bio {
-                font-size: 0.9rem;
-                margin-bottom: 20px;
+                font-size: 1rem;
+                margin-bottom: 25px;
             }
             .link-button {
-                padding: 10px 15px;
-                font-size: 0.95rem;
-            }
-            .link-button i {
-                margin-right: 10px;
+                padding: 12px 15px;
                 font-size: 1rem;
             }
+            .link-button i {
+                margin-right: 15px;
+                font-size: 1.6rem; /* Aumentado de 1.3rem a 1.6rem */
+            }
             .watermark {
-                font-size: 0.7rem;
+                font-size: 0.8rem;
+            }
+            .watermark img {
+                width: 60px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Overlay para Mejorar la Legibilidad -->
+    <div class="overlay"></div>
+
     <!-- Fondo Personalizado -->
     {% if user.background_type == 'video' and user.background_video and user.background_video.endswith(('.mp4', '.mov', '.avi')) %}
     <video class="background-media" autoplay loop muted>
@@ -154,14 +193,14 @@
         {% if links %}
             {% for link in links %}
                 <div class="link-item">
-                    <button class="btn link-button" onclick="window.open('{{ link.url }}', '_blank')">
+                    <a href="{{ url_for('track_click', link_id=link.id) }}" target="_blank" class="btn link-button" aria-label="Abrir {{ link.title }}">
                         {% if link.icon %}
                             <i class="{{ link.icon }}"></i>
                         {% else %}
-                            <i class="fas fa-link"></i>
+                            <i class="fa-solid fa-link"></i>
                         {% endif %}
                         {{ link.title }}
-                    </button>
+                    </a>
                 </div>
             {% endfor %}
         {% else %}
@@ -171,8 +210,9 @@
     
     <!-- Marca de Agua -->
     <div class="watermark">
-        <img src="{{ url_for('static', filename='img/logo-web.jpg') }}" alt="Watermark" style="width: 100px; height: auto;">
+        <img src="{{ url_for('static', filename='nfc_connect_logo.png') }}" alt="Watermark" style="padding-bottom: 10px; height: 60px; width: auto;">
     </div>
+    
     <!-- Incluir Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     

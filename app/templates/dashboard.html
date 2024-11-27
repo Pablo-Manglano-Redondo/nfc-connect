@@ -1,125 +1,336 @@
 <!-- templates/dashboard.html -->
 {% extends "app.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}
+    {{ super() }} - {{ current_user.username }}'s Dashboard
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- Encabezado con Foto de Perfil y Biografía -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-        <div class="d-flex align-items-center">
-            <!-- Foto de Perfil del Usuario -->
-            {% if current_user.profile_image %}
-                <img src="{{ url_for('static', filename='img/profile_pics/' ~ current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Picture" class="profile-picture me-3">
-            {% else %}
-                <img src="{{ url_for('static', filename='img/profile_pics/default.jpg') }}" alt="Default Profile Picture" class="profile-picture me-3">
-            {% endif %}
-            <div>
-                <h1 class="dashboard-title mb-0">Hola, {{ current_user.username }}</h1>
-                <!-- Mostrar Biografía del Usuario -->
-                {% if current_user.bio %}
-                    <p class="bio-text mt-2">{{ current_user.bio }}</p>
-                {% else %}
-                    <p class="bio-text mt-2 text-muted">No has agregado una biografía aún.</p>
-                {% endif %}
-                <!-- Botón para Editar Biografía -->
-                <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
-                    <i class="fas fa-edit"></i> Editar Biografía
-                </button>
+<!-- Contenedor Principal -->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Izquierdo -->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="padding-top: 9rem;">
+            <div class="position-sticky pt-3">
+                <div class="text-center mb-4">
+                    {% if current_user.profile_image %}
+                        <img src="{{ url_for('static', filename='img/profile_pics/' ~ current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Picture" class="profile-picture img-thumbnail">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/profile_pics/default.jpg') }}" alt="Default Profile Picture" class="profile-picture img-thumbnail">
+                    {% endif %}
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" data-section="linktreeSection">
+                            <i class="fas fa-link me-2"></i>
+                            Linktree
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="analyticsSection">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <button class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
+                            <i class="fas fa-paint-brush me-2"></i>
+                            Personalizar Fondo
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
+                            <i class="fas fa-user-edit me-2"></i>
+                            Editar Biografía
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-sm btn-outline-success w-100 mb-4" data-bs-toggle="modal" data-bs-target="#changeProfilePicModal">
+                            <i class="fas fa-camera me-2"></i>
+                            Cambiar Foto de Perfil
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-sm btn-custom w-100 mb-4">
+                            <i class="fas fa-eye me-2"></i>
+                            Ver Perfil Público
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="social-share-buttons text-center">
+                            <span>Compartir Perfil:</span>
+                            <div class="d-flex justify-content-center mt-2">
+                                <a href="https://facebook.com/sharer/sharer.php?u={{ url_for('user_links_page', username=current_user.username, _external=True) }}" target="_blank" class="btn btn-sm btn-facebook me-2">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://twitter.com/intent/tweet?url={{ url_for('user_links_page', username=current_user.username, _external=True) }}&text=Visita mi Linktree!" target="_blank" class="btn btn-sm btn-twitter me-2">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ url_for('user_links_page', username=current_user.username, _external=True) }}" target="_blank" class="btn btn-sm btn-linkedin me-2">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="https://www.instagram.com/sharer.php?u={{ url_for('user_links_page', username=current_user.username, _external=True) }}" target="_blank" class="btn btn-sm btn-instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="d-flex flex-wrap">
-            <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-outline-primary me-2 mb-2" target="_blank">
-                <i class="fas fa-eye"></i> Ver Perfil Público
-            </a>
-            <button type="button" class="btn btn-custom me-2 mb-2" data-bs-toggle="modal" data-bs-target="#addLinkModal">
-                <i class="fas fa-plus"></i> Agregar Enlace
-            </button>
-            <button type="button" class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
-                <i class="fas fa-paint-brush"></i> Personalizar Fondo
-            </button>
-            <button type="button" class="btn btn-info mb-2" data-bs-toggle="modal" data-bs-target="#changeProfilePicModal">
-                <i class="fas fa-camera"></i> Cambiar Foto de Perfil
-            </button>
-        </div>
-    </div>
+        </nav>
 
-    <!-- Slider para Seleccionar Tipo de Fondo -->
-    <div class="d-flex justify-content-end mb-4">
-        <label class="form-check-label">Foto de fondo</label>
-        <div class="mx-2"></div>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="backgroundTypeSwitch">
-            <label class="form-check-label" for="backgroundTypeSwitch">Video de Fondo</label>
-        </div>
-    </div>
-
-    <!-- Lista de Enlaces del Usuario -->
-    {% if links %}
-    <div class="card shadow-sm mb-5">
-        <div class="card-body">
-            <div id="sortable" class="list-group">
-                {% for link in links %}
-                <div class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ link.id }}">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-arrows-alt handle me-3 text-muted"></i>
-                        {% if link.icon %}
-                        <i class="{{ link.icon }} me-2"></i>
-                        {% else %}
-                        <i class="fas fa-link me-2"></i>
-                        {% endif %}
-                        <div>
-                            <div class="link-title">{{ link.title }}</div>
-                            <a href="{{ link.url }}" target="_blank" class="link-url">{{ link.url }}</a>
+        <!-- Contenido Principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Sección de Linktree -->
+            <div id="linktreeSection">
+                <h2 class="mt-4 mb-4">Gestionar Linktree</h2>
+                <div class="row">
+                    <!-- Panel de Gestión de Enlaces -->
+                    <div class="col-md-6">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                                <span>Enlaces</span>
+                                <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addLinkModal">
+                                    <i class="fas fa-plus"></i> Agregar Enlace
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                {% if links %}
+                                    <ul id="sortable" class="list-group">
+                                        {% for link in links %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center" data-id="{{ link.id }}">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-arrows-alt handle me-3 text-muted" style="cursor: move;"></i>
+                                                <i class="{{ link.icon or 'fas fa-link' }} me-2"></i>
+                                                <div>
+                                                    <strong>{{ link.title }}</strong>
+                                                    <br>
+                                                    <a href="{{ link.url }}" target="_blank">{{ link.url }}</a>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button type="button" class="btn btn-sm btn-custom me-2" data-bs-toggle="modal" data-bs-target="#editLinkModal"
+                                                    data-link-id="{{ link.id }}"
+                                                    data-link-title="{{ link.title|e }}"
+                                                    data-link-url="{{ link.url|e }}"
+                                                    data-link-icon="{{ link.icon|e }}"
+                                                    data-link-description="{{ link.description|e }}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ link.id|safe }}')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="text-muted">No has agregado ningún enlace aún.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <button id="saveOrderBtn" class="btn btn-custom w-100">Guardar Orden</button>
+                    </div>
+                    
+                    <!-- Previsualización en Teléfono -->
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <div class="phone-preview d-flex justify-content-center">
+                                <div class="phone">
+                                    <div class="screen" id="phoneScreen">
+                                        <!-- Fondo dentro del teléfono -->
+                                        {% if current_user.background_type == 'video' and current_user.background_video and current_user.background_video.endswith(('.mp4', '.mov', '.avi')) %}
+                                        <video class="phone-background-media" autoplay loop muted>
+                                            <source src="{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) }}" type="video/mp4">
+                                            Tu navegador no soporta videos.
+                                        </video>
+                                        {% elif current_user.background_type == 'image' and current_user.background_image and current_user.background_image.endswith(('.jpg', '.jpeg', '.png', '.gif')) %}
+                                        <img src="{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) }}" alt="Background Image" class="phone-background-media">
+                                        {% else %}
+                                        <div class="phone-background-placeholder"></div>
+                                        {% endif %}
+                                        
+                                        <!-- Enlaces en la previsualización (iframe) -->
+                                        <iframe src="{{ url_for('user_links_page', username=current_user.username) }}" class="linktree-iframe" frameborder="0" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <button type="button" class="btn btn-sm btn-primary me-2" onclick="openEditModal({{ link.id }}, '{{ link.title|escape }}', '{{ link.url|escape }}', '{{ link.icon|escape }}', '{{ link.description|escape }}')">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ link.id|safe }}')">
-                            <i class="fas fa-trash-alt"></i> Eliminar
-                        </button>
+                </div>
+            </div>
+            
+            <!-- Sección de Analytics -->
+            <div id="analyticsSection" class="d-none">
+                <h2 class="mt-4 mb-4">Analytics de Linktree</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-info text-white">
+                                Clics por Enlace
+                            </div>
+                            <div class="card-body">
+                                <canvas id="clicksChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-warning text-white">
+                                Enlaces Más Populares
+                            </div>
+                            <div class="card-body">
+                                <canvas id="popularLinksChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
-            <button id="saveOrderBtn" class="btn btn-primary mt-3">Guardar Orden</button>
-        </div>
+        </main>
     </div>
-    {% else %}
-    <div class="alert alert-info text-center">
-        <p>No has agregado ningún enlace aún.</p>
-        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#addLinkModal">
-            <i class="fas fa-plus"></i> Agregar tu Primer Enlace
-        </button>
-    </div>
-    {% endif %}
 </div>
+
+<!-- Modales -->
 
 <!-- Modal para Agregar Enlace -->
 <div class="modal fade" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg"> <!-- Aumentamos el tamaño del modal para mejor visualización de iconos -->
         <div class="modal-content">
-            <form id="addLinkForm" method="POST">
+            <form id="addLinkForm" method="POST" action="{{ url_for('add_link_ajax') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addLinkModalLabel">Agregar Nuevo Enlace</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Campos del formulario -->
+                    <!-- Campos del formulario con Validación en Tiempo Real -->
                     <div class="mb-3">
-                        <label for="title" class="form-label">Título</label>
+                        <label for="title" class="form-label">Título <span class="text-danger">*</span></label>
                         <input type="text" name="title" id="title" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor, ingresa un título.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="url" class="form-label">URL</label>
+                        <label for="url" class="form-label">URL <span class="text-danger">*</span></label>
                         <input type="url" name="url" id="url" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor, ingresa una URL válida.
+                        </div>
                     </div>
+                    <!-- Selección de Icono -->
                     <div class="mb-3">
-                        <label for="icon" class="form-label">Icono (clase FontAwesome)</label>
-                        <input type="text" name="icon" id="icon" class="form-control" placeholder="Ejemplo: fas fa-globe">
+                        <label class="form-label">Selecciona un Icono</label>
+                        <div class="row" id="iconPicker">
+                            <!-- Iconos de FontAwesome -->
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-globe" title="Globo">
+                                    <i class="fas fa-globe fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-home" title="Inicio">
+                                    <i class="fas fa-home fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-user" title="Usuario">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-envelope" title="Correo">
+                                    <i class="fas fa-envelope fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-phone" title="Teléfono">
+                                    <i class="fas fa-phone fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-cog" title="Configuración">
+                                    <i class="fas fa-cog fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-book" title="Libro">
+                                    <i class="fas fa-book fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-camera" title="Cámara">
+                                    <i class="fas fa-camera fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-heart" title="Corazón">
+                                    <i class="fas fa-heart fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-star" title="Estrella">
+                                    <i class="fas fa-star fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-shopping-cart" title="Carrito">
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-lock" title="Bloquear">
+                                    <i class="fas fa-lock fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-search" title="Buscar">
+                                    <i class="fas fa-search fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-bell" title="Campana">
+                                    <i class="fas fa-bell fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-map-marker-alt" title="Mapa">
+                                    <i class="fas fa-map-marker-alt fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-calendar" title="Calendario">
+                                    <i class="fas fa-calendar fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-comments" title="Comentarios">
+                                    <i class="fas fa-comments fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-briefcase" title="Maletín">
+                                    <i class="fas fa-briefcase fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-film" title="Película">
+                                    <i class="fas fa-film fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-music" title="Música">
+                                    <i class="fas fa-music fa-2x"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Campo Oculto para el Icono Seleccionado -->
+                        <input type="hidden" name="icon" id="selectedIcon" value="">
+                        <!-- Mostrar Icono Seleccionado -->
+                        <div id="selectedIconDisplay" class="mt-3">
+                            <span class="me-2">Icono Seleccionado:</span>
+                            <i id="displayedIcon" class=""></i>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Descripción</label>
@@ -137,9 +348,9 @@
 
 <!-- Modal para Editar Enlace -->
 <div class="modal fade" id="editLinkModal" tabindex="-1" aria-labelledby="editLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg"> <!-- Tamaño adecuado para la selección de iconos -->
         <div class="modal-content">
-            <form id="editLinkForm" method="POST">
+            <form id="editLinkForm" method="POST" action="{{ url_for('edit_link_ajax') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="link_id" id="edit_link_id">
                 <div class="modal-header">
@@ -147,18 +358,134 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Campos del formulario -->
+                    <!-- Campos del formulario con Validación en Tiempo Real -->
                     <div class="mb-3">
-                        <label for="edit_title" class="form-label">Título</label>
+                        <label for="edit_title" class="form-label">Título <span class="text-danger">*</span></label>
                         <input type="text" name="title" id="edit_title" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor, ingresa un título.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label for="edit_url" class="form-label">URL</label>
+                        <label for="edit_url" class="form-label">URL <span class="text-danger">*</span></label>
                         <input type="url" name="url" id="edit_url" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor, ingresa una URL válida.
+                        </div>
                     </div>
+                    <!-- Selección de Icono -->
                     <div class="mb-3">
-                        <label for="edit_icon" class="form-label">Icono (clase FontAwesome)</label>
-                        <input type="text" name="icon" id="edit_icon" class="form-control" placeholder="Ejemplo: fas fa-globe">
+                        <label class="form-label">Selecciona un Icono</label>
+                        <div class="row" id="editIconPicker">
+                            <!-- Iconos de FontAwesome -->
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-globe" title="Globo">
+                                    <i class="fas fa-globe fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-home" title="Inicio">
+                                    <i class="fas fa-home fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-user" title="Usuario">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-envelope" title="Correo">
+                                    <i class="fas fa-envelope fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-phone" title="Teléfono">
+                                    <i class="fas fa-phone fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-cog" title="Configuración">
+                                    <i class="fas fa-cog fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-book" title="Libro">
+                                    <i class="fas fa-book fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-camera" title="Cámara">
+                                    <i class="fas fa-camera fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-heart" title="Corazón">
+                                    <i class="fas fa-heart fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-star" title="Estrella">
+                                    <i class="fas fa-star fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-shopping-cart" title="Carrito">
+                                    <i class="fas fa-shopping-cart fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-lock" title="Bloquear">
+                                    <i class="fas fa-lock fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-search" title="Buscar">
+                                    <i class="fas fa-search fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-bell" title="Campana">
+                                    <i class="fas fa-bell fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-map-marker-alt" title="Mapa">
+                                    <i class="fas fa-map-marker-alt fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-calendar" title="Calendario">
+                                    <i class="fas fa-calendar fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-comments" title="Comentarios">
+                                    <i class="fas fa-comments fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-briefcase" title="Maletín">
+                                    <i class="fas fa-briefcase fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-film" title="Película">
+                                    <i class="fas fa-film fa-2x"></i>
+                                </button>
+                            </div>
+                            <div class="col-3 col-sm-2 mb-3">
+                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-music" title="Música">
+                                    <i class="fas fa-music fa-2x"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Campo Oculto para el Icono Seleccionado -->
+                        <input type="hidden" name="icon" id="edit_selectedIcon" value="">
+                        <!-- Mostrar Icono Seleccionado -->
+                        <div id="edit_selectedIconDisplay" class="mt-3">
+                            <span class="me-2">Icono Seleccionado:</span>
+                            <i id="edit_displayedIcon" class=""></i>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="edit_description" class="form-label">Descripción</label>
@@ -230,6 +557,21 @@
                             <small class="form-text text-muted">Video actual: {{ current_user.background_video }}</small>
                         {% endif %}
                     </div>
+                    <!-- Opciones para elegir el tipo de fondo -->
+                    <div class="mb-3">
+                        <label for="background_type" class="form-label">Tipo de Fondo</label>
+                        <select name="background_type" id="background_type" class="form-select" required>
+                            <option value="" disabled selected>Selecciona el tipo de fondo</option>
+                            <option value="image" {% if current_user.background_type == 'image' %}selected{% endif %}>Imagen</option>
+                            <option value="video" {% if current_user.background_type == 'video' %}selected{% endif %}>Video</option>
+                        </select>
+                    </div>
+                    <!-- Personalización de colores de los enlaces -->
+                    <div class="mb-3">
+                        <label for="link_color" class="form-label">Color de los Enlaces</label>
+                        <input type="color" name="link_color" id="link_color" class="form-control form-control-color" value="{{ current_user.link_color or '#e94e1b' }}" title="Selecciona un color para los enlaces">
+                        <small class="form-text text-muted">Elige un color para los botones de tus enlaces.</small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -266,25 +608,41 @@
     </div>
 </div>
 
-<!-- Incluir Bootstrap JS y SortableJS -->
+<!-- Incluir Bootstrap JS, SortableJS y Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Scripts Personalizados -->
 <script>
     // Definir las URLs de fondo
     var backgroundImageURL = "{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) if current_user.background_image else '' }}";
     var backgroundVideoURL = "{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) if current_user.background_video else '' }}";
-    
-    // Mostrar las URLs en la consola para depuración
-    console.log('Background Image URL:', backgroundImageURL);
-    console.log('Background Video URL:', backgroundVideoURL);
-    
-    // Inicializar SortableJS
+    var linkColor = "{{ current_user.link_color or '#e94e1b' }}"; // Color de los enlaces
+
+    // Aplicar el color de los enlaces al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        applyLinkColor(linkColor);
+    });
+
+    // Función para aplicar el color de los enlaces
+    function applyLinkColor(color) {
+        var linkButtons = document.querySelectorAll('.btn-primary, .btn-success');
+        linkButtons.forEach(function(button) {
+            button.style.backgroundColor = color;
+            button.style.borderColor = color;
+        });
+    }
+
+    // Inicializar SortableJS para reordenar enlaces con Animaciones Suaves
     var sortable = new Sortable(document.getElementById('sortable'), {
         animation: 150,
         handle: '.handle',
-        ghostClass: 'sortable-ghost'
+        ghostClass: 'sortable-ghost',
+        onEnd: function (evt) {
+            // Actualizar la previsualización en teléfono
+            updatePhonePreview();
+        },
     });
 
     // Guardar Orden de Enlaces
@@ -317,9 +675,15 @@
         });
     });
 
-    // Manejar el envío del formulario de agregar enlace
+    // Manejar el envío del formulario de agregar enlace con Validación en Tiempo Real
     document.getElementById('addLinkForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        var form = this;
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
         var formData = new FormData(this);
         var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
 
@@ -348,21 +712,15 @@
         });
     });
 
-    // Función para abrir el modal de editar enlace
-    function openEditModal(id, title, url, icon, description) {
-        document.getElementById('edit_link_id').value = id;
-        document.getElementById('edit_title').value = title;
-        document.getElementById('edit_url').value = url;
-        document.getElementById('edit_icon').value = icon;
-        document.getElementById('edit_description').value = description;
-
-        var editModal = new bootstrap.Modal(document.getElementById('editLinkModal'));
-        editModal.show();
-    }
-
-    // Manejar el envío del formulario de editar enlace
+    // Manejar el envío del formulario de editar enlace con Validación en Tiempo Real
     document.getElementById('editLinkForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        var form = this;
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
         var formData = new FormData(this);
         var csrf_token = document.querySelector('#editLinkForm input[name="csrf_token"]').value;
 
@@ -419,7 +777,7 @@
         }
     }
 
-    // Función para mostrar notificaciones
+    // Función para mostrar notificaciones con Animaciones Suaves
     function showToast(message, type) {
         var toastEl = document.createElement('div');
         toastEl.className = 'toast align-items-center text-white bg-' + type + ' border-0';
@@ -430,6 +788,7 @@
         toastEl.style.top = '20px';
         toastEl.style.right = '20px';
         toastEl.style.zIndex = '1055';
+        toastEl.classList.add('fade', 'show'); // Para animación de entrada
 
         var toastBody = document.createElement('div');
         toastBody.className = 'd-flex';
@@ -446,134 +805,492 @@
         });
     }
 
-    // Manejar el slider de tipo de fondo
-    document.getElementById('backgroundTypeSwitch').addEventListener('change', function() {
-        var selectedType = this.checked ? 'video' : 'image';
-        var csrf_token = "{{ csrf_token() }}"; // Asegúrate de que el token CSRF está disponible
-
-        fetch("{{ url_for('update_background_type') }}", { // Asegúrate de tener esta ruta en tu backend
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrf_token
-            },
-            body: JSON.stringify({ background_type: selectedType })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                // Actualizar el fondo de la página sin recargar
-                updateBackground(selectedType);
-                showToast('Tipo de fondo actualizado correctamente.', 'success');
-            } else {
-                showToast('Error al actualizar el tipo de fondo.', 'danger');
-                // Revertir el switch en caso de error
-                this.checked = !this.checked;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error al actualizar el tipo de fondo.', 'danger');
-            // Revertir el switch en caso de error
-            this.checked = !this.checked;
+    // Manejar clics en la navegación del sidebar con Animaciones Suaves
+    document.querySelectorAll('#sidebarMenu .nav-link').forEach(function(element) {
+        element.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Remover la clase 'active' de todos los enlaces
+            document.querySelectorAll('#sidebarMenu .nav-link').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            // Agregar la clase 'active' al enlace clicado
+            this.classList.add('active');
+            // Mostrar la sección correspondiente
+            var section = this.getAttribute('data-section');
+            showSection(section);
         });
     });
 
-    // Función para actualizar el fondo de la página
-    function updateBackground(type) {
-        console.log('Actualizando fondo a:', type);
-        var body = document.body;
+    // Función para mostrar la sección seleccionada con Transiciones Suaves
+    function showSection(sectionId) {
+        var sections = ['linktreeSection', 'analyticsSection'];
+        sections.forEach(function(id) {
+            var elem = document.getElementById(id);
+            if(id === sectionId) {
+                elem.classList.remove('d-none');
+                elem.classList.add('fade', 'show'); // Añadir clases para transición
+            } else {
+                elem.classList.add('d-none');
+                elem.classList.remove('fade', 'show');
+            }
+        });
+    }
 
-        // Remover clases de fondo anteriores
-        body.classList.remove('background-image', 'background-video');
+    // Función para actualizar el fondo dentro del teléfono
+    function updatePhoneBackground(type) {
+        var phoneBackgroundMedia = document.querySelector('.phone-background-media');
+        var phoneLinks = document.querySelector('.linktree-iframe'); // Ajustado para iframe
+        var screen = document.getElementById('phoneScreen');
+
+        // Remover el fondo actual
+        if(phoneBackgroundMedia) {
+            phoneBackgroundMedia.remove();
+        }
 
         if(type === 'image' && backgroundImageURL) {
-            console.log('Aplicando imagen de fondo:', backgroundImageURL);
-            body.classList.add('background-image');
-            body.style.backgroundImage = "url('" + backgroundImageURL + "')";
-            body.style.backgroundSize = 'cover';
-            body.style.backgroundRepeat = 'no-repeat';
-            body.style.backgroundPosition = 'center';
-            
-            // Remover cualquier video de fondo existente
-            var existingVideo = document.getElementById('background-video-element');
-            if(existingVideo) {
-                existingVideo.remove();
-                console.log('Video de fondo eliminado.');
-            }
+            // Aplicar imagen de fondo
+            var img = document.createElement('img');
+            img.src = backgroundImageURL;
+            img.alt = 'Background Image';
+            img.className = 'phone-background-media';
+            screen.insertBefore(img, phoneLinks);
         } else if(type === 'video' && backgroundVideoURL) {
-            console.log('Aplicando video de fondo:', backgroundVideoURL);
-            body.classList.add('background-video');
-            
-            // Remover cualquier video de fondo existente antes de agregar uno nuevo
-            var existingVideo = document.getElementById('background-video-element');
-            if(existingVideo) {
-                existingVideo.remove();
-                console.log('Video de fondo existente eliminado.');
-            }
-            
-            // Crear un nuevo elemento de video
+            // Aplicar video de fondo
             var video = document.createElement('video');
-            video.id = 'background-video-element';
             video.autoplay = true;
             video.loop = true;
             video.muted = true;
-            video.style.position = 'fixed';
-            video.style.top = '0';
-            video.style.left = '0';
-            video.style.width = '100%';
-            video.style.height = '100%';
-            video.style.objectFit = 'cover';
-            video.style.zIndex = '-1';
+            video.className = 'phone-background-media';
 
             var source = document.createElement('source');
             source.src = backgroundVideoURL;
             source.type = 'video/mp4'; // Ajusta el tipo MIME según el formato de tu video
 
             video.appendChild(source);
-            document.body.appendChild(video);
-            
-            console.log('Video de fondo agregado.');
+            screen.insertBefore(video, phoneLinks);
         } else {
-            console.log('Removiendo fondo.');
-            body.style.backgroundImage = '';
-            var existingVideo = document.getElementById('background-video-element');
-            if(existingVideo) {
-                existingVideo.remove();
-                console.log('Video de fondo eliminado.');
-            }
+            // No aplicar fondo
+            var placeholder = document.createElement('div');
+            placeholder.className = 'phone-background-placeholder';
+            screen.insertBefore(placeholder, phoneLinks);
         }
     }
 
-    // Inicializar el fondo al cargar la página
+    // Función para actualizar la previsualización en teléfono
+    function updatePhonePreview() {
+        var phoneLinks = document.querySelector('.linktree-iframe'); // Ajustado para iframe
+        // No es necesario actualizar el iframe, pero si tienes una representación de los enlaces, actualízala aquí
+    }
+
+    // Manejar el cambio de tipo de fondo y color de los enlaces
+    document.getElementById('customizeForm').addEventListener('submit', function(e) {
+        // Ya estamos manejando la personalización en el backend, no es necesario hacer nada aquí
+    });
+
+    // Inicializar el fondo al cargar la página y los gráficos de Analytics
     document.addEventListener('DOMContentLoaded', function() {
         var selectedType = "{{ current_user.background_type }}" || 'image';
-        var switchElem = document.getElementById('backgroundTypeSwitch');
 
-        if(selectedType === 'video' && backgroundVideoURL) {
-            switchElem.checked = true;
-        } else {
-            switchElem.checked = false;
-        }
+        updatePhoneBackground(selectedType);
 
-        updateBackground(selectedType);
+        // Aplicar el color de los enlaces
+        var linkColor = "{{ current_user.link_color or '#e94e1b' }}";
+        applyLinkColor(linkColor);
+
+        // Inicializar los gráficos de Analytics (si se implementan)
+        {% if analytics_data %}
+            initializeCharts({{ analytics_data|tojson }});
+        {% endif %}
+
+        // Inicializar la previsualización en teléfono
+        updatePhonePreview();
     });
-</script>
 
-<style>
-    /* Estilos para la foto de perfil en el dashboard */
-    .profile-picture {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 4px solid #e67e22;
+    // Función para inicializar los gráficos de Analytics
+    function initializeCharts(data) {
+        // Gráfico de Clics por Enlace
+        var ctxClicks = document.getElementById('clicksChart').getContext('2d');
+        var clicksChart = new Chart(ctxClicks, {
+            type: 'bar',
+            data: {
+                labels: data.clicks_per_link.labels,
+                datasets: [{
+                    label: 'Clics',
+                    data: data.clicks_per_link.data,
+                    backgroundColor: 'rgba(230, 126, 34, 0.6)',
+                    borderColor: 'rgba(230, 126, 34, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Enlaces Más Populares
+        var ctxPopular = document.getElementById('popularLinksChart').getContext('2d');
+        var popularLinksChart = new Chart(ctxPopular, {
+            type: 'pie',
+            data: {
+                labels: data.popular_links.labels,
+                datasets: [{
+                    data: data.popular_links.data,
+                    backgroundColor: [
+                        'rgba(46, 204, 113, 0.6)',
+                        'rgba(52, 152, 219, 0.6)',
+                        'rgba(231, 76, 60, 0.6)',
+                        'rgba(155, 89, 182, 0.6)',
+                        'rgba(241, 196, 15, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(46, 204, 113, 1)',
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(231, 76, 60, 1)',
+                        'rgba(155, 89, 182, 1)',
+                        'rgba(241, 196, 15, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
     }
 
-    /* Estilos para la biografía */
-    .bio-text {
+    // Función para manejar la selección de icono en los modales
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Manejo del Modal para Agregar Enlace ---
+        const addIconButtons = document.querySelectorAll('#iconPicker .icon-btn');
+        const addSelectedIconInput = document.getElementById('selectedIcon');
+        const addDisplayedIcon = document.getElementById('displayedIcon');
+
+        addIconButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const iconClass = this.getAttribute('data-icon');
+                addSelectedIconInput.value = iconClass;
+                addDisplayedIcon.className = iconClass;
+                addIconButtons.forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // --- Manejo del Modal para Editar Enlace ---
+        const editIconButtons = document.querySelectorAll('#editIconPicker .icon-btn');
+        const editSelectedIconInput = document.getElementById('edit_selectedIcon');
+        const editDisplayedIcon = document.getElementById('edit_displayedIcon');
+
+        editIconButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const iconClass = this.getAttribute('data-icon');
+                editSelectedIconInput.value = iconClass;
+                editDisplayedIcon.className = iconClass;
+                editIconButtons.forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // --- Manejo de la Carga de Datos en el Modal para Editar Enlace ---
+        document.getElementById('editLinkModal').addEventListener('show.bs.modal', function(event) {
+            // Botón que activó el modal
+            var button = event.relatedTarget;
+
+            // Extraer los datos de los atributos data-*
+            var linkId = button.getAttribute('data-link-id');
+            var title = button.getAttribute('data-link-title');
+            var url = button.getAttribute('data-link-url');
+            var icon = button.getAttribute('data-link-icon');
+            var description = button.getAttribute('data-link-description');
+
+            // Actualizar los campos del formulario en el modal
+            var modal = this.querySelector('#editLinkForm');
+            modal.querySelector('#edit_link_id').value = linkId;
+            modal.querySelector('#edit_title').value = title;
+            modal.querySelector('#edit_url').value = url;
+            modal.querySelector('#edit_description').value = description;
+
+            // Manejar la selección de icono en el modal de editar
+            editIconButtons.forEach(btn => btn.classList.remove('selected'));
+
+            if(icon) {
+                editSelectedIconInput.value = icon;
+                editDisplayedIcon.className = icon;
+
+                // Resaltar el botón correspondiente
+                editIconButtons.forEach(btn => {
+                    if(btn.getAttribute('data-icon') === icon) {
+                        btn.classList.add('selected');
+                    }
+                });
+            } else {
+                editSelectedIconInput.value = '';
+                editDisplayedIcon.className = '';
+            }
+        });
+    });
+
+</script>
+
+<!-- Estilos Personalizados -->
+<style>
+    /* Definir variables CSS dinámicas */
+    :root {
+        --primary-color: #e94e1b;
+        --secondary-color: #34495e;
+        --background-color: #f8f9fa;
+        --text-color: #2c3e50;
+        --link-color: {{ current_user.link_color or '#e94e1b' }};
+    }
+
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Estilos para la foto de perfil en el sidebar */
+    .profile-picture {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid var(--primary-color);
+        transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .profile-picture:hover {
+        transform: scale(1.05);
+    }
+
+    /* Sidebar */
+    .sidebar {
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 20px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+    }
+
+    .sidebar .nav-link {
+        color: var(--text-color);
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .sidebar .nav-link.active {
+        background-color: var(--primary-color);
+        color: #fff !important;
+        border-radius: 5px;
+    }
+
+    /* Secciones de Contenido */
+    #linktreeSection, #analyticsSection {
+        padding-top: 20px;
+        transition: opacity 0.5s ease;
+    }
+
+    .linktree-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 10px;
+    }
+
+    /* Asegúrate de que el iframe no cubra el fondo */
+    .phone-background-media {
+        z-index: -1;
+    }
+
+    .screen {
+        position: relative;
+    }
+
+    /* Ajustar la altura del teléfono para que el iframe se vea correctamente */
+    .phone {
+        height: 600px; /* Ajusta según sea necesario */
+        transition: height 0.3s ease;
+    }
+
+    /* Responsive ajustes */
+    @media (max-width: 768px) {
+        .phone {
+            height: 400px; /* Ajusta según sea necesario */
+        }
+    }
+
+    /* Previsualización en Teléfono */
+    .phone-preview {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 400px;
+    }
+
+    .phone {
+        width: 300px;
+        height: 600px;
+        border: 16px var(--secondary-color) solid;
+        border-radius: 36px;
+        position: relative;
+        background: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .phone::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 5px;
+        background: #ccc;
+        border-radius: 10px;
+    }
+
+    .screen {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .phone-background-media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: opacity 0.3s ease;
+    }
+
+    .phone-background-placeholder {
+        width: 100%;
+        height: 100%;
+        background-color: #6c757d; /* Color de fondo predeterminado */
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    .phone-links {
+        position: relative;
+        z-index: 1;
+    }
+
+    .phone-links h4 {
+        font-size: 1.2rem;
+        color: var(--text-color);
+    }
+
+    .phone-links hr {
+        border-top: 1px solid var(--text-color);
+    }
+
+    .phone-links .btn-link {
+        margin-bottom: 10px;
+        color: var(--link-color);
         font-size: 1rem;
-        max-width: 400px;
+        transition: color 0.3s ease;
+    }
+
+    .phone-links .btn-link:hover {
+        color: var(--primary-color);
+    }
+
+    /* Responsive Ajustes */
+    @media (max-width: 768px) {
+        .sidebar {
+            position: static;
+            height: auto;
+        }
+        .phone-preview {
+            height: auto;
+            margin-bottom: 20px;
+        }
+    }
+
+    /* Estilos adicionales */
+    .btn-custom {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .btn-custom:hover {
+        /* darken(var(--primary-color), 10%); */ /* Comentado porque darken no es una función válida en CSS puro */
+        background-color: #cc6b1f; /* Color más oscuro manualmente */
+        color: #fff;
+    }
+
+    /* Estilos para botones de redes sociales */
+    .btn-facebook {
+        background-color: #3b5998;
+        color: #fff;
+    }
+    .btn-facebook:hover {
+        background-color: #2d4373;
+        color: #fff;
+    }
+
+    .btn-twitter {
+        background-color: #1da1f2;
+        color: #fff;
+    }
+    .btn-twitter:hover {
+        background-color: #0d95e8;
+        color: #fff;
+    }
+
+    .btn-linkedin {
+        background-color: #0077b5;
+        color: #fff;
+    }
+    .btn-linkedin:hover {
+        background-color: #005582;
+        color: #fff;
+    }
+
+    .btn-instagram {
+        background-color: #c13584;
+        color: #fff;
+    }
+    
+    .btn-instagram:hover {
+        background-color: #a9337e;
+        color: #fff;
+    }
+
+
+    /* Animaciones Suaves para los Modales */
+    .modal.fade .modal-dialog {
+        transition: transform 0.3s ease-out;
+    }
+    .modal.show .modal-dialog {
+        transform: translate(0, 0);
+    }
+
+    /* Validación de Formularios */
+    .was-validated .form-control:invalid {
+        border-color: #dc3545;
+    }
+
+    .was-validated .form-control:valid {
+        border-color: #28a745;
     }
 </style>
 {% endblock %}
