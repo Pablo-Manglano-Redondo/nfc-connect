@@ -10,6 +10,18 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+/* Wrapper principal para usar Flexbox */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asegura que el contenedor ocupe toda la pantalla */
+}
+
+/* El contenido principal debe crecer para ocupar el espacio disponible */
+main {
+    flex-grow: 1;
+}
+
 /* ===================================================
    Navbar
 =================================================== */
@@ -607,7 +619,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
+    padding: 5.45rem;
+    color: white;
+    text-align: center;
 }
 
 .background-image-wrapper {
@@ -615,7 +629,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100%; 
     overflow: hidden;
     z-index: 1;
 }
@@ -623,8 +637,9 @@ body {
 .background-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    filter: brightness(50%);
+    object-fit: cover; /* Ajusta la imagen al tamaño de la pantalla */
+    object-position: center;
+    filter: brightness(60%);
 }
 
 .overlay {
@@ -633,15 +648,38 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.6); /* Más opacidad para mejorar el contraste */
     z-index: 2;
 }
 
 .contact-form-wrapper {
     position: relative;
     z-index: 3;
-    width: 100%;
-    max-width: 600px;
+    width: 90%; /* Incrementa el ancho del formulario */
+    max-width: 1200px; /* Limita el ancho máximo en pantallas grandes */
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px); /* Efecto de vidrio */
+    border-radius: 10px;
+}
+
+/* Responsividad */
+@media (max-width: 992px) {
+    .contact-form-wrapper {
+        width: 95%; /* Ajusta el ancho en pantallas medianas */
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .contact-form-wrapper {
+        width: 100%; /* Ancho completo en pantallas pequeñas */
+        padding: 1rem;
+    }
 }
 
 .form-container {

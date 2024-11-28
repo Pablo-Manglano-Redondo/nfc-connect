@@ -2,15 +2,15 @@
 
 <footer class="footer">
     <div class="container py-3">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-6 mb-0">
+        <div class="row flex-column flex-md-row justify-content-center align-items-center">
+            <div class="col-12 col-md-6 mb-3 mb-md-0 text-center">
                 <a class="navbar-brand d-flex justify-content-center align-items-center" href="{{ url_for_locale('index', g.lang_code) }}">
-                    <img src="{{ url_for('static', filename='nfc_connect_logo.png') }}" alt="Logo" class="d-inline-block align-top logo-img" style="transform: scale(1.2)">
+                    <img src="{{ url_for('static', filename='nfc_connect_logo.png') }}" alt="Logo" class="d-inline-block align-top" style="transform: scale(1.2)">
                 </a>
             </div>
             <!-- Redes Sociales -->
-            <div class="col-md-4 mb-4">
-                <h5>{{ _('Síguenos') }}</h5>
+            <div class="col-12 col-md-4 mb-40 text-center">
+                <hr class="d-block d-md-none">
                 <a href="#" class="me-3"><i class="fab fa-facebook fa-2x"></i></a>
                 <a href="#" class="me-3"><i class="fab fa-twitter fa-2x"></i></a>
                 <a href="#" class="me-3"><i class="fab fa-linkedin fa-2x"></i></a>

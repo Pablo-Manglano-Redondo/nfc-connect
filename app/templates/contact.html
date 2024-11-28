@@ -2,58 +2,50 @@
 
 {% extends 'app.html' %}
 
-{% block title %}Contacto - NFC Connect{% endblock %}
+{% block title %}
+    {{ super() }} - Contacto
+{% endblock %}
 
 {% block content %}
 <div class="contact-section">
     <div class="background-image-wrapper">
-        <img src="{{ url_for('static', filename='img/logo-web.jpg') }}" alt="Contact Image" class="background-image img-fluid w-100 h-100 object-fit-cover">
+        <img src="{{ url_for('static', filename='img/logo-web.jpg') }}" alt="Contact Image" class="background-image img-fluid">
         <div class="overlay"></div>
     </div>
     <div class="contact-form-wrapper">
-        <div class="form-container">
-            <h1 class="form-title">Contáctanos</h1>
-            <p class="form-subtitle">¿Tienes alguna pregunta? ¡Estamos aquí para ayudarte!</p>
+        <div class="form-container text-center text-md-start">
+            <h1 class="form-title text-black">Contáctanos</h1>
+            <p class="form-subtitle text-black">¿Tienes alguna pregunta? ¡Estamos aquí para ayudarte!</p>
             <form method="POST" action="{{ url_for('contact_page') }}" class="row g-3 needs-validation" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="col-md-6">
-                    <label for="subject" class="form-label">{{ form.subject.label.text }}</label>
+                    <label for="subject" class="form-label text-black">{{ form.subject.label.text }}</label>
                     {{ form.subject(class_="form-select form-select-lg", id="subject") }}
-                    <div class="invalid-feedback">
-                        Por favor, selecciona un asunto.
-                    </div>
+                    <div class="invalid-feedback">Por favor, selecciona un asunto.</div>
                 </div>
                 <div class="col-md-6">
-                    <label for="name" class="form-label">{{ form.name.label.text }}</label>
+                    <label for="name" class="form-label text-black">{{ form.name.label.text }}</label>
                     {{ form.name(class_="form-control form-control-lg", id="name", placeholder="Tu nombre") }}
-                    <div class="invalid-feedback">
-                        Por favor, ingresa tu nombre.
-                    </div>
+                    <div class="invalid-feedback">Por favor, ingresa tu nombre.</div>
                 </div>
                 <div class="col-md-6">
-                    <label for="email" class="form-label">{{ form.email.label.text }}</label>
+                    <label for="email" class="form-label text-black">{{ form.email.label.text }}</label>
                     {{ form.email(class_="form-control form-control-lg", id="email", placeholder="Tu correo electrónico") }}
                     <div class="form-text">Nunca compartiremos tu email con nadie más.</div>
-                    <div class="invalid-feedback">
-                        Por favor, ingresa una dirección de correo válida.
-                    </div>
+                    <div class="invalid-feedback">Por favor, ingresa una dirección de correo válida.</div>
                 </div>
                 <div class="col-md-6">
-                    <label for="phone" class="form-label">{{ form.phone.label.text }}</label>
+                    <label for="phone" class="form-label text-black">{{ form.phone.label.text }}</label>
                     {{ form.phone(class_="form-control form-control-lg", id="phone", placeholder="Tu número de teléfono") }}
-                    <div class="invalid-feedback">
-                        Por favor, ingresa un número de teléfono válido.
-                    </div>
+                    <div class="invalid-feedback">Por favor, ingresa un número de teléfono válido.</div>
                 </div>
                 <div class="col-12">
-                    <label for="message" class="form-label">{{ form.message.label.text }}</label>
+                    <label for="message" class="form-label text-black">{{ form.message.label.text }}</label>
                     {{ form.message(class_="form-control form-control-lg", id="message", rows="4", placeholder="Tu mensaje") }}
-                    <div class="invalid-feedback">
-                        Por favor, ingresa tu mensaje.
-                    </div>
+                    <div class="invalid-feedback">Por favor, ingresa tu mensaje.</div>
                 </div>
                 <div class="col-12 text-center">
-                    {{ form.submit(class_="btn btn-custom btn-lg") }}
+                    {{ form.submit(class_="btn btn-dark btn-lg") }}
                 </div>
             </form>
         </div>

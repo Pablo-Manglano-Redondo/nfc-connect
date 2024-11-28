@@ -1,5 +1,7 @@
 # app/routes.py
 
+from collections import defaultdict
+from datetime import datetime, timedelta
 import os
 import secrets
 import openai
@@ -17,7 +19,7 @@ from werkzeug.utils import secure_filename
 
 from app import app, mail, db
 from app.models import (
-    Cart, CartItem, NewsletterSubscription, ProductImage,
+    Cart, CartItem, ClickLog, NewsletterSubscription, ProductImage,
     User, Product, UserLink
 )
 from app.forms import (
@@ -475,31 +477,62 @@ def login_google():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    user_links = current_user.user_links.order_by(UserLink.order).all()
+    # Obtener los enlaces del usuario ordenados por 'order'
+    links = UserLink.query.filter_by(owner_id=current_user.id).order_by(UserLink.order).all()
     
-    # Datos para Analytics
+    # Clicks por enlace
     clicks_per_link = {
-        'labels': [link.title for link in user_links],
-        'data': [link.clicks for link in user_links]
+        'labels': [link.title for link in links],
+        'data': [link.clicks for link in links]
     }
-    
+
     # Enlaces más populares (top 5)
-    sorted_links = sorted(user_links, key=lambda x: x.clicks, reverse=True)
+    sorted_links = sorted(links, key=lambda l: l.clicks, reverse=True)[:5]
     popular_links = {
-        'labels': [link.title for link in sorted_links[:5]],
-        'data': [link.clicks for link in sorted_links[:5]]
+        'labels': [link.title for link in sorted_links],
+        'data': [link.clicks for link in sorted_links]
     }
-    
+
+    # Tendencia de clics a lo largo del tiempo (últimos 30 días)
+    today = datetime.utcnow().date()
+    thirty_days_ago = today - timedelta(days=29)
+    date_range = [thirty_days_ago + timedelta(days=i) for i in range(30)]
+
+    # Inicializar diccionario para contar clics por día y por enlace
+    clicks_trend = defaultdict(lambda: defaultdict(int))
+    for log in ClickLog.query.filter(ClickLog.timestamp >= thirty_days_ago).all():
+        click_date = log.timestamp.date()
+        clicks_trend[click_date][log.link.title] += 1
+
+    # Preparar datos para la gráfica
+    trend_labels = [date.strftime('%d-%m') for date in date_range]
+    datasets = []
+    for link in links:
+        link_data = [clicks_trend[date][link.title] for date in date_range]
+        # Generar colores únicos para cada enlace
+        color = generate_random_color()  # Implementa esta función o define una lista de colores
+        datasets.append({
+            'title': link.title,
+            'data': link_data,
+            'color': color
+        })
+
+    click_trend = {
+        'labels': trend_labels,
+        'datasets': datasets
+    }
+
     analytics_data = {
         'clicks_per_link': clicks_per_link,
-        'popular_links': popular_links
+        'popular_links': popular_links,
+        'click_trend': click_trend
     }
-    
-    return render_template(
-        'dashboard.html',
-        links=user_links,
-        analytics_data=analytics_data
-    )
+
+    return render_template('dashboard.html', links=links, analytics_data=analytics_data)
+
+def generate_random_color():
+    import random
+    return 'rgba({},{},{},1)'.format(random.randint(0,255), random.randint(0,255), random.randint(0,255))
 
 @app.route('/dashboard/customize', methods=['POST'])
 @login_required
@@ -649,14 +682,23 @@ def user_links_page(username):
 def track_click(link_id):
     link = UserLink.query.get_or_404(link_id)
     
-    # Verificar que el enlace pertenezca al usuario actual si es necesario
-    # Esto depende de si quieres permitir que usuarios vean enlaces de otros
-    # Por ejemplo:
-    # if link.owner_id != current_user.id:
-    #     abort(403)
-    
     # Incrementar el contador de clics
     link.clicks += 1
+    db.session.commit()
+    
+    return redirect(link.url)
+
+@app.route('/go/<int:link_id>')
+def go_link(link_id):
+    link = UserLink.query.get_or_404(link_id)
+    
+    # Incrementar el contador total de clics
+    link.clicks += 1
+    
+    # Registrar el clic en ClickLog
+    new_click = ClickLog(link_id=link.id, timestamp=datetime.utcnow())
+    db.session.add(new_click)
+    
     db.session.commit()
     
     return redirect(link.url)

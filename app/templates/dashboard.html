@@ -1,8 +1,9 @@
 <!-- templates/dashboard.html -->
+ 
 {% extends "app.html" %}
 
 {% block title %}
-    {{ super() }} - {{ current_user.username }}'s Dashboard
+    {{ super() }} - Dashboard de {{ current_user.username }}
 {% endblock %}
 
 {% block content %}
@@ -14,11 +15,14 @@
             <div class="position-sticky pt-3">
                 <div class="text-center mb-4">
                     {% if current_user.profile_image %}
-                        <img src="{{ url_for('static', filename='img/profile_pics/' ~ current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Picture" class="profile-picture img-thumbnail">
+                        <img src="{{ url_for('static', filename='img/profile_pics/' ~ current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Picture" class="profile-picture img-thumbnail" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#changeProfilePicModal">
                     {% else %}
                         <img src="{{ url_for('static', filename='img/profile_pics/default.jpg') }}" alt="Default Profile Picture" class="profile-picture img-thumbnail">
                     {% endif %}
                 </div>
+                <h4 class="text-center mb-2">{{ current_user.username }}</h4>
+                <h7 class="text-center mb-2">{{ current_user.bio }}</h7>
+                <hr>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#" data-section="linktreeSection">
@@ -32,26 +36,21 @@
                             Analytics
                         </a>
                     </li>
-                    <li class="nav-item mt-4">
-                        <button class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
+                    <hr>
+                    <li class="nav-item mt-2">
+                        <button class="btn btn-sm btn-custom-outline-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
                             <i class="fas fa-paint-brush me-2"></i>
                             Personalizar Fondo
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="btn btn-sm btn-outline-secondary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
+                        <button class="btn btn-sm btn-custom-outline-secondary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
                             <i class="fas fa-user-edit me-2"></i>
                             Editar Biografía
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="btn btn-sm btn-outline-success w-100 mb-4" data-bs-toggle="modal" data-bs-target="#changeProfilePicModal">
-                            <i class="fas fa-camera me-2"></i>
-                            Cambiar Foto de Perfil
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-sm btn-custom w-100 mb-4">
+                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-primary w-100 mb-4">
                             <i class="fas fa-eye me-2"></i>
                             Ver Perfil Público
                         </a>
@@ -80,7 +79,7 @@
         </nav>
 
         <!-- Contenido Principal -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <!-- Sección de Linktree -->
             <div id="linktreeSection">
                 <h2 class="mt-4 mb-4">Gestionar Linktree</h2>
@@ -113,8 +112,7 @@
                                                     data-link-id="{{ link.id }}"
                                                     data-link-title="{{ link.title|e }}"
                                                     data-link-url="{{ link.url|e }}"
-                                                    data-link-icon="{{ link.icon|e }}"
-                                                    data-link-description="{{ link.description|e }}">
+                                                    data-link-icon="{{ link.icon|e }}">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ link.id|safe }}')">
@@ -129,29 +127,30 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <button id="saveOrderBtn" class="btn btn-custom w-100">Guardar Orden</button>
                     </div>
                     
                     <!-- Previsualización en Teléfono -->
                     <div class="col-md-6">
-                        <div class="card-body">
-                            <div class="phone-preview d-flex justify-content-center">
-                                <div class="phone">
-                                    <div class="screen" id="phoneScreen">
-                                        <!-- Fondo dentro del teléfono -->
-                                        {% if current_user.background_type == 'video' and current_user.background_video and current_user.background_video.endswith(('.mp4', '.mov', '.avi')) %}
-                                        <video class="phone-background-media" autoplay loop muted>
-                                            <source src="{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) }}" type="video/mp4">
-                                            Tu navegador no soporta videos.
-                                        </video>
-                                        {% elif current_user.background_type == 'image' and current_user.background_image and current_user.background_image.endswith(('.jpg', '.jpeg', '.png', '.gif')) %}
-                                        <img src="{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) }}" alt="Background Image" class="phone-background-media">
-                                        {% else %}
-                                        <div class="phone-background-placeholder"></div>
-                                        {% endif %}
-                                        
-                                        <!-- Enlaces en la previsualización (iframe) -->
-                                        <iframe src="{{ url_for('user_links_page', username=current_user.username) }}" class="linktree-iframe" frameborder="0" allowfullscreen></iframe>
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="phone-preview d-flex justify-content-center">
+                                    <div class="phone">
+                                        <div class="screen" id="phoneScreen">
+                                            <!-- Fondo dentro del teléfono -->
+                                            {% if current_user.background_type == 'video' and current_user.background_video and current_user.background_video.endswith(('.mp4', '.mov', '.avi')) %}
+                                            <video class="phone-background-media" autoplay loop muted>
+                                                <source src="{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) }}" type="video/mp4">
+                                                Tu navegador no soporta videos.
+                                            </video>
+                                            {% elif current_user.background_type == 'image' and current_user.background_image and current_user.background_image.endswith(('.jpg', '.jpeg', '.png', '.gif')) %}
+                                            <img src="{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) }}" alt="Background Image" class="phone-background-media">
+                                            {% else %}
+                                            <div class="phone-background-placeholder"></div>
+                                            {% endif %}
+                                            
+                                            <!-- Enlaces en la previsualización (iframe) -->
+                                            <iframe src="{{ url_for('user_links_page', username=current_user.username) }}" class="linktree-iframe" frameborder="0" allowfullscreen></iframe>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -160,10 +159,11 @@
                 </div>
             </div>
             
-            <!-- Sección de Analytics -->
+            <!-- Sección de Analytics Mejorada -->
             <div id="analyticsSection" class="d-none">
                 <h2 class="mt-4 mb-4">Analytics de Linktree</h2>
                 <div class="row">
+                    <!-- Gráfico de Clics por Enlace -->
                     <div class="col-md-6">
                         <div class="card mb-4 shadow-sm">
                             <div class="card-header bg-info text-white">
@@ -174,6 +174,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Gráfico de Enlaces Más Populares -->
                     <div class="col-md-6">
                         <div class="card mb-4 shadow-sm">
                             <div class="card-header bg-warning text-white">
@@ -185,18 +186,28 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <!-- Nueva Gráfica de Tendencias de Clics -->
+                    <div class="col-md-12">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                Tendencia de Clics a lo Largo del Tiempo
+                            </div>
+                            <div class="card-body">
+                                <canvas id="trendClicksChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
-    </div>
-</div>
 
 <!-- Modales -->
 
 <!-- Modal para Agregar Enlace -->
 <div class="modal fade" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Aumentamos el tamaño del modal para mejor visualización de iconos -->
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="addLinkForm" method="POST" action="{{ url_for('add_link_ajax') }}">
+            <form id="addLinkForm" method="POST" action="{{ url_for('add_link_ajax') }}" class="needs-validation" novalidate>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addLinkModalLabel">Agregar Nuevo Enlace</h5>
@@ -223,106 +234,19 @@
                         <label class="form-label">Selecciona un Icono</label>
                         <div class="row" id="iconPicker">
                             <!-- Iconos de FontAwesome -->
+                            {% for icon in [
+                                'fas fa-globe', 'fas fa-home', 'fas fa-user', 'fas fa-envelope',
+                                'fas fa-phone', 'fas fa-cog', 'fas fa-book', 'fas fa-camera',
+                                'fas fa-heart', 'fas fa-star', 'fas fa-shopping-cart', 'fas fa-lock',
+                                'fas fa-search', 'fas fa-bell', 'fas fa-map-marker-alt', 'fas fa-calendar',
+                                'fas fa-comments', 'fas fa-briefcase', 'fas fa-film', 'fas fa-music'
+                            ] %}
                             <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-globe" title="Globo">
-                                    <i class="fas fa-globe fa-2x"></i>
+                                <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
+                                    <i class="{{ icon }} fa-2x"></i>
                                 </button>
                             </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-home" title="Inicio">
-                                    <i class="fas fa-home fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-user" title="Usuario">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-envelope" title="Correo">
-                                    <i class="fas fa-envelope fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-phone" title="Teléfono">
-                                    <i class="fas fa-phone fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-cog" title="Configuración">
-                                    <i class="fas fa-cog fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-book" title="Libro">
-                                    <i class="fas fa-book fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-camera" title="Cámara">
-                                    <i class="fas fa-camera fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-heart" title="Corazón">
-                                    <i class="fas fa-heart fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-star" title="Estrella">
-                                    <i class="fas fa-star fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-shopping-cart" title="Carrito">
-                                    <i class="fas fa-shopping-cart fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-lock" title="Bloquear">
-                                    <i class="fas fa-lock fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-search" title="Buscar">
-                                    <i class="fas fa-search fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-bell" title="Campana">
-                                    <i class="fas fa-bell fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-map-marker-alt" title="Mapa">
-                                    <i class="fas fa-map-marker-alt fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-calendar" title="Calendario">
-                                    <i class="fas fa-calendar fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-comments" title="Comentarios">
-                                    <i class="fas fa-comments fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-briefcase" title="Maletín">
-                                    <i class="fas fa-briefcase fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-film" title="Película">
-                                    <i class="fas fa-film fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-music" title="Música">
-                                    <i class="fas fa-music fa-2x"></i>
-                                </button>
-                            </div>
+                            {% endfor %}
                         </div>
                         <!-- Campo Oculto para el Icono Seleccionado -->
                         <input type="hidden" name="icon" id="selectedIcon" value="">
@@ -331,10 +255,6 @@
                             <span class="me-2">Icono Seleccionado:</span>
                             <i id="displayedIcon" class=""></i>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Descripción</label>
-                        <textarea name="description" id="description" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -350,7 +270,7 @@
 <div class="modal fade" id="editLinkModal" tabindex="-1" aria-labelledby="editLinkModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg"> <!-- Tamaño adecuado para la selección de iconos -->
         <div class="modal-content">
-            <form id="editLinkForm" method="POST" action="{{ url_for('edit_link_ajax') }}">
+            <form id="editLinkForm" method="POST" action="{{ url_for('edit_link_ajax') }}" class="needs-validation" novalidate>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="link_id" id="edit_link_id">
                 <div class="modal-header">
@@ -378,106 +298,19 @@
                         <label class="form-label">Selecciona un Icono</label>
                         <div class="row" id="editIconPicker">
                             <!-- Iconos de FontAwesome -->
+                            {% for icon in [
+                                'fas fa-globe', 'fas fa-home', 'fas fa-user', 'fas fa-envelope',
+                                'fas fa-phone', 'fas fa-cog', 'fas fa-book', 'fas fa-camera',
+                                'fas fa-heart', 'fas fa-star', 'fas fa-shopping-cart', 'fas fa-lock',
+                                'fas fa-search', 'fas fa-bell', 'fas fa-map-marker-alt', 'fas fa-calendar',
+                                'fas fa-comments', 'fas fa-briefcase', 'fas fa-film', 'fas fa-music'
+                            ] %}
                             <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-globe" title="Globo">
-                                    <i class="fas fa-globe fa-2x"></i>
+                                <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
+                                    <i class="{{ icon }} fa-2x"></i>
                                 </button>
                             </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-home" title="Inicio">
-                                    <i class="fas fa-home fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-user" title="Usuario">
-                                    <i class="fas fa-user fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-envelope" title="Correo">
-                                    <i class="fas fa-envelope fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-phone" title="Teléfono">
-                                    <i class="fas fa-phone fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-cog" title="Configuración">
-                                    <i class="fas fa-cog fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-book" title="Libro">
-                                    <i class="fas fa-book fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-camera" title="Cámara">
-                                    <i class="fas fa-camera fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-heart" title="Corazón">
-                                    <i class="fas fa-heart fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-star" title="Estrella">
-                                    <i class="fas fa-star fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-shopping-cart" title="Carrito">
-                                    <i class="fas fa-shopping-cart fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-lock" title="Bloquear">
-                                    <i class="fas fa-lock fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-search" title="Buscar">
-                                    <i class="fas fa-search fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-bell" title="Campana">
-                                    <i class="fas fa-bell fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-map-marker-alt" title="Mapa">
-                                    <i class="fas fa-map-marker-alt fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-calendar" title="Calendario">
-                                    <i class="fas fa-calendar fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-comments" title="Comentarios">
-                                    <i class="fas fa-comments fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-briefcase" title="Maletín">
-                                    <i class="fas fa-briefcase fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-film" title="Película">
-                                    <i class="fas fa-film fa-2x"></i>
-                                </button>
-                            </div>
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="fas fa-music" title="Música">
-                                    <i class="fas fa-music fa-2x"></i>
-                                </button>
-                            </div>
+                            {% endfor %}
                         </div>
                         <!-- Campo Oculto para el Icono Seleccionado -->
                         <input type="hidden" name="icon" id="edit_selectedIcon" value="">
@@ -486,10 +319,6 @@
                             <span class="me-2">Icono Seleccionado:</span>
                             <i id="edit_displayedIcon" class=""></i>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_description" class="form-label">Descripción</label>
-                        <textarea name="description" id="edit_description" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -505,7 +334,7 @@
 <div class="modal fade" id="changeProfilePicModal" tabindex="-1" aria-labelledby="changeProfilePicModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="changeProfilePicForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}">
+            <form id="changeProfilePicForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="changeProfilePicModalLabel">Cambiar Foto de Perfil</h5>
@@ -519,6 +348,9 @@
                         {% if current_user.profile_image %}
                             <small class="form-text text-muted">Foto actual: {{ current_user.profile_image }}</small>
                         {% endif %}
+                        <div class="invalid-feedback">
+                            Por favor, sube una imagen válida.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -534,7 +366,7 @@
 <div class="modal fade" id="customizeModal" tabindex="-1" aria-labelledby="customizeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="customizeForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}">
+            <form id="customizeForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="customizeModalLabel">Personalizar Fondo</h5>
@@ -565,6 +397,9 @@
                             <option value="image" {% if current_user.background_type == 'image' %}selected{% endif %}>Imagen</option>
                             <option value="video" {% if current_user.background_type == 'video' %}selected{% endif %}>Video</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Por favor, selecciona el tipo de fondo.
+                        </div>
                     </div>
                     <!-- Personalización de colores de los enlaces -->
                     <div class="mb-3">
@@ -586,7 +421,7 @@
 <div class="modal fade" id="editBioModal" tabindex="-1" aria-labelledby="editBioModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="editBioForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}">
+            <form id="editBioForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editBioModalLabel">Editar Biografía</h5>
@@ -613,302 +448,287 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Scripts Personalizados -->
+<!-- Scripts Personalizados Mejorados -->
 <script>
-    // Definir las URLs de fondo
-    var backgroundImageURL = "{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) if current_user.background_image else '' }}";
-    var backgroundVideoURL = "{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) if current_user.background_video else '' }}";
-    var linkColor = "{{ current_user.link_color or '#e94e1b' }}"; // Color de los enlaces
+    document.addEventListener('DOMContentLoaded', function () {
+        // Definir las URLs de fondo
+        var backgroundImageURL = "{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) if current_user.background_image else '' }}";
+        var backgroundVideoURL = "{{ url_for('static', filename='video/backgrounds/' ~ current_user.background_video) if current_user.background_video else '' }}";
+        var linkColor = "{{ current_user.link_color or '#e94e1b' }}"; // Color de los enlaces
 
-    // Aplicar el color de los enlaces al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
+        // Aplicar el color de los enlaces al cargar la página
         applyLinkColor(linkColor);
-    });
 
-    // Función para aplicar el color de los enlaces
-    function applyLinkColor(color) {
-        var linkButtons = document.querySelectorAll('.btn-primary, .btn-success');
-        linkButtons.forEach(function(button) {
-            button.style.backgroundColor = color;
-            button.style.borderColor = color;
-        });
-    }
+        // Inicializar SortableJS para reordenar enlaces con Animaciones Suaves
+        var sortable = new Sortable(document.getElementById('sortable'), {
+            animation: 150,
+            handle: '.handle',
+            ghostClass: 'sortable-ghost',
+            onEnd: function (evt) {
+                // Obtener el nuevo orden de los enlaces
+                var order = Array.from(document.querySelectorAll('#sortable .list-group-item')).map(function(item) {
+                    return item.getAttribute('data-id');
+                });
+                var csrf_token = document.querySelector('input[name="csrf_token"]').value;
 
-    // Inicializar SortableJS para reordenar enlaces con Animaciones Suaves
-    var sortable = new Sortable(document.getElementById('sortable'), {
-        animation: 150,
-        handle: '.handle',
-        ghostClass: 'sortable-ghost',
-        onEnd: function (evt) {
-            // Actualizar la previsualización en teléfono
-            updatePhonePreview();
-        },
-    });
-
-    // Guardar Orden de Enlaces
-    document.getElementById('saveOrderBtn').addEventListener('click', function() {
-        var order = Array.from(document.querySelectorAll('#sortable .list-group-item')).map(function(item) {
-            return item.getAttribute('data-id');
-        });
-        var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
-
-        fetch("{{ url_for('update_link_order') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrf_token
+                // Enviar el nuevo orden al servidor
+                fetch("{{ url_for('update_link_order') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrf_token
+                    },
+                    body: JSON.stringify({order: order})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        // Recargar el iframe para actualizar la previsualización
+                        updatePhonePreview();
+                        showToast('Orden actualizado exitosamente.', 'success');
+                    } else {
+                        showToast('Error al guardar el orden.', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error al guardar el orden.', 'danger');
+                });
             },
-            body: JSON.stringify({order: order})
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                // Mostrar notificación
-                showToast('Orden guardado correctamente.', 'success');
-            } else {
-                showToast('Error al guardar el orden.', 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error al guardar el orden.', 'danger');
         });
-    });
 
-    // Manejar el envío del formulario de agregar enlace con Validación en Tiempo Real
-    document.getElementById('addLinkForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var form = this;
-        if (!form.checkValidity()) {
-            e.stopPropagation();
-            form.classList.add('was-validated');
-            return;
+        // Función para aplicar el color de los enlaces
+        function applyLinkColor(color) {
+            var linkButtons = document.querySelectorAll('.btn-success');
+            linkButtons.forEach(function(button) {
+                button.style.backgroundColor = color;
+                button.style.borderColor = color;
+            });
         }
-        var formData = new FormData(this);
-        var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
 
-        fetch("{{ url_for('add_link_ajax') }}", {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrf_token
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                // Cerrar el modal
-                var addModal = bootstrap.Modal.getInstance(document.getElementById('addLinkModal'));
-                addModal.hide();
-                // Recargar la página o actualizar la lista de enlaces
-                location.reload();
-            } else {
-                showToast('Error al agregar el enlace.', 'danger');
+        // Manejar el envío del formulario de agregar enlace con Validación en Tiempo Real
+        document.getElementById('addLinkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var form = this;
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error al agregar el enlace.', 'danger');
-        });
-    });
+            var formData = new FormData(this);
+            var csrf_token = form.querySelector('input[name="csrf_token"]').value;
 
-    // Manejar el envío del formulario de editar enlace con Validación en Tiempo Real
-    document.getElementById('editLinkForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var form = this;
-        if (!form.checkValidity()) {
-            e.stopPropagation();
-            form.classList.add('was-validated');
-            return;
-        }
-        var formData = new FormData(this);
-        var csrf_token = document.querySelector('#editLinkForm input[name="csrf_token"]').value;
-
-        fetch("{{ url_for('edit_link_ajax') }}", {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrf_token
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                // Cerrar el modal
-                var editModal = bootstrap.Modal.getInstance(document.getElementById('editLinkModal'));
-                editModal.hide();
-                // Recargar la página o actualizar la lista de enlaces
-                location.reload();
-            } else {
-                showToast('Error al actualizar el enlace.', 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error al actualizar el enlace.', 'danger');
-        });
-    });
-
-    // Confirmar eliminación de enlace
-    function confirmDelete(linkId) {
-        if(confirm('¿Estás seguro de eliminar este enlace?')) {
-            var csrf_token = document.querySelector('#addLinkForm input[name="csrf_token"]').value;
-            fetch("{{ url_for('delete_link_ajax') }}", {
+            fetch("{{ url_for('add_link_ajax') }}", {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRFToken': csrf_token
                 },
-                body: JSON.stringify({link_id: linkId})
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if(data.success) {
+                    // Cerrar el modal
+                    var addModal = bootstrap.Modal.getInstance(document.getElementById('addLinkModal'));
+                    addModal.hide();
                     // Recargar la página o actualizar la lista de enlaces
                     location.reload();
                 } else {
-                    showToast('Error al eliminar el enlace.', 'danger');
+                    showToast('Error al agregar el enlace.', 'danger');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showToast('Error al eliminar el enlace.', 'danger');
+                showToast('Error al agregar el enlace.', 'danger');
             });
-        }
-    }
-
-    // Función para mostrar notificaciones con Animaciones Suaves
-    function showToast(message, type) {
-        var toastEl = document.createElement('div');
-        toastEl.className = 'toast align-items-center text-white bg-' + type + ' border-0';
-        toastEl.role = 'alert';
-        toastEl.ariaLive = 'assertive';
-        toastEl.ariaAtomic = 'true';
-        toastEl.style.position = 'fixed';
-        toastEl.style.top = '20px';
-        toastEl.style.right = '20px';
-        toastEl.style.zIndex = '1055';
-        toastEl.classList.add('fade', 'show'); // Para animación de entrada
-
-        var toastBody = document.createElement('div');
-        toastBody.className = 'd-flex';
-        toastBody.innerHTML = '<div class="toast-body">' + message + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>';
-
-        toastEl.appendChild(toastBody);
-        document.body.appendChild(toastEl);
-
-        var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-        toast.show();
-
-        toastEl.addEventListener('hidden.bs.toast', function () {
-            toastEl.remove();
         });
-    }
 
-    // Manejar clics en la navegación del sidebar con Animaciones Suaves
-    document.querySelectorAll('#sidebarMenu .nav-link').forEach(function(element) {
-        element.addEventListener('click', function(e) {
+        // Manejar el envío del formulario de editar enlace con Validación en Tiempo Real
+        document.getElementById('editLinkForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Remover la clase 'active' de todos los enlaces
-            document.querySelectorAll('#sidebarMenu .nav-link').forEach(function(el) {
-                el.classList.remove('active');
-            });
-            // Agregar la clase 'active' al enlace clicado
-            this.classList.add('active');
-            // Mostrar la sección correspondiente
-            var section = this.getAttribute('data-section');
-            showSection(section);
-        });
-    });
-
-    // Función para mostrar la sección seleccionada con Transiciones Suaves
-    function showSection(sectionId) {
-        var sections = ['linktreeSection', 'analyticsSection'];
-        sections.forEach(function(id) {
-            var elem = document.getElementById(id);
-            if(id === sectionId) {
-                elem.classList.remove('d-none');
-                elem.classList.add('fade', 'show'); // Añadir clases para transición
-            } else {
-                elem.classList.add('d-none');
-                elem.classList.remove('fade', 'show');
+            var form = this;
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
             }
+            var formData = new FormData(this);
+            var csrf_token = form.querySelector('input[name="csrf_token"]').value;
+
+            fetch("{{ url_for('edit_link_ajax') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrf_token
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Cerrar el modal
+                    var editModal = bootstrap.Modal.getInstance(document.getElementById('editLinkModal'));
+                    editModal.hide();
+                    // Recargar la página o actualizar la lista de enlaces
+                    location.reload();
+                } else {
+                    showToast('Error al actualizar el enlace.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error al actualizar el enlace.', 'danger');
+            });
         });
-    }
 
-    // Función para actualizar el fondo dentro del teléfono
-    function updatePhoneBackground(type) {
-        var phoneBackgroundMedia = document.querySelector('.phone-background-media');
-        var phoneLinks = document.querySelector('.linktree-iframe'); // Ajustado para iframe
-        var screen = document.getElementById('phoneScreen');
-
-        // Remover el fondo actual
-        if(phoneBackgroundMedia) {
-            phoneBackgroundMedia.remove();
+        // Confirmar eliminación de enlace
+        function confirmDelete(linkId) {
+            if(confirm('¿Estás seguro de eliminar este enlace?')) {
+                var csrf_token = document.querySelector('input[name="csrf_token"]').value;
+                fetch("{{ url_for('delete_link_ajax') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrf_token
+                    },
+                    body: JSON.stringify({link_id: linkId})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        // Recargar la página o actualizar la lista de enlaces
+                        location.reload();
+                    } else {
+                        showToast('Error al eliminar el enlace.', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error al eliminar el enlace.', 'danger');
+                });
+            }
         }
 
-        if(type === 'image' && backgroundImageURL) {
-            // Aplicar imagen de fondo
-            var img = document.createElement('img');
-            img.src = backgroundImageURL;
-            img.alt = 'Background Image';
-            img.className = 'phone-background-media';
-            screen.insertBefore(img, phoneLinks);
-        } else if(type === 'video' && backgroundVideoURL) {
-            // Aplicar video de fondo
-            var video = document.createElement('video');
-            video.autoplay = true;
-            video.loop = true;
-            video.muted = true;
-            video.className = 'phone-background-media';
+        // Función para mostrar notificaciones con Animaciones Suaves
+        function showToast(message, type) {
+            var toastEl = document.createElement('div');
+            toastEl.className = 'toast align-items-center text-white bg-' + type + ' border-0';
+            toastEl.role = 'alert';
+            toastEl.ariaLive = 'assertive';
+            toastEl.ariaAtomic = 'true';
+            toastEl.style.position = 'fixed';
+            toastEl.style.top = '20px';
+            toastEl.style.right = '20px';
+            toastEl.style.zIndex = '1055';
+            toastEl.classList.add('fade', 'show'); // Para animación de entrada
 
-            var source = document.createElement('source');
-            source.src = backgroundVideoURL;
-            source.type = 'video/mp4'; // Ajusta el tipo MIME según el formato de tu video
+            var toastBody = document.createElement('div');
+            toastBody.className = 'd-flex';
+            toastBody.innerHTML = '<div class="toast-body">' + message + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>';
 
-            video.appendChild(source);
-            screen.insertBefore(video, phoneLinks);
-        } else {
-            // No aplicar fondo
-            var placeholder = document.createElement('div');
-            placeholder.className = 'phone-background-placeholder';
-            screen.insertBefore(placeholder, phoneLinks);
+            toastEl.appendChild(toastBody);
+            document.body.appendChild(toastEl);
+
+            var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+            toast.show();
+
+            toastEl.addEventListener('hidden.bs.toast', function () {
+                toastEl.remove();
+            });
         }
-    }
 
-    // Función para actualizar la previsualización en teléfono
-    function updatePhonePreview() {
-        var phoneLinks = document.querySelector('.linktree-iframe'); // Ajustado para iframe
-        // No es necesario actualizar el iframe, pero si tienes una representación de los enlaces, actualízala aquí
-    }
+        // Manejar clics en la navegación del sidebar con Animaciones Suaves
+        document.querySelectorAll('#sidebarMenu .nav-link').forEach(function(element) {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Remover la clase 'active' de todos los enlaces
+                document.querySelectorAll('#sidebarMenu .nav-link').forEach(function(el) {
+                    el.classList.remove('active');
+                });
+                // Agregar la clase 'active' al enlace clicado
+                this.classList.add('active');
+                // Mostrar la sección correspondiente
+                var section = this.getAttribute('data-section');
+                showSection(section);
+            });
+        });
 
-    // Manejar el cambio de tipo de fondo y color de los enlaces
-    document.getElementById('customizeForm').addEventListener('submit', function(e) {
-        // Ya estamos manejando la personalización en el backend, no es necesario hacer nada aquí
-    });
+        // Función para mostrar la sección seleccionada con Transiciones Suaves
+        function showSection(sectionId) {
+            var sections = ['linktreeSection', 'analyticsSection'];
+            sections.forEach(function(id) {
+                var elem = document.getElementById(id);
+                if(id === sectionId) {
+                    elem.classList.remove('d-none');
+                    elem.classList.add('fade', 'show'); // Añadir clases para transición
+                } else {
+                    elem.classList.add('d-none');
+                    elem.classList.remove('fade', 'show');
+                }
+            });
+        }
 
-    // Inicializar el fondo al cargar la página y los gráficos de Analytics
-    document.addEventListener('DOMContentLoaded', function() {
+        // Función para actualizar el fondo dentro del teléfono
+        function updatePhoneBackground(type) {
+            var phoneBackgroundMedia = document.querySelector('.phone-background-media');
+            var phoneLinks = document.querySelector('.linktree-iframe'); // Ajustado para iframe
+            var screen = document.getElementById('phoneScreen');
+
+            // Remover el fondo actual
+            if(phoneBackgroundMedia) {
+                phoneBackgroundMedia.remove();
+            }
+
+            if(type === 'image' && backgroundImageURL) {
+                // Aplicar imagen de fondo
+                var img = document.createElement('img');
+                img.src = backgroundImageURL;
+                img.alt = 'Background Image';
+                img.className = 'phone-background-media';
+                screen.insertBefore(img, phoneLinks);
+            } else if(type === 'video' && backgroundVideoURL) {
+                // Aplicar video de fondo
+                var video = document.createElement('video');
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.className = 'phone-background-media';
+
+                var source = document.createElement('source');
+                source.src = backgroundVideoURL;
+                source.type = 'video/mp4'; // Ajusta el tipo MIME según el formato de tu video
+
+                video.appendChild(source);
+                screen.insertBefore(video, phoneLinks);
+            } else {
+                // No aplicar fondo
+                var placeholder = document.createElement('div');
+                placeholder.className = 'phone-background-placeholder';
+                screen.insertBefore(placeholder, phoneLinks);
+            }
+        }
+
+        // Función para actualizar la previsualización en teléfono
+        function updatePhonePreview() {
+            var phoneLinks = document.querySelector('.linktree-iframe');
+            if(phoneLinks) {
+                phoneLinks.src = phoneLinks.src;
+            }
+        }
+
+        // Inicializar el fondo al cargar la página y los gráficos de Analytics
         var selectedType = "{{ current_user.background_type }}" || 'image';
-
         updatePhoneBackground(selectedType);
-
-        // Aplicar el color de los enlaces
-        var linkColor = "{{ current_user.link_color or '#e94e1b' }}";
-        applyLinkColor(linkColor);
-
-        // Inicializar los gráficos de Analytics (si se implementan)
-        {% if analytics_data %}
-            initializeCharts({{ analytics_data|tojson }});
-        {% endif %}
-
-        // Inicializar la previsualización en teléfono
+        initializeCharts({{ analytics_data|tojson if analytics_data else 'null' }});
         updatePhonePreview();
-    });
 
     // Función para inicializar los gráficos de Analytics
     function initializeCharts(data) {
-        // Gráfico de Clics por Enlace
+        if(!data) {
+            console.error('No se recibieron datos de analytics.');
+            return;
+        }
+
+        // Gráfico de Clics por Enlace Mejorado
         var ctxClicks = document.getElementById('clicksChart').getContext('2d');
         var clicksChart = new Chart(ctxClicks, {
             type: 'bar',
@@ -917,41 +737,63 @@
                 datasets: [{
                     label: 'Clics',
                     data: data.clicks_per_link.data,
-                    backgroundColor: 'rgba(230, 126, 34, 0.6)',
-                    borderColor: 'rgba(230, 126, 34, 1)',
+                    backgroundColor: 'rgba(46, 204, 113, 0.6)',
+                    borderColor: 'rgba(46, 204, 113, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        precision: 0
+                        ticks: {
+                            precision:0
+                        },
+                        title: {
+                            display: true,
+                            text: 'Número de Clics'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Enlaces'
+                        }
                     }
                 }
             }
         });
 
-        // Gráfico de Enlaces Más Populares
+        // Gráfico de Enlaces Más Populares Mejorado
         var ctxPopular = document.getElementById('popularLinksChart').getContext('2d');
         var popularLinksChart = new Chart(ctxPopular, {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: data.popular_links.labels,
                 datasets: [{
                     data: data.popular_links.data,
                     backgroundColor: [
-                        'rgba(46, 204, 113, 0.6)',
                         'rgba(52, 152, 219, 0.6)',
                         'rgba(231, 76, 60, 0.6)',
+                        'rgba(46, 204, 113, 0.6)',
                         'rgba(155, 89, 182, 0.6)',
                         'rgba(241, 196, 15, 0.6)'
                     ],
                     borderColor: [
-                        'rgba(46, 204, 113, 1)',
                         'rgba(52, 152, 219, 1)',
                         'rgba(231, 76, 60, 1)',
+                        'rgba(46, 204, 113, 1)',
                         'rgba(155, 89, 182, 1)',
                         'rgba(241, 196, 15, 1)'
                     ],
@@ -959,82 +801,139 @@
                 }]
             },
             options: {
-                responsive: true
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        enabled: true,
+                        mode: 'nearest',
+                        intersect: false,
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Nueva Gráfica de Tendencia de Clics a lo Largo del Tiempo con Líneas Individuales por Enlace
+        var ctxTrend = document.getElementById('trendClicksChart').getContext('2d');
+        var trendClicksChart = new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: data.click_trend.labels, // Fechas o periodos
+                datasets: data.click_trend.datasets.map(function(dataset) {
+                    return {
+                        label: dataset.title,
+                        data: dataset.data,
+                        fill: false,
+                        backgroundColor: dataset.color,
+                        borderColor: dataset.color,
+                        tension: 0.4
+                    };
+                })
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Número de Clics'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Fecha'
+                        }
+                    }
+                }
             }
         });
     }
 
-    // Función para manejar la selección de icono en los modales
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- Manejo del Modal para Agregar Enlace ---
-        const addIconButtons = document.querySelectorAll('#iconPicker .icon-btn');
-        const addSelectedIconInput = document.getElementById('selectedIcon');
-        const addDisplayedIcon = document.getElementById('displayedIcon');
+        // Función para manejar la selección de icono en los modales
+        function setupIconSelectors(pickerId, hiddenInputId, displayIconId) {
+            const iconButtons = document.querySelectorAll(`#${pickerId} .icon-btn`);
+            const hiddenInput = document.getElementById(hiddenInputId);
+            const displayedIcon = document.getElementById(displayIconId);
 
-        addIconButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const iconClass = this.getAttribute('data-icon');
-                addSelectedIconInput.value = iconClass;
-                addDisplayedIcon.className = iconClass;
-                addIconButtons.forEach(btn => btn.classList.remove('selected'));
-                this.classList.add('selected');
+            iconButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Eliminar selección de otros botones
+                    iconButtons.forEach(btn => btn.classList.remove('selected'));
+                    // Añadir selección al botón actual
+                    this.classList.add('selected');
+                    // Obtener el icono seleccionado
+                    const iconClass = this.getAttribute('data-icon');
+                    // Actualizar el campo oculto y la vista previa
+                    hiddenInput.value = iconClass;
+                    displayedIcon.className = iconClass;
+                });
             });
-        });
+        }
 
-        // --- Manejo del Modal para Editar Enlace ---
-        const editIconButtons = document.querySelectorAll('#editIconPicker .icon-btn');
-        const editSelectedIconInput = document.getElementById('edit_selectedIcon');
-        const editDisplayedIcon = document.getElementById('edit_displayedIcon');
+        // Configurar los selectores de iconos en ambos modales
+        setupIconSelectors('iconPicker', 'selectedIcon', 'displayedIcon');
+        setupIconSelectors('editIconPicker', 'edit_selectedIcon', 'edit_displayedIcon');
 
-        editIconButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const iconClass = this.getAttribute('data-icon');
-                editSelectedIconInput.value = iconClass;
-                editDisplayedIcon.className = iconClass;
-                editIconButtons.forEach(btn => btn.classList.remove('selected'));
-                this.classList.add('selected');
-            });
-        });
-
-        // --- Manejo de la Carga de Datos en el Modal para Editar Enlace ---
-        document.getElementById('editLinkModal').addEventListener('show.bs.modal', function(event) {
-            // Botón que activó el modal
+        // Manejar la carga de datos en el Modal para Editar Enlace
+        var editLinkModal = document.getElementById('editLinkModal');
+        editLinkModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
-
-            // Extraer los datos de los atributos data-*
             var linkId = button.getAttribute('data-link-id');
-            var title = button.getAttribute('data-link-title');
-            var url = button.getAttribute('data-link-url');
-            var icon = button.getAttribute('data-link-icon');
-            var description = button.getAttribute('data-link-description');
+            var linkTitle = button.getAttribute('data-link-title');
+            var linkUrl = button.getAttribute('data-link-url');
+            var linkIcon = button.getAttribute('data-link-icon');
+            var linkDescription = button.getAttribute('data-link-description');
 
-            // Actualizar los campos del formulario en el modal
             var modal = this.querySelector('#editLinkForm');
             modal.querySelector('#edit_link_id').value = linkId;
-            modal.querySelector('#edit_title').value = title;
-            modal.querySelector('#edit_url').value = url;
-            modal.querySelector('#edit_description').value = description;
+            modal.querySelector('#edit_title').value = linkTitle;
+            modal.querySelector('#edit_url').value = linkUrl;
+            modal.querySelector('#edit_description').value = linkDescription;
 
-            // Manejar la selección de icono en el modal de editar
+            // Reset icon selection
+            var editIconButtons = modal.querySelectorAll('#editIconPicker .icon-btn');
             editIconButtons.forEach(btn => btn.classList.remove('selected'));
-
-            if(icon) {
-                editSelectedIconInput.value = icon;
-                editDisplayedIcon.className = icon;
-
-                // Resaltar el botón correspondiente
-                editIconButtons.forEach(btn => {
-                    if(btn.getAttribute('data-icon') === icon) {
-                        btn.classList.add('selected');
-                    }
-                });
-            } else {
-                editSelectedIconInput.value = '';
-                editDisplayedIcon.className = '';
+            if(linkIcon){
+                var selectedBtn = modal.querySelector(`.icon-btn[data-icon="${linkIcon}"]`);
+                if(selectedBtn){
+                    selectedBtn.classList.add('selected');
+                }
             }
         });
-    });
 
+        // Validación de formularios Bootstrap
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    });
 </script>
 
 <!-- Estilos Personalizados -->
@@ -1046,6 +945,10 @@
         --background-color: #f8f9fa;
         --text-color: #2c3e50;
         --link-color: {{ current_user.link_color or '#e94e1b' }};
+        --hover-color: #cc6b1f;
+        --outline-primary-color: rgba(233, 78, 27, 0.1);
+        --outline-secondary-color: rgba(52, 152, 219, 0.1);
+        --outline-success-color: rgba(46, 204, 113, 0.1);
     }
 
     body {
@@ -1079,6 +982,7 @@
         overflow-y: auto;
         background-color: var(--background-color);
         transition: background-color 0.3s ease;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
 
     .sidebar .nav-link {
@@ -1086,10 +990,70 @@
         transition: color 0.3s ease, background-color 0.3s ease;
     }
 
+    .sidebar .nav-link:hover {
+        background-color: var(--primary-color);
+        color: #fff !important;
+        border-radius: 5px;
+    }
+
     .sidebar .nav-link.active {
         background-color: var(--primary-color);
         color: #fff !important;
         border-radius: 5px;
+    }
+
+    /* Botones personalizados */
+    .btn-custom {
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-custom:hover {
+        background-color: var(--hover-color);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .btn-custom:focus {
+        box-shadow: 0 0 0 0.2rem rgba(233, 78, 27, 0.5);
+    }
+
+    .btn-custom-outline-primary {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background-color: transparent;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-custom-outline-primary:hover {
+        background-color: var(--outline-primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-custom-outline-secondary {
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+        background-color: transparent;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-custom-outline-secondary:hover {
+        background-color: var(--outline-secondary-color);
+        color: var(--secondary-color);
+    }
+
+    .btn-custom-outline-success {
+        border-color: var(--link-color);
+        color: var(--link-color);
+        background-color: transparent;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-custom-outline-success:hover {
+        background-color: rgba(46, 204, 113, 0.1);
+        color: var(--link-color);
     }
 
     /* Secciones de Contenido */
@@ -1103,28 +1067,7 @@
         height: 100%;
         border: none;
         border-radius: 10px;
-    }
-
-    /* Asegúrate de que el iframe no cubra el fondo */
-    .phone-background-media {
-        z-index: -1;
-    }
-
-    .screen {
-        position: relative;
-    }
-
-    /* Ajustar la altura del teléfono para que el iframe se vea correctamente */
-    .phone {
-        height: 600px; /* Ajusta según sea necesario */
-        transition: height 0.3s ease;
-    }
-
-    /* Responsive ajustes */
-    @media (max-width: 768px) {
-        .phone {
-            height: 400px; /* Ajusta según sea necesario */
-        }
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     /* Previsualización en Teléfono */
@@ -1213,28 +1156,40 @@
         color: var(--primary-color);
     }
 
-    /* Responsive Ajustes */
-    @media (max-width: 768px) {
-        .sidebar {
-            position: static;
-            height: auto;
-        }
-        .phone-preview {
-            height: auto;
-            margin-bottom: 20px;
-        }
+    /* Selector de Iconos */
+    .icon-btn {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    /* Estilos adicionales */
-    .btn-custom {
-        background-color: var(--primary-color);
-        color: #fff;
+    .icon-btn:hover {
+        background-color: #f1f1f1;
+        transform: scale(1.05);
     }
 
-    .btn-custom:hover {
-        /* darken(var(--primary-color), 10%); */ /* Comentado porque darken no es una función válida en CSS puro */
-        background-color: #cc6b1f; /* Color más oscuro manualmente */
-        color: #fff;
+    .icon-btn.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(233, 78, 27, 0.1);
+    }
+
+    /* Animaciones Suaves para los Modales */
+    .modal.fade .modal-dialog {
+        transition: transform 0.3s ease-out;
+    }
+    .modal.show .modal-dialog {
+        transform: translate(0, 0);
+    }
+
+    /* Validación de Formularios */
+    .was-validated .form-control:invalid {
+        border-color: #dc3545;
+    }
+
+    .was-validated .form-control:valid {
+        border-color: #28a745;
     }
 
     /* Estilos para botones de redes sociales */
@@ -1266,7 +1221,7 @@
     }
 
     .btn-instagram {
-        background-color: #c13584;
+        background-color: #e1306c;
         color: #fff;
     }
     
@@ -1275,22 +1230,48 @@
         color: #fff;
     }
 
-
-    /* Animaciones Suaves para los Modales */
-    .modal.fade .modal-dialog {
-        transition: transform 0.3s ease-out;
+    /* Responsive Ajustes */
+    @media (max-width: 768px) {
+        .sidebar {
+            position: static;
+            height: auto;
+            box-shadow: none;
+        }
+        .phone-preview {
+            height: auto;
+            margin-bottom: 20px;
+        }
     }
-    .modal.show .modal-dialog {
-        transform: translate(0, 0);
+
+    /* Estilos para las tarjetas de Analytics */
+    .card-header {
+        font-weight: bold;
+        font-size: 1.1rem;
     }
 
-    /* Validación de Formularios */
-    .was-validated .form-control:invalid {
-        border-color: #dc3545;
+    .card-body {
+        position: relative;
+        height: 300px; /* Ajusta según sea necesario */
     }
 
-    .was-validated .form-control:valid {
-        border-color: #28a745;
+    .chart-container {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+
+    /* Estilos para el tooltip de Chart.js */
+    .chartjs-tooltip {
+        opacity: 1;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px;
+        border-radius: 4px;
+        pointer-events: none;
+        transition: all .1s ease;
+        transform: translate(-50%, 0);
+        white-space: nowrap;
     }
 </style>
 {% endblock %}

@@ -193,7 +193,7 @@
         {% if links %}
             {% for link in links %}
                 <div class="link-item">
-                    <a href="{{ url_for('track_click', link_id=link.id) }}" target="_blank" class="btn link-button" aria-label="Abrir {{ link.title }}">
+                    <a href="{{ url_for('go_link', link_id=link.id) }}" target="_blank" class="btn link-button" aria-label="Abrir {{ link.title }}">
                         {% if link.icon %}
                             <i class="{{ link.icon }}"></i>
                         {% else %}

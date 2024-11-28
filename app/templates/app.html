@@ -36,7 +36,7 @@
     {% endblock %}
 </head>
 
-<body class="bg-white text-dark mt-0" data-bs-spy="scroll" data-bs-target="#navScroll">
+<body class="bg-white text-dark mt-0 d-flex flex-column min-vh-100" data-bs-spy="scroll" data-bs-target="#navScroll">
 
     <!-- Navbar -->
     {% include 'layout/navbar.html' %}
@@ -69,9 +69,11 @@
     {% endif %}
     {% endwith %}
 
-    <!-- Content -->
-    {% block content %}
-    {% endblock %}
+    <!-- Contenido Principal -->
+    <main class="flex-grow-1">
+        {% block content %}
+        {% endblock %}
+    </main>
 
     <!-- Footer -->
     {% block footer %}

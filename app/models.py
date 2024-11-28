@@ -52,16 +52,29 @@ class UserLink(db.Model):
     title = db.Column(db.String(150), nullable=False)
     url = db.Column(db.String(255), nullable=False)
     icon = db.Column(db.String(150), nullable=True)
-    description = db.Column(db.Text, nullable=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     order = db.Column(db.Integer, nullable=False, default=0)
     clicks = db.Column(db.Integer, nullable=False, default=0)
     
     # Relaciones
     owner = db.relationship('User', back_populates='user_links')
+    click_logs = db.relationship('ClickLog', back_populates='link', lazy='dynamic')
     
     def __repr__(self):
         return f"<UserLink {self.title} - {self.url}>"
+    
+class ClickLog(db.Model):
+    __tablename__ = 'click_log'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    link_id = db.Column(db.Integer, db.ForeignKey('user_link.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Relaciones
+    link = db.relationship('UserLink', back_populates='click_logs')
+
+    def __repr__(self):
+        return f"<ClickLog Link ID: {self.link_id} at {self.timestamp}>"
 
 # -------------------------------------------------------------------
 # Modelo de Suscripción al Newsletter
