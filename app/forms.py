@@ -109,6 +109,9 @@ class ProductForm(FlaskForm):
     features = StringField('Características (separadas por comas)', validators=[Length(max=500)])
     submit = SubmitField('Guardar Producto')
 
+class DeleteForm(FlaskForm):
+    submit = SubmitField('Eliminar')
+
 # -------------------------------------------------------------------
 # Formularios de Carrito de Compras
 # -------------------------------------------------------------------

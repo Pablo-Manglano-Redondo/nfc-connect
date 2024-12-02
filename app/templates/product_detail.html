@@ -8,7 +8,7 @@
 {% block content %}
 <main>
     <section class="product-detail-section py-5">
-        <div class="container">
+        <div class="container" style="padding-top: 7rem;">
             <div class="row">
                 <!-- Imagen Principal del Producto -->
                 <div class="col-md-6" data-aos="fade-right">
@@ -32,7 +32,7 @@
                 <!-- Información del Producto -->
                 <div class="col-md-6" data-aos="fade-left">
                     <h2>{{ product.name }}</h2>
-                    <p class="lead">{{ _('Precio') }}: ${{ "%.2f"|format(product.price) }}</p>
+                    <p class="lead">{{ _('Precio') }}: {{ "%.2f"|format(product.price) }}€</p>
                     <p>{{ product.description }}</p>
                     
                     <!-- Formulario para Añadir al Carrito -->

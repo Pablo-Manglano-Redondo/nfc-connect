@@ -14,14 +14,15 @@
                     <p>Este sitio web utiliza cookies para mejorar la experiencia del usuario. Al utilizar nuestro sitio web, aceptas todas las cookies de acuerdo con nuestra política de cookies. <a href="/cookies">Más información</a>.</p>
                 </div>
                 <div class="col-md-4 text-md-end text-center">
-                    <button id="acceptCookies" class="btn btn-custom">Aceptar</button>
+                    <button id="acceptCookies" class="btn btn-custom me-2">Aceptar</button>
+                    <button id="rejectCookies" class="btn btn-custom-outline-secondary">Rechazar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Sección Hero -->
-    <section class="hero-section position-relative min-vh-100">
+    <section class="hero-section position-relative min-vh-100" style="zoom: 112%;">
         <video class="video-background w-100 h-100 object-fit-cover" autoplay muted loop>
             <source src="{{ url_for('static', filename='video/nfc-connect-video.mp4') }}" type="video/mp4">
             Tu navegador no soporta el video.
@@ -38,7 +39,7 @@
     <section id="services" class="services-section py-5">
         <div class="container">
             <!-- Título de la Sección -->
-            <div class="row mb-5 text-center">
+            <div class="row mb-2 text-center">
                 <div class="col-12">
                     <h2>{{ _('Nuestros Servicios') }}</h2>
                     <p class="lead">{{ _('En NFC Connect, ofrecemos una variedad de servicios para asegurar que tu negocio se mantenga a la vanguardia de la tecnología NFC.') }}</p>
@@ -78,9 +79,9 @@
     </section>
 
     <!-- Sección de Videos con Swiper.js -->
-    <section class="video-carousel py-5 bg-light">
+    <section class="video-carousel py-3 bg-light"> 
         <div class="container">
-            <div class="row mb-4 text-center">
+            <div class="row mb-3 text-center"> 
                 <div class="col-12">
                     <h2>{{ _('Nuestros Clientes Agradecen') }}</h2>
                     <p class="lead">{{ _('Mira lo que nuestros clientes tienen para decir sobre sus experiencias con nosotros.') }}</p>
@@ -200,7 +201,7 @@
     </section>
 
     <!-- Sección de Productos -->
-    <section class="store-section py-5">
+    <section class="store-section py-4">
         <div class="container">
             <div class="row mb-5 text-center">
                 <div class="col-12">
@@ -208,35 +209,41 @@
                     <p class="lead">{{ _('Explora nuestros productos y servicios diseñados para impulsar tu negocio.') }}</p>
                 </div>
             </div>
-            <div class="row">
-                {% for product in products %}
-                <div class="col-md-4 mb-4" data-aos="fade-up">
-                    <div class="card h-100">
-                        <a href="{{ url_for('product_detail', product_id=product.id) }}">
-                            <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top" alt="{{ product.name }}">
-                        </a>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">
-                                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
-                                    {{ product.name }}
-                                </a>
-                            </h5>
-                            <p class="card-text">{{ product.description }}</p>
-                            <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
-                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
-                                {{ add_to_cart_form.hidden_tag() }}
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-custom" onclick="handleAddToCart(event, '{{ product.id }}')">{{ _('Añadir al Carrito') }}</button>
-                                </div>
-                            </form>
+            
+            <!-- Contenedor Swiper -->
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    {% for product in products %}
+                    <div class="swiper-slide">
+                        <div class="card h-100 shadow-sm">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                                <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="card-img-top img-fluid rounded" alt="{{ product.name }}">
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">
+                                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                                        {{ product.name }}
+                                    </a>
+                                </h5>
+                                <p class="card-text">{{ product.description }}</p>
+                                <p class="card-text"><strong>{{ _('Precio') }}:</strong> {{ "%.2f"|format(product.price) }}€</p>
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                
+                <!-- Elementos de Navegación -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                
+                <!-- Elemento de Paginación -->
+                <div class="swiper-pagination"></div>
             </div>
+            
             <!-- Botón para Ver Todos los Productos -->
             <div class="text-center mt-4">
-                <a href="{{ url_for('store') }}" class="btn btn-primary">{{ _('Ver Todos los Productos') }}</a>
+                <a href="{{ url_for('store') }}" class="btn btn-custom">{{ _('Ver Todos los Productos') }}</a>
             </div>
         </div>
     </section>
@@ -268,11 +275,11 @@
             </div>
         </div>
     </div></button>
-
+    
     <!-- Sección de Preguntas Frecuentes (FAQ) Mejorada -->
-    <section id="faq" class="faq-section py-5 bg-light">
+    <section id="faq" class="faq-section py-4 bg-light">
         <div class="container">
-            <div class="row mb-5 text-center">
+            <div class="row mb-2 text-center">
                 <div class="col-12">
                     <h2>{{ _('Preguntas Frecuentes') }}</h2>
                     <p class="lead">{{ _('Encuentra respuestas a las preguntas más comunes sobre nuestros servicios y productos.') }}</p>
@@ -338,19 +345,20 @@
                 </div>
             </div>
         </div>
-    </section>
+
+    <div class="mb-5"></div>
 
     <!-- Sección de Suscripción a la Newsletter -->
-    <section id="newsletter" class="newsletter-section py-5 bg-secondary text-white">
+    <section id="newsletter" class="newsletter-section py-3">
         <div class="container">
-            <div class="row mb-4 text-center">
+            <div class="row text-center">
                 <div class="col-12">
                     <h2>{{ _('Suscríbete a Nuestra Newsletter') }}</h2>
                     <p class="lead">{{ _('Recibe las últimas noticias y actualizaciones directamente en tu correo electrónico.') }}</p>
                 </div>
             </div>
             <div class="row justify-content-center">
-                <div class="col-md-6">
+                <div class="col-md-11 mb-2">
                     <form action="{{ url_for('subscribe') }}" method="POST" class="d-flex">
                         {% if csrf_token %}
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -362,6 +370,8 @@
             </div>
         </div>
     </section>
+
+    <div class="mb-2"></div>
 
     <!-- Chatbot Widget Mejorado -->
     <div id="chatbot" class="card shadow-lg chatbot-card" style="display: none;">

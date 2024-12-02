@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="contact-section">
+<div class="contact-section" style="padding-top: 12rem;">
     <div class="background-image-wrapper">
         <img src="{{ url_for('static', filename='img/logo-web.jpg') }}" alt="Contact Image" class="background-image img-fluid">
         <div class="overlay"></div>
@@ -45,7 +45,7 @@
                     <div class="invalid-feedback">Por favor, ingresa tu mensaje.</div>
                 </div>
                 <div class="col-12 text-center">
-                    {{ form.submit(class_="btn btn-dark btn-lg") }}
+                    {{ form.submit(class_="btn btn-custom btn-lg") }}
                 </div>
             </form>
         </div>

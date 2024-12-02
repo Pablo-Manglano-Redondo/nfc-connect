@@ -4,72 +4,103 @@
    * Copyright 2011-2022 Twitter, Inc.
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
    */
-:root {
-  --bs-blue: #1717e5;
-  --bs-indigo: #6610f2;
-  --bs-purple: #6f42c1;
-  --bs-pink: #d63384;
-  --bs-red: #dc3545;
-  --bs-orange: #e94e1b;
-  --bs-yellow: #ffc107;
-  --bs-green: #198754;
-  --bs-teal: #20c997;
-  --bs-cyan: #0dcaf0;
-  --bs-white: #fff;
-  --bs-gray: #8a8a8e;
-  --bs-gray-dark: #343a40;
-  --bs-gray-100: #f8f9fa;
-  --bs-gray-200: #e9ecef;
-  --bs-gray-300: #dee2e6;
-  --bs-gray-400: #ced4da;
-  --bs-gray-500: #adb5bd;
-  --bs-gray-600: #8a8a8e;
-  --bs-gray-700: #495057;
-  --bs-gray-800: #343a40;
-  --bs-gray-900: #202020;
-  --bs-primary: #e94e1b;
-  --bs-secondary: #8a8a8e;
-  --bs-success: #198754;
-  --bs-info: #0dcaf0;
-  --bs-warning: #ffc107;
-  --bs-danger: #dc3545;
-  --bs-light: #f8f9fa;
-  --bs-dark: #202020;
-  --bs-primary-rgb: 233, 78, 27;
-  --bs-secondary-rgb: 138, 138, 142;
-  --bs-success-rgb: 25, 135, 84;
-  --bs-info-rgb: 13, 202, 240;
-  --bs-warning-rgb: 255, 193, 7;
-  --bs-danger-rgb: 220, 53, 69;
-  --bs-light-rgb: 248, 249, 250;
-  --bs-dark-rgb: 32, 32, 32;
-  --bs-white-rgb: 255, 255, 255;
-  --bs-black-rgb: 17, 17, 17;
-  --bs-body-color-rgb: 32, 32, 32;
-  --bs-body-bg-rgb: 255, 255, 255;
-  --bs-font-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
-  --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 1.2rem;
-  --bs-body-font-weight: 400;
-  --bs-body-line-height: 1.5;
-  --bs-body-color: #202020;
-  --bs-body-bg: #fff;
-  --bs-border-width: 1px;
-  --bs-border-style: solid;
-  --bs-border-color: #dee2e6;
-  --bs-border-color-translucent: rgba(17, 17, 17, 0.175);
-  --bs-border-radius: 0.375rem;
-  --bs-border-radius-sm: 0.25rem;
-  --bs-border-radius-lg: 0.5rem;
-  --bs-border-radius-xl: 1rem;
-  --bs-border-radius-2xl: 2rem;
-  --bs-border-radius-pill: 50rem;
-  --bs-link-color: #1717e5;
-  --bs-link-hover-color: #1212b7;
-  --bs-code-color: #d63384;
-  --bs-highlight-bg: #fff3cd; }
+   :root {
+    /* ===================================================
+       Paleta de Colores Modernos
+    =================================================== */
+    --bs-blue: #3b82f6; /* Azul Moderno */
+    --bs-indigo: #6366f1; /* Índigo Moderno */
+    --bs-purple: #8b5cf6; /* Púrpura Moderno */
+    --bs-pink: #ec4899; /* Rosa Moderno */
+    --bs-red: #ef4444; /* Rojo Moderno */
+    --bs-orange: #e94e1b; /* Naranja Moderno */
+    --bs-yellow: #f59e0b; /* Amarillo Moderno */
+    --bs-green: #10b981; /* Verde Moderno */
+    --bs-teal: #14b8a6; /* Teal Moderno */
+    --bs-cyan: #06b6d4; /* Cian Moderno */
+    --bs-white: #ffffff; /* Blanco */
+    --bs-gray: #6b7280; /* Gris Moderno */
+    --bs-gray-dark: #374151; /* Gris Oscuro Moderno */
+    --bs-gray-100: #f3f4f6; /* Gris Claro Moderno */
+    --bs-gray-200: #d1d5db; /* Gris Medio Moderno */
+    --bs-gray-300: #9ca3af; /* Gris Suave Moderno */
+    --bs-gray-400: #6b7280; /* Gris Intermedio Moderno */
+    --bs-gray-500: #4b5563; /* Gris Oscuro Suave Moderno */
+    --bs-gray-600: #374151; /* Gris Muy Oscuro Moderno */
+    --bs-gray-700: #1f2937; /* Gris Profundo Moderno */
+    --bs-gray-800: #111827; /* Gris Casi Negro Moderno */
+    --bs-gray-900: #000000; /* Negro */
+    --bs-primary: #e94e1b; /* Naranja Principal Moderno */
+    --bs-secondary: #6b7280; /* Gris Secundario Moderno */
+    --bs-success: #10b981; /* Verde Éxito Moderno */
+    --bs-info: #06b6d4; /* Cian Información Moderno */
+    --bs-warning: #f59e0b; /* Amarillo Advertencia Moderno */
+    --bs-danger: #ef4444; /* Rojo Peligro Moderno */
+    --bs-light: #f3f4f6; /* Gris Claro Moderno */
+    --bs-dark: #000000; /* Negro Moderno */
+    --bs-primary-rgb: 233, 78, 27; /* RGB para Naranja Principal */
+    --bs-secondary-rgb: 107, 114, 128; /* RGB para Gris Secundario */
+    --bs-success-rgb: 16, 185, 129; /* RGB para Verde Éxito */
+    --bs-info-rgb: 6, 182, 212; /* RGB para Cian Información */
+    --bs-warning-rgb: 245, 158, 11; /* RGB para Amarillo Advertencia */
+    --bs-danger-rgb: 239, 68, 68; /* RGB para Rojo Peligro */
+    --bs-light-rgb: 243, 244, 246; /* RGB para Gris Claro */
+    --bs-dark-rgb: 0, 0, 0; /* RGB para Negro */
+    --bs-white-rgb: 255, 255, 255; /* RGB para Blanco */
+    --bs-black-rgb: 0, 0, 0; /* RGB para Negro */
+    --bs-body-color-rgb: 0, 0, 0; /* RGB para Color del Cuerpo */
+    --bs-body-bg-rgb: 255, 255, 255; /* RGB para Fondo del Cuerpo */
+    
+    /* ===================================================
+       Tipografías
+    =================================================== */
+    --bs-font-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1.2rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 1.5;
+    --bs-body-color: #000000; /* Negro */
+    --bs-body-bg: #ffffff; /* Blanco */
+    
+    /* ===================================================
+       Bordes y Radio
+    =================================================== */
+    --bs-border-width: 1px;
+    --bs-border-style: solid;
+    --bs-border-color: #d1d5db; /* Gris Medio Moderno */
+    --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
+    --bs-border-radius: 0.375rem; /* 6px */
+    --bs-border-radius-sm: 0.25rem; /* 4px */
+    --bs-border-radius-lg: 0.5rem; /* 8px */
+    --bs-border-radius-xl: 1rem; /* 16px */
+    --bs-border-radius-2xl: 2rem; /* 32px */
+    --bs-border-radius-pill: 50rem;
+    
+    /* ===================================================
+       Otros Estilos
+    =================================================== */
+    --bs-link-color: #3b82f6; /* Azul Moderno para Enlaces */
+    --bs-link-hover-color: #173bb1; /* Azul Oscuro para Hover de Enlaces */
+    --bs-code-color: #ec4899; /* Rosa para Código */
+    --bs-highlight-bg: #fffbeb; /* Fondo de Resaltado */
+    
+    /* ===================================================
+       Tipografía y Estilos del Cuerpo
+    =================================================== */
+    --bs-font-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    
+    /* ===================================================
+       Configuración Adicional del Cuerpo
+    =================================================== */
+    --bs-body-font-family: var(--bs-font-sans-serif);
+    --bs-body-font-size: 1.2rem;
+    --bs-body-font-weight: 400;
+    --bs-body-line-height: 1.5;
+    --bs-body-color: var(--bs-dark);
+    --bs-body-bg: var(--bs-white);  
 
 *,
 *::before,
@@ -3034,7 +3065,7 @@ textarea.form-control-lg {
   --bs-navbar-hover-color: rgba(17, 17, 17, 0.8);
   --bs-navbar-disabled-color: rgba(17, 17, 17, 0.3);
   --bs-navbar-active-color: rgba(17, 17, 17, 0.9);
-  --bs-navbar-brand-padding-y: 0.275rem;
+  --bs-navbar-brand-padding-y: 0.0rem;
   --bs-navbar-brand-margin-end: 1rem;
   --bs-navbar-brand-font-size: 1.5rem;
   --bs-navbar-brand-color: rgba(17, 17, 17, 0.9);

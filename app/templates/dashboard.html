@@ -2,18 +2,20 @@
  
 {% extends "app.html" %}
 
+{% set navbar_size = 'small' %}
+
 {% block title %}
     {{ super() }} - Dashboard de {{ current_user.username }}
 {% endblock %}
 
 {% block content %}
 <!-- Contenedor Principal -->
-<div class="container-fluid">
-    <div class="row">
+<div class="container-fluid d-flex flex-grow-1" style="padding-top: 3rem;">
+    <div class="row flex-fill">
         <!-- Sidebar Izquierdo -->
-        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="padding-top: 9rem;">
-            <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse h-100" style="padding-top: 5rem;">
+            <div class="position-sticky pt-3 h-100">
+                <div class="text-center mb-2">
                     {% if current_user.profile_image %}
                         <img src="{{ url_for('static', filename='img/profile_pics/' ~ current_user.profile_image) }}" alt="{{ current_user.username }}'s Profile Picture" class="profile-picture img-thumbnail" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#changeProfilePicModal">
                     {% else %}
@@ -21,15 +23,16 @@
                     {% endif %}
                 </div>
                 <h4 class="text-center mb-2">{{ current_user.username }}</h4>
-                <h7 class="text-center mb-2">{{ current_user.bio }}</h7>
+                <p class="text-center mb-2"><small>{{ current_user.bio }}</small></p>
                 <hr>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#" data-section="linktreeSection">
-                            <i class="fas fa-link me-2"></i>
+                            <i class="fas fa-link me-1"></i>
                             Linktree
                         </a>
                     </li>
+                    <div class="separator my-2"></div>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-section="analyticsSection">
                             <i class="fas fa-chart-line me-2"></i>
@@ -38,19 +41,19 @@
                     </li>
                     <hr>
                     <li class="nav-item mt-2">
-                        <button class="btn btn-sm btn-custom-outline-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
+                        <button class="btn btn-sm btn-dashboard mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
                             <i class="fas fa-paint-brush me-2"></i>
                             Personalizar Fondo
                         </button>
                     </li>
                     <li class="nav-item">
-                        <button class="btn btn-sm btn-custom-outline-secondary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
+                        <button class="btn btn-sm btn-dashboard w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editBioModal">
                             <i class="fas fa-user-edit me-2"></i>
                             Editar Biografía
                         </button>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-primary w-100 mb-4">
+                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-sm btn-dashboard mb-3">
                             <i class="fas fa-eye me-2"></i>
                             Ver Perfil Público
                         </a>
@@ -108,7 +111,7 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-sm btn-custom me-2" data-bs-toggle="modal" data-bs-target="#editLinkModal"
+                                                <button type="button" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#editLinkModal"
                                                     data-link-id="{{ link.id }}"
                                                     data-link-title="{{ link.title|e }}"
                                                     data-link-url="{{ link.url|e }}"
@@ -204,7 +207,7 @@
 <!-- Modales -->
 
 <!-- Modal para Agregar Enlace -->
-<div class="modal fade" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
+<div class="modal" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="addLinkForm" method="POST" action="{{ url_for('add_link_ajax') }}" class="needs-validation" novalidate>
@@ -235,11 +238,11 @@
                         <div class="row" id="iconPicker">
                             <!-- Iconos de FontAwesome -->
                             {% for icon in [
-                                'fas fa-globe', 'fas fa-home', 'fas fa-user', 'fas fa-envelope',
-                                'fas fa-phone', 'fas fa-cog', 'fas fa-book', 'fas fa-camera',
-                                'fas fa-heart', 'fas fa-star', 'fas fa-shopping-cart', 'fas fa-lock',
-                                'fas fa-search', 'fas fa-bell', 'fas fa-map-marker-alt', 'fas fa-calendar',
-                                'fas fa-comments', 'fas fa-briefcase', 'fas fa-film', 'fas fa-music'
+                                'fab fa-youtube', 'fab fa-twitter', 'fab fa-facebook', 'fab fa-instagram',
+                                'fab fa-linkedin', 'fab fa-snapchat', 'fab fa-whatsapp', 'fab fa-pinterest',
+                                'fab fa-reddit', 'fab fa-tiktok', 'fab fa-spotify', 'fab fa-discord',
+                                'fab fa-github', 'fab fa-stack-overflow', 'fab fa-apple', 'fab fa-android',
+                                'fab fa-aws', 'fab fa-dropbox', 'fab fa-paypal', 'fab fa-soundcloud'
                             ] %}
                             <div class="col-3 col-sm-2 mb-3">
                                 <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
@@ -247,13 +250,6 @@
                                 </button>
                             </div>
                             {% endfor %}
-                        </div>
-                        <!-- Campo Oculto para el Icono Seleccionado -->
-                        <input type="hidden" name="icon" id="selectedIcon" value="">
-                        <!-- Mostrar Icono Seleccionado -->
-                        <div id="selectedIconDisplay" class="mt-3">
-                            <span class="me-2">Icono Seleccionado:</span>
-                            <i id="displayedIcon" class=""></i>
                         </div>
                     </div>
                 </div>
@@ -299,11 +295,11 @@
                         <div class="row" id="editIconPicker">
                             <!-- Iconos de FontAwesome -->
                             {% for icon in [
-                                'fas fa-globe', 'fas fa-home', 'fas fa-user', 'fas fa-envelope',
-                                'fas fa-phone', 'fas fa-cog', 'fas fa-book', 'fas fa-camera',
-                                'fas fa-heart', 'fas fa-star', 'fas fa-shopping-cart', 'fas fa-lock',
-                                'fas fa-search', 'fas fa-bell', 'fas fa-map-marker-alt', 'fas fa-calendar',
-                                'fas fa-comments', 'fas fa-briefcase', 'fas fa-film', 'fas fa-music'
+                                'fab fa-youtube', 'fab fa-twitter', 'fab fa-facebook', 'fab fa-instagram',
+                                'fab fa-linkedin', 'fab fa-snapchat', 'fab fa-whatsapp', 'fab fa-pinterest',
+                                'fab fa-reddit', 'fab fa-tiktok', 'fab fa-spotify', 'fab fa-discord',
+                                'fab fa-github', 'fab fa-stack-overflow', 'fab fa-apple', 'fab fa-android',
+                                'fab fa-aws', 'fab fa-dropbox', 'fab fa-paypal', 'fab fa-soundcloud'
                             ] %}
                             <div class="col-3 col-sm-2 mb-3">
                                 <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
@@ -311,13 +307,6 @@
                                 </button>
                             </div>
                             {% endfor %}
-                        </div>
-                        <!-- Campo Oculto para el Icono Seleccionado -->
-                        <input type="hidden" name="icon" id="edit_selectedIcon" value="">
-                        <!-- Mostrar Icono Seleccionado -->
-                        <div id="edit_selectedIconDisplay" class="mt-3">
-                            <span class="me-2">Icono Seleccionado:</span>
-                            <i id="edit_displayedIcon" class=""></i>
                         </div>
                     </div>
                 </div>
@@ -945,7 +934,7 @@
         --background-color: #f8f9fa;
         --text-color: #2c3e50;
         --link-color: {{ current_user.link_color or '#e94e1b' }};
-        --hover-color: #cc6b1f;
+        --hover-color: #50443b;
         --outline-primary-color: rgba(233, 78, 27, 0.1);
         --outline-secondary-color: rgba(52, 152, 219, 0.1);
         --outline-success-color: rgba(46, 204, 113, 0.1);
@@ -959,8 +948,8 @@
 
     /* Estilos para la foto de perfil en el sidebar */
     .profile-picture {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
         object-fit: cover;
         border-radius: 50%;
         border: 4px solid var(--primary-color);
@@ -1002,59 +991,19 @@
         border-radius: 5px;
     }
 
-    /* Botones personalizados */
-    .btn-custom {
+    /* Sección de botones*/
+    .btn.btn-dashboard {
         background-color: var(--primary-color);
         color: #fff;
-        border: none;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .btn-custom:hover {
-        background-color: var(--hover-color);
-        color: #fff;
-        transform: translateY(-2px);
-    }
-
-    .btn-custom:focus {
-        box-shadow: 0 0 0 0.2rem rgba(233, 78, 27, 0.5);
-    }
-
-    .btn-custom-outline-primary {
         border-color: var(--primary-color);
-        color: var(--primary-color);
-        background-color: transparent;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
-    .btn-custom-outline-primary:hover {
-        background-color: var(--outline-primary-color);
-        color: var(--primary-color);
+    .btn.btn-dashboard:hover {
+        background-color: var(--hover-color);
+        border-color: var(--hover-color);
     }
 
-    .btn-custom-outline-secondary {
-        border-color: var(--secondary-color);
-        color: var(--secondary-color);
-        background-color: transparent;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .btn-custom-outline-secondary:hover {
-        background-color: var(--outline-secondary-color);
-        color: var(--secondary-color);
-    }
-
-    .btn-custom-outline-success {
-        border-color: var(--link-color);
-        color: var(--link-color);
-        background-color: transparent;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .btn-custom-outline-success:hover {
-        background-color: rgba(46, 204, 113, 0.1);
-        color: var(--link-color);
-    }
 
     /* Secciones de Contenido */
     #linktreeSection, #analyticsSection {
@@ -1193,7 +1142,7 @@
     }
 
     /* Estilos para botones de redes sociales */
-    .btn-facebook {
+    .btn.btn-facebook {
         background-color: #3b5998;
         color: #fff;
     }
@@ -1202,7 +1151,7 @@
         color: #fff;
     }
 
-    .btn-twitter {
+    .btn.btn-twitter {
         background-color: #1da1f2;
         color: #fff;
     }
@@ -1211,7 +1160,7 @@
         color: #fff;
     }
 
-    .btn-linkedin {
+    .btn.btn-linkedin {
         background-color: #0077b5;
         color: #fff;
     }
@@ -1220,7 +1169,7 @@
         color: #fff;
     }
 
-    .btn-instagram {
+    .btn.btn-instagram {
         background-color: #e1306c;
         color: #fff;
     }
@@ -1272,6 +1221,116 @@
         transition: all .1s ease;
         transform: translate(-50%, 0);
         white-space: nowrap;
+    }
+
+    /* YouTube */
+    .fab.fa-youtube {
+        color: #FF0000; /* Rojo de YouTube */
+    }
+
+    /* Twitter */
+    .fab.fa-twitter {
+        color: #1DA1F2; /* Azul de Twitter */
+    }
+
+    /* Facebook */
+    .fab.fa-facebook {
+        color: #1877F2; /* Azul de Facebook */
+    }
+
+    /* Instagram */
+    .fab.fa-instagram {
+        color: #E1306C; /* Magenta de Instagram */
+    }
+
+    /* LinkedIn */
+    .fab.fa-linkedin {
+        color: #0077B5; /* Azul de LinkedIn */
+    }
+
+    /* Snapchat */
+    .fab.fa-snapchat {
+        color: #FFFC00; /* Amarillo de Snapchat */
+    }
+
+    /* WhatsApp */
+    .fab.fa-whatsapp {
+        color: #25D366; /* Verde de WhatsApp */
+    }
+
+    /* Pinterest */
+    .fab.fa-pinterest {
+        color: #E60023; /* Rojo de Pinterest */
+    }
+
+    /* Reddit */
+    .fab.fa-reddit {
+        color: #FF4500; /* Naranja de Reddit */
+    }
+
+    /* TikTok */
+    .fab.fa-tiktok {
+        color: #69C9D0; /* Turquesa de TikTok */
+    }
+
+    /* Spotify */
+    .fab.fa-spotify {
+        color: #1DB954; /* Verde de Spotify */
+    }
+
+    /* Discord */
+    .fab.fa-discord {
+        color: #5865F2; /* Azul de Discord */
+    }
+
+    /* GitHub */
+    .fab.fa-github {
+        color: #333333; /* Gris de GitHub */
+    }
+
+    /* Stack Overflow */
+    .fab.fa-stack-overflow {
+        color: #F48024; /* Naranja de Stack Overflow */
+    }
+
+    /* Apple */
+    .fab.fa-apple {
+        color: #A2AAAD; /* Gris de Apple */
+    }
+
+    /* Android */
+    .fab.fa-android {
+        color: #3DDC84; /* Verde de Android */
+    }
+
+    /* AWS */
+    .fab.fa-aws {
+        color: #FF9900; /* Naranja de AWS */
+    }
+
+    /* Dropbox */
+    .fab.fa-dropbox {
+        color: #007EE5; /* Azul de Dropbox */
+    }
+
+    /* PayPal */
+    .fab.fa-paypal {
+        color: #003087; /* Azul Oscuro de PayPal */
+    }
+
+    /* SoundCloud */
+    .fab.fa-soundcloud {
+        color: #FF5500; /* Naranja de SoundCloud */
+    }
+
+    /* Efectos de hover para todos los iconos de Font Awesome */
+    .fab {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .fab:hover {
+        transform: scale(1.1); /* Aumenta ligeramente el tamaño al pasar el cursor */
+        opacity: 0.8;          /* Reduce la opacidad para un efecto de desvanecimiento */
     }
 </style>
 {% endblock %}

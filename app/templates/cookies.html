@@ -1,0 +1,66 @@
+{% extends "app.html" %}
+
+{% block title %}Política de Cookies{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .policy-section {
+      background-color: var(--bs-light);
+      padding: 60px 0;
+      color: var(--bs-black);
+    }
+    .policy-section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .policy-section h2 {
+      font-size: 2rem;
+      margin-top: 40px;
+      margin-bottom: 15px;
+    }
+    .policy-section p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<main>
+    <section class="policy-section">
+        <div class="container" style="padding-top: 7rem;">
+            <h1>Política de Cookies</h1>
+            <p>En <strong>Nombre de tu Empresa</strong> utilizamos cookies para mejorar la experiencia de los usuarios en nuestro sitio web. Al utilizar este sitio, aceptas el uso de cookies de acuerdo con nuestra política.</p>
+
+            <h2>¿Qué son las cookies?</h2>
+            <p>Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Estos archivos contienen información sobre tu navegación y permiten que el sitio web te reconozca durante futuras visitas.</p>
+
+            <h2>¿Por qué utilizamos cookies?</h2>
+            <p>Utilizamos cookies para personalizar tu experiencia en el sitio, analizar cómo se utiliza nuestro sitio web, y mejorar los servicios que ofrecemos. Las cookies nos permiten recordar tus preferencias y proporcionar una navegación más fluida.</p>
+
+            <h2>Tipos de cookies que utilizamos</h2>
+            <p>En nuestra web, utilizamos los siguientes tipos de cookies:</p>
+            <ul>
+                <li><strong>Cookies necesarias:</strong> Son esenciales para el funcionamiento del sitio web y no pueden desactivarse en nuestros sistemas.</li>
+                <li><strong>Cookies de rendimiento:</strong> Ayudan a analizar cómo los usuarios navegan por nuestro sitio, lo que nos permite mejorar su rendimiento.</li>
+                <li><strong>Cookies de funcionalidad:</strong> Permiten recordar tus preferencias y mejorar la experiencia de usuario al personalizar la interfaz.</li>
+                <li><strong>Cookies de marketing:</strong> Utilizadas para rastrear la actividad de navegación y ofrecer publicidad personalizada.</li>
+            </ul>
+
+            <h2>Control de cookies</h2>
+            <p>Puedes controlar las cookies a través de la configuración de tu navegador. Si prefieres que no se almacenen cookies, puedes desactivarlas en cualquier momento. Sin embargo, ten en cuenta que al hacerlo algunas funcionalidades del sitio pueden no estar disponibles o no funcionar correctamente.</p>
+
+            <h2>Aceptación de nuestra política</h2>
+            <p>Al continuar navegando en nuestro sitio web, aceptas el uso de cookies de acuerdo con esta política. Si no estás de acuerdo con el uso de cookies, puedes cambiar la configuración en tu navegador o abandonar el sitio web.</p>
+
+            <h2>Más información</h2>
+            <p>Para obtener más información sobre el uso de cookies y cómo gestionarlas, puedes visitar los siguientes enlaces:</p>
+            <ul>
+                <li><a href="/privacy">Política de Privacidad</a></li>
+                <li><a href="/contact-page">Contáctanos</a></li>
+            </ul>
+        </div>
+    </section>
+</main>
+{% endblock %}

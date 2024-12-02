@@ -12,7 +12,7 @@
 {% block content %}
 <main>
     <section class="how-it-works-section py-5">
-        <div class="container">
+        <div class="container" style="padding-top: 7rem;">
             <!-- Título de la Sección -->
             <div class="row mb-5 text-center">
                 <div class="col-12">
@@ -58,10 +58,22 @@
                 </div>
             </div>
 
+            <!-- Sección de Video -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h3>{{ _('Mira Nuestro Video Explicativo') }}</h3>
+                    <div class="ratio ratio-16x9 mt-4 mx-auto" style="max-width: 800px;">
+                        <iframe src="https://www.youtube.com/embed/TU_VIDEO_ID" 
+                               title="Video explicativo"
+                               allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
             <!-- Público Objetivo -->
             <div class="row mt-5">
                 <div class="col-12 text-center">
-                    <h3 class="mb-4">{{ _('Público Objetivo') }}</h3>
+                    <h3 class="mb-4">{{ _('Casos de uso') }}</h3>
                     <p></p>
                 </div>
             </div>
@@ -95,7 +107,7 @@
                         <small>{{ _('Diseñadora Gráfica') }}</small>
                     </div>
                 </div>
-                <div class="col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-md-6 mb-2" data-aos="fade-up" data-aos-delay="100">
                     <div class="testimonial p-4 shadow rounded">
                         <p class="mb-3">"Implementar las tarjetas NFC en nuestro negocio ha mejorado significativamente la experiencia de nuestros clientes, permitiéndoles acceder fácilmente a nuestras ofertas y servicios."</p>
                         <h5 class="mb-0">- Carlos Ruiz</h5>
@@ -105,7 +117,7 @@
             </div>
 
             <!-- Llamado a la Acción -->
-            <div class="row mt-5">
+            <div class="row mt-2">
                 <div class="col-12 text-center">
                     <a href="{{ url_for('contact_page') }}" class="btn btn-custom btn-lg">{{ _('Contacta con Nosotros') }}</a>
                 </div>

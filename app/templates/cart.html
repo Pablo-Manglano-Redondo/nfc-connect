@@ -6,7 +6,7 @@
 {% block content %}
 <main>
     <section class="cart-section py-5">
-        <div class="container">
+        <div class="container" style="padding-top: 7rem;">
             <div class="row mb-5 text-center">
                 <div class="col-12">
                     <h2>{{ _('Tu Carrito de Compras') }}</h2>
@@ -26,9 +26,9 @@
                                     <div class="card-body">
                                         <h5 class="card-title">{{ item.product.name }}</h5>
                                         <p class="card-text">{{ item.product.description }}</p>
-                                        <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(item.product.price) }}</p>
+                                        <p class="card-text"><strong>{{ _('Precio') }}:</strong> {{ "%.2f"|format(item.product.price) }}€</p>
                                         <p class="card-text"><strong>{{ _('Cantidad') }}:</strong> {{ item.quantity }}</p>
-                                        <p class="card-text"><strong>{{ _('Subtotal') }}:</strong> ${{ "%.2f"|format(item.product.price * item.quantity) }}</p>
+                                        <p class="card-text"><strong>{{ _('Subtotal') }}:</strong> {{ "%.2f"|format(item.product.price * item.quantity) }}€</p>
                                     </div>
                                 </div>
                                 <div class="col-md-2 d-flex align-items-center">
@@ -41,7 +41,7 @@
                     </div>
                     {% endfor %}
                     <div class="col-md-12 text-end">
-                        <h4>{{ _('Total') }}: ${{ "%.2f"|format(total_price) }}</h4>
+                        <h4>{{ _('Total') }}: {{ "%.2f"|format(total_price) }}€</h4>
                         <a href="{{ url_for('checkout') }}" class="btn btn-custom">{{ _('Proceder al Pago') }}</a>
                     </div>
                 {% else %}

@@ -26,11 +26,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('list_products') }}">Productos</a>
                     </li>
-                    <!-- Agrega más enlaces de administración según sea necesario -->
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <form action="{{ url_for('logout') }}" method="POST">
+                        <form action="{{ url_for('logout') }}" method="POST" class="d-flex">
                             {{ logout_form.hidden_tag() }}
                             <button type="submit" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
                         </form>

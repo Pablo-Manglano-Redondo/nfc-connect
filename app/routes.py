@@ -23,7 +23,7 @@ from app.models import (
     User, Product, UserLink
 )
 from app.forms import (
-    ContactForm, CustomizeForm, NewsletterForm, ProductForm,
+    ContactForm, CustomizeForm, DeleteForm, NewsletterForm, ProductForm,
     RegistrationForm, LoginForm, LogoutForm, DeleteAccountForm,
     UserLinkForm, AddToCartForm
 )
@@ -85,10 +85,15 @@ def store(lang_code=None):
 def how_it_works(lang_code=None):
     return render_template('how_it_works.html')
 
+@app.route('/cookies')
+@app.route('/<lang_code>/cookies')
+def cookies(lang_code=None):
+    return render_template('cookies.html')
+
 @app.route('/privacy')
 @app.route('/<lang_code>/privacy')
 def privacy(lang_code=None):
-    return render_template('privacy_policy.html')
+    return render_template('privacy.html')
 
 @app.route('/servicios/<service_slug>')
 def service_detail(service_slug):
@@ -266,12 +271,13 @@ def checkout():
 # FUNCIONALIDAD: PRODUCTOS
 # -------------------------------------------------------------------
 
-@app.route('/admin/productos', methods=['GET'])
+@app.route('/admin', methods=['GET'])
 @login_required
 @admin_required
 def list_products():
     products = Product.query.all()
-    return render_template('admin/list_products.html', products=products)
+    delete_form = DeleteForm()
+    return render_template('admin/list_products.html', products=products, delete_form=delete_form)
 
 @app.route('/producto/<int:product_id>')
 def product_detail(product_id):
@@ -621,7 +627,6 @@ def add_link_ajax():
             title=form.title.data,
             url=form.url.data,
             icon=form.icon.data,
-            description=form.description.data,
             owner=current_user
         )
         db.session.add(link)
@@ -629,7 +634,7 @@ def add_link_ajax():
         return jsonify({'success': True}), 200
     else:
         return jsonify({'success': False, 'errors': form.errors}), 400
-
+    
 @app.route('/dashboard/edit_link_ajax', methods=['POST'])
 @login_required
 def edit_link_ajax():
@@ -642,7 +647,6 @@ def edit_link_ajax():
         link.title = form.title.data
         link.url = form.url.data
         link.icon = form.icon.data
-        link.description = form.description.data
         db.session.commit()
         return jsonify({'success': True}), 200
     else:

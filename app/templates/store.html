@@ -7,7 +7,7 @@
 {% block content %}
 <main>
     <section class="store-section py-5">
-        <div class="container">
+        <div class="container" style="padding-top: 7rem;">
             <div class="row mb-5 text-center">
                 <div class="col-12">
                     <h2>{{ _('Nuestra Tienda') }}</h2>
@@ -35,7 +35,7 @@
                                 {% endfor %}
                                 {% endif %}
                             </ul>
-                            <p class="card-text"><strong>{{ _('Precio') }}:</strong> ${{ "%.2f"|format(product.price) }}</p>
+                            <p class="card-text"><strong>{{ _('Precio') }}:</strong> {{ "%.2f"|format(product.price) }}€</p>
                             <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mt-auto">
                                 {{ add_to_cart_form.hidden_tag() }}
                                 <div class="text-center">

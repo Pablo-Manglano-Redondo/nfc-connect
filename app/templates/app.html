@@ -1,3 +1,5 @@
+<!-- templates/app.html -->
+
 <!doctype html>
 <html class="h-100" lang="{{ g.lang_code }}">
 
@@ -6,8 +8,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <meta name="description" content="A well made and handcrafted Bootstrap 5 template">
     
-    <!-- Enlace al Archivo CSS Personalizado -->
+    <!-- Enlace a Bootstrap CSS (asegúrate de tenerlo primero) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Enlaces a FontAwesome y Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Enlaces a tus archivos CSS personalizados (después de Bootstrap) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     <!-- Iconos y Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/apple-touch-icon.png') }}">
@@ -16,17 +26,8 @@
     <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='img/logo-web.jpg') }}">
     <meta name="HandheldFriendly" content="true">
 
-    <!-- Bootstrap Icons CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <!-- FontAwesome para Iconos (Solo una versión) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    
-    <!-- Enlace al Archivo CSS Personalizado -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     <!-- Título de la Página -->
     <title>{% block title %}NFC Connect{% endblock %}</title>
@@ -36,7 +37,11 @@
     {% endblock %}
 </head>
 
-<body class="bg-white text-dark mt-0 d-flex flex-column min-vh-100" data-bs-spy="scroll" data-bs-target="#navScroll">
+<body class="bg-white text-dark mt-0 d-flex flex-column min-vh-100 {% block body_class %}{% endblock %}" data-bs-spy="scroll" data-bs-target="#navScroll" style="zoom: 90%;">
+
+    <!-- Bloque para Variables del Navbar -->
+    {% block navbar_variables %}
+    {% endblock %}
 
     <!-- Navbar -->
     {% include 'layout/navbar.html' %}
@@ -47,7 +52,7 @@
         <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
             {% for category, message in messages %}
                 <div class="toast show animate__animated animate__fadeIn" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-                    <div class="toast-header bg-{{ category }} text-white">
+                    <div class="toast-header bg-{{ category }} text-dark">
                         {% if category == 'success' %}
                             <i class="bi bi-check-circle-fill me-2"></i>
                         {% elif category == 'danger' %}
@@ -58,7 +63,7 @@
                             <i class="bi bi-info-circle-fill me-2"></i>
                         {% endif %}
                         <strong class="me-auto">Notificación</strong>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                     <div class="toast-body">
                         {{ message }}
@@ -81,7 +86,7 @@
     {% endblock %}
     
     <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/aos.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <!-- Swiper JS -->
@@ -107,44 +112,60 @@
             else { remove_class_on_scroll(); }
         })
     </script>
-         <!-- Script para Consentimiento de Cookies -->
-         <script>
-          document.addEventListener('DOMContentLoaded', function() {
-              if (!getCookie('cookiesAccepted')) {
-                  document.getElementById('cookieConsent').style.display = 'block';
-              }
+    
+    <!-- Script para Consentimiento de Cookies -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si ya existe la cookie
+            if (getCookie('cookiesAccepted') === null) {
+                document.getElementById('cookieConsent').style.display = 'block';
+            } else {
+                // Si la cookie existe, no mostrar el banner
+                document.getElementById('cookieConsent').style.display = 'none';
+            }
 
-              const acceptBtn = document.getElementById('acceptCookies');
-              if (acceptBtn) {
-                  acceptBtn.addEventListener('click', function() {
-                      setCookie('cookiesAccepted', 'true', 365);
-                      document.getElementById('cookieConsent').style.display = 'none';
-                  });
-              }
-          });
+            // Manejo de aceptación de cookies
+            const acceptBtn = document.getElementById('acceptCookies');
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function() {
+                    setCookie('cookiesAccepted', 'true', 365); // Acepta cookies
+                    document.getElementById('cookieConsent').style.display = 'none'; // Oculta el banner
+                });
+            }
 
-          function setCookie(name, value, days) {
-              var expires = "";
-              if (days) {
-                  var date = new Date();
-                  date.setTime(date.getTime() + (days*24*60*60*1000));
-                  expires = "; expires=" + date.toUTCString();
-              }
-              document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-          }
+            // Manejo de rechazo de cookies
+            const rejectBtn = document.getElementById('rejectCookies');
+            if (rejectBtn) {
+                rejectBtn.addEventListener('click', function() {
+                    setCookie('cookiesAccepted', 'false', 365); // Rechaza cookies
+                    document.getElementById('cookieConsent').style.display = 'none'; // Oculta el banner
+                });
+            }
+        });
 
-          function getCookie(name) {
-              var nameEQ = name + "=";
-              var ca = document.cookie.split(';');
-              for(var i=0;i < ca.length;i++) {
-                  var c = ca[i];
-                  while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                  if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-              }
-              return null;
-          }
-      </script>
+        // Función para establecer una cookie
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000)); // Fecha de expiración
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/"; // Establece la cookie
+        }
 
+        // Función para obtener el valor de una cookie
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length); // Elimina los espacios en blanco
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length); // Devuelve el valor de la cookie
+            }
+            return null;
+        }
+    </script>
     <!-- Page-specific scripts -->
     {% block scripts %}
     {% endblock %}
