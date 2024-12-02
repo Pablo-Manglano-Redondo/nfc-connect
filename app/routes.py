@@ -15,6 +15,7 @@ from flask_login import (
 )
 from flask_wtf.csrf import CSRFProtect
 from flask_dance.contrib.google import google
+from sqlalchemy import func
 from werkzeug.utils import secure_filename
 
 from app import app, mail, db
@@ -490,6 +491,24 @@ def dashboard():
     clicks_per_link = {
         'labels': [link.title for link in links],
         'data': [link.clicks for link in links]
+    }
+
+    today = datetime.now(datetime.utcnow().astimezone().tzinfo).date()
+    # Get analytics data for today
+    today_clicks_count = (
+        db.session.query(ClickLog)
+        .join(UserLink)
+        .filter(
+            UserLink.owner_id == current_user.id,
+            func.date(ClickLog.timestamp) == today
+        ).count()
+    )
+
+    analytics_data = {
+        'total_clicks': sum(link.clicks for link in links),
+        'today_clicks': today_clicks_count,
+        'active_links': len([link for link in links if link.clicks > 0]),
+        'daily_average': sum(link.clicks for link in links) / len(links) if links else 0
     }
 
     # Enlaces más populares (top 5)
