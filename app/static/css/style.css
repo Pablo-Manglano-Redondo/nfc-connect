@@ -44,6 +44,29 @@ main {
 }
 
 /* ===================================================
+    Botones Customizados Adicionales
+
+/* Twitter */
+.fab.fa-twitter {
+    color: #1DA1F2; /* Azul de Twitter */
+}
+
+/* Facebook */
+.fab.fa-facebook {
+    color: #1877F2; /* Azul de Facebook */
+}
+
+/* Instagram */
+.fab.fa-instagram {
+    color: #E1306C; /* Magenta de Instagram */
+}
+
+/* LinkedIn */
+.fab.fa-linkedin {
+    color: #0077B5; /* Azul de LinkedIn */
+}
+
+/* ===================================================
     Botones Customizados Adicionales para Tamaños Grandes
 =================================================== */
 .btn-custom.btn-lg {

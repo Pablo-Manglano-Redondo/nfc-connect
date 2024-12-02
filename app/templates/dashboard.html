@@ -1,5 +1,5 @@
 <!-- templates/dashboard.html -->
- 
+
 {% extends "app.html" %}
 
 {% set navbar_size = 'small' %}
@@ -7,10 +7,26 @@
 {% block title %}
     {{ super() }} - Dashboard de {{ current_user.username }}
 {% endblock %}
+</div>
+{% block head %}
+    <!-- Incluir la meta tag para el token CSRF -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{ super() }}
+{% endblock %}
 
 {% block content %}
-<!-- Contenedor Principal -->
-<div class="container-fluid d-flex flex-grow-1" style="padding-top: 3rem;">
+{% if not current_user.is_authorized %}
+    <div class="container mt-5">
+        <div class="alert alert-danger text-center" role="alert">
+            <h4 class="alert-heading">Acceso No Autorizado</h4>
+            <p>Tu cuenta no está autorizada para acceder a esta página.</p>
+            <hr>
+            <p class="mb-0">Por favor, contacta con el administrador para solicitar autorización.</p>
+        </div>
+    </div>
+{% else %}
+    <!-- Contenedor Principal -->
+    <div class="container-fluid d-flex flex-grow-1" style="padding-top: 3rem;">
     <div class="row flex-fill">
         <!-- Sidebar Izquierdo -->
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse h-100" style="padding-top: 5rem;">
@@ -41,7 +57,7 @@
                     </li>
                     <hr>
                     <li class="nav-item mt-2">
-                        <button class="btn btn-sm btn-dashboard mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
+                        <button class="btn btn-sm btn-dashboard w-100 mb-2" data-bs-toggle="modal" data-bs-target="#customizeModal">
                             <i class="fas fa-paint-brush me-2"></i>
                             Personalizar Fondo
                         </button>
@@ -53,7 +69,7 @@
                         </button>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-sm btn-dashboard mb-3">
+                        <a href="{{ url_for('user_links_page', username=current_user.username) }}" class="btn btn-sm btn-dashboard w-100 mb-3">
                             <i class="fas fa-eye me-2"></i>
                             Ver Perfil Público
                         </a>
@@ -63,16 +79,16 @@
                             <span>Compartir Perfil:</span>
                             <div class="d-flex justify-content-center mt-2">
                                 <a href="https://facebook.com/sharer/sharer.php?u={{ url_for('user_links_page', username=current_user.username, _external=True) }}" target="_blank" class="btn btn-sm btn-facebook me-2">
-                                    <i class="fab fa-facebook-f"></i>
+                                    <i class="fa-brands fa-square-facebook"></i>
                                 </a>
                                 <a href="https://twitter.com/intent/tweet?url={{ url_for('user_links_page', username=current_user.username, _external=True) }}&text=Visita mi Linktree!" target="_blank" class="btn btn-sm btn-twitter me-2">
-                                    <i class="fab fa-twitter"></i>
+                                    <i class="fa-brands fa-twitter"></i>
                                 </a>
                                 <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ url_for('user_links_page', username=current_user.username, _external=True) }}" target="_blank" class="btn btn-sm btn-linkedin me-2">
-                                    <i class="fab fa-linkedin-in"></i>
+                                    <i class="fa-brands fa-linkedin-in"></i>
                                 </a>
                                 <a href="https://www.instagram.com/sharer.php?u={{ url_for('user_links_page', username=current_user.username, _external=True) }}" target="_blank" class="btn btn-sm btn-instagram">
-                                    <i class="fab fa-instagram"></i>
+                                    <i class="fa-brands fa-square-instagram"></i>
                                 </a>
                             </div>
                         </div>
@@ -203,234 +219,251 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-<!-- Modales -->
+        <!-- Modales -->
 
-<!-- Modal para Agregar Enlace -->
-<div class="modal" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="addLinkForm" method="POST" action="{{ url_for('add_link_ajax') }}" class="needs-validation" novalidate>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addLinkModalLabel">Agregar Nuevo Enlace</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Campos del formulario con Validación en Tiempo Real -->
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Título <span class="text-danger">*</span></label>
-                        <input type="text" name="title" id="title" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Por favor, ingresa un título.
+        <!-- Modal para Agregar Enlace -->
+        <div class="modal fade" id="addLinkModal" tabindex="-1" aria-labelledby="addLinkModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="addLinkForm" method="POST" action="{{ url_for('add_link_ajax') }}" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addLinkModalLabel">Agregar Nuevo Enlace</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="url" class="form-label">URL <span class="text-danger">*</span></label>
-                        <input type="url" name="url" id="url" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Por favor, ingresa una URL válida.
-                        </div>
-                    </div>
-                    <!-- Selección de Icono -->
-                    <div class="mb-3">
-                        <label class="form-label">Selecciona un Icono</label>
-                        <div class="row" id="iconPicker">
-                            <!-- Iconos de FontAwesome -->
-                            {% for icon in [
-                                'fab fa-youtube', 'fab fa-twitter', 'fab fa-facebook', 'fab fa-instagram',
-                                'fab fa-linkedin', 'fab fa-snapchat', 'fab fa-whatsapp', 'fab fa-pinterest',
-                                'fab fa-reddit', 'fab fa-tiktok', 'fab fa-spotify', 'fab fa-discord',
-                                'fab fa-github', 'fab fa-stack-overflow', 'fab fa-apple', 'fab fa-android',
-                                'fab fa-aws', 'fab fa-dropbox', 'fab fa-paypal', 'fab fa-soundcloud'
-                            ] %}
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
-                                    <i class="{{ icon }} fa-2x"></i>
-                                </button>
+                        <div class="modal-body">
+                            <!-- Campos del formulario con Validación en Tiempo Real -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Título <span class="text-danger">*</span></label>
+                                <input type="text" name="title" id="title" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa un título.
+                                </div>
                             </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-custom">Agregar Enlace</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Editar Enlace -->
-<div class="modal fade" id="editLinkModal" tabindex="-1" aria-labelledby="editLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Tamaño adecuado para la selección de iconos -->
-        <div class="modal-content">
-            <form id="editLinkForm" method="POST" action="{{ url_for('edit_link_ajax') }}" class="needs-validation" novalidate>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="link_id" id="edit_link_id">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editLinkModalLabel">Editar Enlace</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Campos del formulario con Validación en Tiempo Real -->
-                    <div class="mb-3">
-                        <label for="edit_title" class="form-label">Título <span class="text-danger">*</span></label>
-                        <input type="text" name="title" id="edit_title" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Por favor, ingresa un título.
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_url" class="form-label">URL <span class="text-danger">*</span></label>
-                        <input type="url" name="url" id="edit_url" class="form-control" required>
-                        <div class="invalid-feedback">
-                            Por favor, ingresa una URL válida.
-                        </div>
-                    </div>
-                    <!-- Selección de Icono -->
-                    <div class="mb-3">
-                        <label class="form-label">Selecciona un Icono</label>
-                        <div class="row" id="editIconPicker">
-                            <!-- Iconos de FontAwesome -->
-                            {% for icon in [
-                                'fab fa-youtube', 'fab fa-twitter', 'fab fa-facebook', 'fab fa-instagram',
-                                'fab fa-linkedin', 'fab fa-snapchat', 'fab fa-whatsapp', 'fab fa-pinterest',
-                                'fab fa-reddit', 'fab fa-tiktok', 'fab fa-spotify', 'fab fa-discord',
-                                'fab fa-github', 'fab fa-stack-overflow', 'fab fa-apple', 'fab fa-android',
-                                'fab fa-aws', 'fab fa-dropbox', 'fab fa-paypal', 'fab fa-soundcloud'
-                            ] %}
-                            <div class="col-3 col-sm-2 mb-3">
-                                <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
-                                    <i class="{{ icon }} fa-2x"></i>
-                                </button>
+                            <div class="mb-3">
+                                <label for="url" class="form-label">URL <span class="text-danger">*</span></label>
+                                <input type="url" name="url" id="url" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa una URL válida.
+                                </div>
                             </div>
-                            {% endfor %}
+                            <!-- Selección de Icono -->
+                            <div class="mb-3">
+                                <label class="form-label">Selecciona un Icono <span class="text-danger">*</span></label>
+                                <div class="row" id="iconPicker">
+                                    <!-- Iconos de FontAwesome -->
+                                    {% for icon in [
+                                        'fab fa-youtube', 'fab fa-twitter', 'fab fa-facebook', 'fab fa-instagram',
+                                        'fab fa-linkedin', 'fab fa-snapchat', 'fab fa-whatsapp', 'fab fa-pinterest',
+                                        'fab fa-reddit', 'fab fa-tiktok', 'fab fa-spotify', 'fab fa-discord',
+                                        'fab fa-github', 'fab fa-stack-overflow', 'fab fa-apple', 'fab fa-android',
+                                        'fab fa-aws', 'fab fa-dropbox', 'fab fa-paypal', 'fab fa-soundcloud'
+                                    ] %}
+                                    <div class="col-3 col-sm-2 mb-3">
+                                        <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
+                                            <i class="{{ icon }} fa-2x"></i>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- Campo Oculto para el Icono Seleccionado -->
+                                <input type="hidden" name="icon" id="selectedIcon" value="" required>
+                            </div>
                         </div>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-custom">Agregar Enlace</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-custom">Guardar Cambios</button>
+            </div>
+        </div>
+
+        <!-- Modal para Editar Enlace -->
+        <div class="modal fade" id="editLinkModal" tabindex="-1" aria-labelledby="editLinkModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg"> <!-- Tamaño adecuado para la selección de iconos -->
+                <div class="modal-content">
+                    <form id="editLinkForm" method="POST" action="{{ url_for('edit_link_ajax') }}" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="link_id" id="edit_link_id">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editLinkModalLabel">Editar Enlace</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Campos del formulario con Validación en Tiempo Real -->
+                            <div class="mb-3">
+                                <label for="edit_title" class="form-label">Título <span class="text-danger">*</span></label>
+                                <input type="text" name="title" id="edit_title" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa un título.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="edit_url" class="form-label">URL <span class="text-danger">*</span></label>
+                                <input type="url" name="url" id="edit_url" class="form-control" required>
+                                <div class="invalid-feedback">
+                                    Por favor, ingresa una URL válida.
+                                </div>
+                            </div>
+                            <!-- Selección de Icono -->
+                            <div class="mb-3">
+                                <label class="form-label">Selecciona un Icono <span class="text-danger">*</span></label>
+                                <div class="row" id="editIconPicker">
+                                    <!-- Iconos de FontAwesome -->
+                                    {% for icon in [
+                                        'fab fa-youtube', 'fab fa-twitter', 'fab fa-facebook', 'fab fa-instagram',
+                                        'fab fa-linkedin', 'fab fa-snapchat', 'fab fa-whatsapp', 'fab fa-pinterest',
+                                        'fab fa-reddit', 'fab fa-tiktok', 'fab fa-spotify', 'fab fa-discord',
+                                        'fab fa-github', 'fab fa-stack-overflow', 'fab fa-apple', 'fab fa-android',
+                                        'fab fa-aws', 'fab fa-dropbox', 'fab fa-paypal', 'fab fa-soundcloud'
+                                    ] %}
+                                    <div class="col-3 col-sm-2 mb-3">
+                                        <button type="button" class="btn btn-light icon-btn" data-icon="{{ icon }}" title="{{ icon.split(' ')[1].replace('-', ' ') | capitalize }}">
+                                            <i class="{{ icon }} fa-2x"></i>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <!-- Campo Oculto para el Icono Seleccionado -->
+                                <input type="hidden" name="icon" id="edit_selectedIcon" value="" required>
+                                <!-- Mostrar Icono Seleccionado -->
+                                <div id="edit_selectedIconDisplay" class="mt-3">
+                                    <span class="me-2">Icono Seleccionado:</span>
+                                    <i id="edit_displayedIcon" class=""></i>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecciona un icono.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-custom">Guardar Cambios</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+        </div>
+
+        <!-- Modal para Cambiar Foto de Perfil -->
+        <div class="modal fade" id="changeProfilePicModal" tabindex="-1" aria-labelledby="changeProfilePicModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="changeProfilePicForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="changeProfilePicModalLabel">Cambiar Foto de Perfil</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Campo para subir nueva foto de perfil -->
+                            <div class="mb-3">
+                                <label for="profile_image" class="form-label">Nueva Foto de Perfil</label>
+                                <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*" required>
+                                {% if current_user.profile_image %}
+                                    <small class="form-text text-muted">Foto actual: {{ current_user.profile_image }}</small>
+                                {% endif %}
+                                <div class="invalid-feedback">
+                                    Por favor, sube una imagen válida.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Cambiar Foto</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Personalizar Fondo -->
+        <div class="modal fade" id="customizeModal" tabindex="-1" aria-labelledby="customizeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="customizeForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="customizeModalLabel">Personalizar Fondo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Campo para subir Imagen de Fondo -->
+                            <div class="mb-3">
+                                <label for="background_image" class="form-label">Imagen de Fondo</label>
+                                <input type="file" name="background_image" id="background_image" class="form-control" accept="image/*">
+                                {% if current_user.background_image %}
+                                    <small class="form-text text-muted">Imagen actual: {{ current_user.background_image }}</small>
+                                {% endif %}
+                            </div>
+                            <!-- Campo para subir Video de Fondo -->
+                            <div class="mb-3">
+                                <label for="background_video" class="form-label">Video de Fondo</label>
+                                <input type="file" name="background_video" id="background_video" class="form-control" accept="video/*">
+                                {% if current_user.background_video %}
+                                    <small class="form-text text-muted">Video actual: {{ current_user.background_video }}</small>
+                                {% endif %}
+                            </div>
+                            <!-- Opciones para elegir el tipo de fondo -->
+                            <div class="mb-3">
+                                <label for="background_type" class="form-label">Tipo de Fondo</label>
+                                <select name="background_type" id="background_type" class="form-select" required>
+                                    <option value="" disabled selected>Selecciona el tipo de fondo</option>
+                                    <option value="image" {% if current_user.background_type == 'image' %}selected{% endif %}>Imagen</option>
+                                    <option value="video" {% if current_user.background_type == 'video' %}selected{% endif %}>Video</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Por favor, selecciona el tipo de fondo.
+                                </div>
+                            </div>
+                            <!-- Personalización de colores de los enlaces -->
+                            <div class="mb-3">
+                                <label for="link_color" class="form-label">Color de los Enlaces</label>
+                                <input type="color" name="link_color" id="link_color" class="form-control form-control-color" value="{{ current_user.link_color or '#e94e1b' }}" title="Selecciona un color para los enlaces">
+                                <small class="form-text text-muted">Elige un color para los botones de tus enlaces.</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Editar Biografía -->
+        <div class="modal fade" id="editBioModal" tabindex="-1" aria-labelledby="editBioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="editBioForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editBioModalLabel">Editar Biografía</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Campo para editar la biografía -->
+                            <div class="mb-3">
+                                <label for="bio" class="form-label">Biografía</label>
+                                <textarea name="bio" id="bio" class="form-control" rows="4" placeholder="Escribe tu biografía aquí...">{{ current_user.bio }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Guardar Biografía</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal para Cambiar Foto de Perfil -->
-<div class="modal fade" id="changeProfilePicModal" tabindex="-1" aria-labelledby="changeProfilePicModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="changeProfilePicForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changeProfilePicModalLabel">Cambiar Foto de Perfil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Campo para subir nueva foto de perfil -->
-                    <div class="mb-3">
-                        <label for="profile_image" class="form-label">Nueva Foto de Perfil</label>
-                        <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*" required>
-                        {% if current_user.profile_image %}
-                            <small class="form-text text-muted">Foto actual: {{ current_user.profile_image }}</small>
-                        {% endif %}
-                        <div class="invalid-feedback">
-                            Por favor, sube una imagen válida.
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Cambiar Foto</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Personalizar Fondo -->
-<div class="modal fade" id="customizeModal" tabindex="-1" aria-labelledby="customizeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="customizeForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="customizeModalLabel">Personalizar Fondo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Campo para subir Imagen de Fondo -->
-                    <div class="mb-3">
-                        <label for="background_image" class="form-label">Imagen de Fondo</label>
-                        <input type="file" name="background_image" id="background_image" class="form-control" accept="image/*">
-                        {% if current_user.background_image %}
-                            <small class="form-text text-muted">Imagen actual: {{ current_user.background_image }}</small>
-                        {% endif %}
-                    </div>
-                    <!-- Campo para subir Video de Fondo -->
-                    <div class="mb-3">
-                        <label for="background_video" class="form-label">Video de Fondo</label>
-                        <input type="file" name="background_video" id="background_video" class="form-control" accept="video/*">
-                        {% if current_user.background_video %}
-                            <small class="form-text text-muted">Video actual: {{ current_user.background_video }}</small>
-                        {% endif %}
-                    </div>
-                    <!-- Opciones para elegir el tipo de fondo -->
-                    <div class="mb-3">
-                        <label for="background_type" class="form-label">Tipo de Fondo</label>
-                        <select name="background_type" id="background_type" class="form-select" required>
-                            <option value="" disabled selected>Selecciona el tipo de fondo</option>
-                            <option value="image" {% if current_user.background_type == 'image' %}selected{% endif %}>Imagen</option>
-                            <option value="video" {% if current_user.background_type == 'video' %}selected{% endif %}>Video</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            Por favor, selecciona el tipo de fondo.
-                        </div>
-                    </div>
-                    <!-- Personalización de colores de los enlaces -->
-                    <div class="mb-3">
-                        <label for="link_color" class="form-label">Color de los Enlaces</label>
-                        <input type="color" name="link_color" id="link_color" class="form-control form-control-color" value="{{ current_user.link_color or '#e94e1b' }}" title="Selecciona un color para los enlaces">
-                        <small class="form-text text-muted">Elige un color para los botones de tus enlaces.</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Editar Biografía -->
-<div class="modal fade" id="editBioModal" tabindex="-1" aria-labelledby="editBioModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="editBioForm" method="POST" enctype="multipart/form-data" action="{{ url_for('customize') }}" class="needs-validation" novalidate>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editBioModalLabel">Editar Biografía</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Campo para editar la biografía -->
-                    <div class="mb-3">
-                        <label for="bio" class="form-label">Biografía</label>
-                        <textarea name="bio" id="bio" class="form-control" rows="4" placeholder="Escribe tu biografía aquí...">{{ current_user.bio }}</textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Biografía</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{% endif %}
 
 <!-- Incluir Bootstrap JS, SortableJS y Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -439,6 +472,34 @@
 
 <!-- Scripts Personalizados Mejorados -->
 <script>
+    // Función global para eliminar enlaces
+    function confirmDelete(linkId) {
+        if(confirm('¿Estás seguro de eliminar este enlace?')) {
+            var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            fetch("{{ url_for('delete_link_ajax') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrf_token
+                },
+                body: JSON.stringify({link_id: linkId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    location.reload();
+                } else {
+                    alert('Error al eliminar el enlace.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el enlace.');
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         // Definir las URLs de fondo
         var backgroundImageURL = "{{ url_for('static', filename='img/backgrounds/' ~ current_user.background_image) if current_user.background_image else '' }}";
@@ -458,7 +519,7 @@
                 var order = Array.from(document.querySelectorAll('#sortable .list-group-item')).map(function(item) {
                     return item.getAttribute('data-id');
                 });
-                var csrf_token = document.querySelector('input[name="csrf_token"]').value;
+                var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 // Enviar el nuevo orden al servidor
                 fetch("{{ url_for('update_link_order') }}", {
@@ -488,7 +549,7 @@
 
         // Función para aplicar el color de los enlaces
         function applyLinkColor(color) {
-            var linkButtons = document.querySelectorAll('.btn-success');
+            var linkButtons = document.querySelectorAll('.btn-success'); 
             linkButtons.forEach(function(button) {
                 button.style.backgroundColor = color;
                 button.style.borderColor = color;
@@ -505,7 +566,7 @@
                 return;
             }
             var formData = new FormData(this);
-            var csrf_token = form.querySelector('input[name="csrf_token"]').value;
+            var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             fetch("{{ url_for('add_link_ajax') }}", {
                 method: 'POST',
@@ -542,7 +603,7 @@
                 return;
             }
             var formData = new FormData(this);
-            var csrf_token = form.querySelector('input[name="csrf_token"]').value;
+            var csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             fetch("{{ url_for('edit_link_ajax') }}", {
                 method: 'POST',
@@ -568,34 +629,6 @@
                 showToast('Error al actualizar el enlace.', 'danger');
             });
         });
-
-        // Confirmar eliminación de enlace
-        function confirmDelete(linkId) {
-            if(confirm('¿Estás seguro de eliminar este enlace?')) {
-                var csrf_token = document.querySelector('input[name="csrf_token"]').value;
-                fetch("{{ url_for('delete_link_ajax') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrf_token
-                    },
-                    body: JSON.stringify({link_id: linkId})
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.success) {
-                        // Recargar la página o actualizar la lista de enlaces
-                        location.reload();
-                    } else {
-                        showToast('Error al eliminar el enlace.', 'danger');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showToast('Error al eliminar el enlace.', 'danger');
-                });
-            }
-        }
 
         // Función para mostrar notificaciones con Animaciones Suaves
         function showToast(message, type) {
@@ -710,148 +743,148 @@
         initializeCharts({{ analytics_data|tojson if analytics_data else 'null' }});
         updatePhonePreview();
 
-    // Función para inicializar los gráficos de Analytics
-    function initializeCharts(data) {
-        if(!data) {
-            console.error('No se recibieron datos de analytics.');
-            return;
-        }
+        // Función para inicializar los gráficos de Analytics
+        function initializeCharts(data) {
+            if(!data) {
+                console.error('No se recibieron datos de analytics.');
+                return;
+            }
 
-        // Gráfico de Clics por Enlace Mejorado
-        var ctxClicks = document.getElementById('clicksChart').getContext('2d');
-        var clicksChart = new Chart(ctxClicks, {
-            type: 'bar',
-            data: {
-                labels: data.clicks_per_link.labels,
-                datasets: [{
-                    label: 'Clics',
-                    data: data.clicks_per_link.data,
-                    backgroundColor: 'rgba(46, 204, 113, 0.6)',
-                    borderColor: 'rgba(46, 204, 113, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                    }
+            // Gráfico de Clics por Enlace Mejorado
+            var ctxClicks = document.getElementById('clicksChart').getContext('2d');
+            var clicksChart = new Chart(ctxClicks, {
+                type: 'bar',
+                data: {
+                    labels: data.clicks_per_link.labels,
+                    datasets: [{
+                        label: 'Clics',
+                        data: data.clicks_per_link.data,
+                        backgroundColor: 'rgba(46, 204, 113, 0.6)',
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        borderWidth: 1
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision:0
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        title: {
-                            display: true,
-                            text: 'Número de Clics'
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
                         }
                     },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Enlaces'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision:0
+                            },
+                            title: {
+                                display: true,
+                                text: 'Número de Clics'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Enlaces'
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        // Gráfico de Enlaces Más Populares Mejorado
-        var ctxPopular = document.getElementById('popularLinksChart').getContext('2d');
-        var popularLinksChart = new Chart(ctxPopular, {
-            type: 'doughnut',
-            data: {
-                labels: data.popular_links.labels,
-                datasets: [{
-                    data: data.popular_links.data,
-                    backgroundColor: [
-                        'rgba(52, 152, 219, 0.6)',
-                        'rgba(231, 76, 60, 0.6)',
-                        'rgba(46, 204, 113, 0.6)',
-                        'rgba(155, 89, 182, 0.6)',
-                        'rgba(241, 196, 15, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(52, 152, 219, 1)',
-                        'rgba(231, 76, 60, 1)',
-                        'rgba(46, 204, 113, 1)',
-                        'rgba(155, 89, 182, 1)',
-                        'rgba(241, 196, 15, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: {
-                        enabled: true,
-                        mode: 'nearest',
-                        intersect: false,
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-
-        // Nueva Gráfica de Tendencia de Clics a lo Largo del Tiempo con Líneas Individuales por Enlace
-        var ctxTrend = document.getElementById('trendClicksChart').getContext('2d');
-        var trendClicksChart = new Chart(ctxTrend, {
-            type: 'line',
-            data: {
-                labels: data.click_trend.labels, // Fechas o periodos
-                datasets: data.click_trend.datasets.map(function(dataset) {
-                    return {
-                        label: dataset.title,
-                        data: dataset.data,
-                        fill: false,
-                        backgroundColor: dataset.color,
-                        borderColor: dataset.color,
-                        tension: 0.4
-                    };
-                })
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                    }
+            // Gráfico de Enlaces Más Populares Mejorado
+            var ctxPopular = document.getElementById('popularLinksChart').getContext('2d');
+            var popularLinksChart = new Chart(ctxPopular, {
+                type: 'doughnut',
+                data: {
+                    labels: data.popular_links.labels,
+                    datasets: [{
+                        data: data.popular_links.data,
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.6)',
+                            'rgba(231, 76, 60, 0.6)',
+                            'rgba(46, 204, 113, 0.6)',
+                            'rgba(155, 89, 182, 0.6)',
+                            'rgba(241, 196, 15, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(241, 196, 15, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Número de Clics'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Fecha'
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                            mode: 'nearest',
+                            intersect: false,
+                        },
+                        legend: {
+                            position: 'bottom'
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+
+            // Nueva Gráfica de Tendencia de Clics a lo Largo del Tiempo con Líneas Individuales por Enlace
+            var ctxTrend = document.getElementById('trendClicksChart').getContext('2d');
+            var trendClicksChart = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: data.click_trend.labels, // Fechas o periodos
+                    datasets: data.click_trend.datasets.map(function(dataset) {
+                        return {
+                            label: dataset.title,
+                            data: dataset.data,
+                            fill: false,
+                            backgroundColor: dataset.color,
+                            borderColor: dataset.color,
+                            tension: 0.4
+                        };
+                    })
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Número de Clics'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Fecha'
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         // Función para manejar la selección de icono en los modales
         function setupIconSelectors(pickerId, hiddenInputId, displayIconId) {
@@ -886,13 +919,11 @@
             var linkTitle = button.getAttribute('data-link-title');
             var linkUrl = button.getAttribute('data-link-url');
             var linkIcon = button.getAttribute('data-link-icon');
-            var linkDescription = button.getAttribute('data-link-description');
 
             var modal = this.querySelector('#editLinkForm');
             modal.querySelector('#edit_link_id').value = linkId;
             modal.querySelector('#edit_title').value = linkTitle;
             modal.querySelector('#edit_url').value = linkUrl;
-            modal.querySelector('#edit_description').value = linkDescription;
 
             // Reset icon selection
             var editIconButtons = modal.querySelectorAll('#editIconPicker .icon-btn');
@@ -902,6 +933,11 @@
                 if(selectedBtn){
                     selectedBtn.classList.add('selected');
                 }
+                modal.querySelector('#edit_selectedIcon').value = linkIcon;
+                modal.querySelector('#edit_displayedIcon').className = linkIcon;
+            } else {
+                modal.querySelector('#edit_selectedIcon').value = '';
+                modal.querySelector('#edit_displayedIcon').className = '';
             }
         });
 
@@ -980,13 +1016,13 @@
     }
 
     .sidebar .nav-link:hover {
-        background-color: var(--primary-color);
+        background-color: var(--secondary-color);
         color: #fff !important;
         border-radius: 5px;
     }
 
     .sidebar .nav-link.active {
-        background-color: var(--primary-color);
+        background-color: var(--secondary-color);
         color: #fff !important;
         border-radius: 5px;
     }
@@ -1141,44 +1177,6 @@
         border-color: #28a745;
     }
 
-    /* Estilos para botones de redes sociales */
-    .btn.btn-facebook {
-        background-color: #3b5998;
-        color: #fff;
-    }
-    .btn-facebook:hover {
-        background-color: #2d4373;
-        color: #fff;
-    }
-
-    .btn.btn-twitter {
-        background-color: #1da1f2;
-        color: #fff;
-    }
-    .btn-twitter:hover {
-        background-color: #0d95e8;
-        color: #fff;
-    }
-
-    .btn.btn-linkedin {
-        background-color: #0077b5;
-        color: #fff;
-    }
-    .btn-linkedin:hover {
-        background-color: #005582;
-        color: #fff;
-    }
-
-    .btn.btn-instagram {
-        background-color: #e1306c;
-        color: #fff;
-    }
-    
-    .btn-instagram:hover {
-        background-color: #a9337e;
-        color: #fff;
-    }
-
     /* Responsive Ajustes */
     @media (max-width: 768px) {
         .sidebar {
@@ -1223,29 +1221,78 @@
         white-space: nowrap;
     }
 
+    /* Estilos para botones de redes sociales */
+    /* Botones de redes sociales con gradientes y efectos mejorados */
+    .btn.btn-facebook {
+        background: linear-gradient(45deg, #3b5998, #2d4373);
+        color: #fff;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(59, 89, 152, 0.2);
+    }
+
+    .btn-facebook:hover {
+        background: linear-gradient(45deg, #2d4373, #3b5998);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(59, 89, 152, 0.3);
+    }
+
+    .btn.btn-twitter {
+        background: linear-gradient(45deg, #1DA1F2, #0d95e8);
+        color: #fff;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(29, 161, 242, 0.2);
+    }
+
+    .btn-twitter:hover {
+        background: linear-gradient(45deg, #0d95e8, #1DA1F2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(29, 161, 242, 0.3);
+    }
+
+    .btn.btn-linkedin {
+        background: linear-gradient(45deg, #0077b5, #005582);
+        color: #fff;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 119, 181, 0.2);
+    }
+
+    .btn-linkedin:hover {
+        background: linear-gradient(45deg, #005582, #0077b5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 119, 181, 0.3);
+    }
+
+    .btn.btn-instagram {
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        color: #fff;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 4px rgba(225, 48, 108, 0.2);
+    }
+
+    .btn-instagram:hover {
+        background: linear-gradient(45deg, #bc1888, #cc2366, #dc2743, #e6683c, #f09433);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(225, 48, 108, 0.3);
+    }
+
+    /* Estilo común para todos los botones de redes sociales */
+    .btn.btn-facebook,
+    .btn.btn-twitter,
+    .btn.btn-linkedin,
+    .btn.btn-instagram {
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
     /* YouTube */
     .fab.fa-youtube {
         color: #FF0000; /* Rojo de YouTube */
-    }
-
-    /* Twitter */
-    .fab.fa-twitter {
-        color: #1DA1F2; /* Azul de Twitter */
-    }
-
-    /* Facebook */
-    .fab.fa-facebook {
-        color: #1877F2; /* Azul de Facebook */
-    }
-
-    /* Instagram */
-    .fab.fa-instagram {
-        color: #E1306C; /* Magenta de Instagram */
-    }
-
-    /* LinkedIn */
-    .fab.fa-linkedin {
-        color: #0077B5; /* Azul de LinkedIn */
     }
 
     /* Snapchat */

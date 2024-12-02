@@ -715,7 +715,7 @@ def save_picture(form_picture, folder='profile_pics'):
     random_hex = os.urandom(8).hex()
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/img', picture_fn)
+    picture_path = os.path.join(app.root_path, 'static/img', folder, picture_fn)
     form_picture.save(picture_path)
     return picture_fn
 
@@ -730,23 +730,12 @@ def save_image(form_image, folder='img'):
         return unique_filename
     return 'default_product.jpg'
 
-def save_file(form_file, folder_name):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_file.filename)
-    filename = random_hex + f_ext
-    file_path = os.path.join(current_app.root_path, 'static', folder_name, filename)
-
-    form_file.save(file_path)
-    return filename
-
 def save_background(form_file, folder_name):
     _, f_ext = os.path.splitext(form_file.filename)
     if f_ext.lower() in ['.jpg', '.jpeg', '.png', '.gif']:
         filename = f"{current_user.username}-foto{f_ext}"
     elif f_ext.lower() in ['.mp4', '.mov', '.avi']:
         filename = f"{current_user.username}-video{f_ext}"
-    else:
-        filename = f"{current_user.username}-profile_picture{f_ext}"
     file_path = os.path.join(app.root_path, 'static', folder_name, filename)
 
     form_file.save(file_path)

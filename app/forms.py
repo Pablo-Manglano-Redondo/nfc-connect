@@ -71,7 +71,6 @@ class UserLinkForm(FlaskForm):
     title = StringField('Título del Enlace', validators=[DataRequired(), Length(min=2, max=150)])
     url = URLField('URL del Enlace', validators=[DataRequired(), URL()])
     icon = StringField('Icono (Opcional)', validators=[Optional(), Length(max=50)])
-    description = StringField('Descripción (Opcional)', validators=[Optional(), Length(max=255)])
     submit = SubmitField('Guardar Enlace')
 
 # -------------------------------------------------------------------
@@ -130,7 +129,7 @@ class CustomizeForm(FlaskForm):
         Optional(),
         FileAllowed(['mp4', 'mov', 'avi'], 'Solo se permiten videos.')
     ])
-    background_type = SelectField('Tipo de Fondo', choices=[('image', 'Imagen'), ('video', 'Video')], validators=[DataRequired()])
+    background_type = SelectField('Tipo de Fondo', choices=[('image', 'Imagen'), ('video', 'Video')], validators=[Optional()])
     link_color = StringField('Color de los Enlaces', validators=[Optional()])
     bio = TextAreaField('Biografía', validators=[Optional()])
     profile_image = FileField('Imagen de Perfil', validators=[

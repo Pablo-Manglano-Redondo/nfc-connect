@@ -30,6 +30,7 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.Text, nullable=True)
     date_joined = db.Column(db.DateTime, default=datetime.utcnow)
     is_admin = db.Column(db.Boolean, default=False)
+    is_authorized = db.Column(db.Boolean, default=False)
     
     # Relaciones
     cart = db.relationship('Cart', backref='user', uselist=False, cascade="all, delete-orphan")
@@ -58,7 +59,7 @@ class UserLink(db.Model):
     
     # Relaciones
     owner = db.relationship('User', back_populates='user_links')
-    click_logs = db.relationship('ClickLog', back_populates='link', lazy='dynamic')
+    click_logs = db.relationship('ClickLog', back_populates='link', lazy='dynamic', cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<UserLink {self.title} - {self.url}>"
@@ -68,7 +69,7 @@ class ClickLog(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     link_id = db.Column(db.Integer, db.ForeignKey('user_link.id'), nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(datetime.timezone.utc))
     
     # Relaciones
     link = db.relationship('UserLink', back_populates='click_logs')
