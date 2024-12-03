@@ -493,23 +493,17 @@ def dashboard():
         'data': [link.clicks for link in links]
     }
 
-    today = datetime.now(datetime.utcnow().astimezone().tzinfo).date()
-    # Get analytics data for today
-    today_clicks_count = (
-        db.session.query(ClickLog)
-        .join(UserLink)
-        .filter(
-            UserLink.owner_id == current_user.id,
-            func.date(ClickLog.timestamp) == today
-        ).count()
-    )
+    # Obtener la fecha de hoy
+    today = datetime.utcnow().date()
 
-    analytics_data = {
-        'total_clicks': sum(link.clicks for link in links),
-        'today_clicks': today_clicks_count,
-        'active_links': len([link for link in links if link.clicks > 0]),
-        'daily_average': sum(link.clicks for link in links) / len(links) if links else 0
-    }
+    # Estadísticas de clics
+    total_clicks = sum(link.clicks for link in links)
+    today_clicks = ClickLog.query.filter(
+        ClickLog.link_id.in_([link.id for link in links]),
+        func.date(ClickLog.timestamp) == today - timedelta(days=1)
+    ).count()
+    active_links = len([link for link in links if link.clicks > 0])
+    daily_average = total_clicks / len(links) if links else 0
 
     # Enlaces más populares (top 5)
     sorted_links = sorted(links, key=lambda l: l.clicks, reverse=True)[:5]
@@ -550,7 +544,11 @@ def dashboard():
     analytics_data = {
         'clicks_per_link': clicks_per_link,
         'popular_links': popular_links,
-        'click_trend': click_trend
+        'click_trend': click_trend,
+        'total_clicks': total_clicks,
+        'today_clicks': today_clicks,
+        'active_links': active_links,
+        'daily_average': daily_average
     }
 
     return render_template('dashboard.html', links=links, analytics_data=analytics_data)

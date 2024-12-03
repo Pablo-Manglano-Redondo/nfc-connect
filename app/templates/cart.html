@@ -3,6 +3,25 @@
 {% block title %}
     {{ super() }} - Cesta
 {% endblock %}
+
+{% block styles %}
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #mainContent {
+        flex: 1;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <main>
     <section class="cart-section py-5">
