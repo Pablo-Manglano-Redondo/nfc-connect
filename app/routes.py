@@ -6,8 +6,8 @@ import os
 import secrets
 import openai
 from flask import (
-    abort, current_app, jsonify, render_template, request, redirect,
-    flash, url_for, g
+    abort, current_app, json, jsonify, render_template, request, redirect,
+    flash, url_for, g, session
 )
 from flask_mail import Message
 from flask_login import (
@@ -15,7 +15,8 @@ from flask_login import (
 )
 from flask_wtf.csrf import CSRFProtect
 from flask_dance.contrib.google import google
-from sqlalchemy import func
+from sqlalchemy import asc, desc, func, or_
+import stripe
 from werkzeug.utils import secure_filename
 
 from app import app, mail, db
@@ -36,6 +37,9 @@ from app.utils import url_for_locale, admin_required  # Asegúrate de tener admi
 
 # Configura tu clave de API de OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Configura tu clave de API de Stripe
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 # Configura la protección CSRF
 csrf = CSRFProtect(app)
@@ -74,12 +78,50 @@ def index(lang_code=None):
 def about(lang_code=None):
     return render_template('about.html')
 
-@app.route('/store')
-@app.route('/<lang_code>/store')
+@app.route('/store', methods=['GET'])
+@app.route('/<lang_code>/store', methods=['GET'])
 def store(lang_code=None):
-    # Lógica para mostrar productos
-    products = Product.query.all()  # Asumiendo que tienes un modelo Product
-    return render_template('store.html', products=products)
+    # Obtener los filtros de la solicitud GET
+    product_type = request.args.get('type', None)
+    date_sort = request.args.get('date_sort', None)
+    price_sort = request.args.get('price_sort', None)
+
+    # Consulta base
+    query = Product.query
+
+    # Filtrar por tipo de producto si se selecciona
+    if product_type:
+        query = query.filter_by(type=product_type)
+
+    # Aplicar ordenamientos
+    if date_sort:
+        if date_sort == 'asc':
+            query = query.order_by(asc(Product.date_added))
+        elif date_sort == 'desc':
+            query = query.order_by(desc(Product.date_added))
+
+    if price_sort:
+        if price_sort == 'asc':
+            query = query.order_by(asc(Product.price))
+        elif price_sort == 'desc':
+            query = query.order_by(desc(Product.price))
+
+    # Obtener todos los productos que cumplen con los filtros y ordenamientos
+    products = query.all()
+
+    # Obtener todos los tipos de productos y características disponibles para los filtros
+    all_types = Product.query.with_entities(Product.type).distinct().all()
+    all_features = set()
+    for product in Product.query.all():
+        if product.features:
+            try:
+                features_list = json.loads(product.features)
+                for feature in features_list:
+                    all_features.add(feature)
+            except json.JSONDecodeError:
+                pass  # En caso de que haya un error en la conversión
+
+    return render_template('store.html', products=products, all_types=all_types, all_features=sorted(all_features), lang_code=lang_code)
 
 @app.route('/how_it_works')
 @app.route('/<lang_code>/how_it_works')
@@ -191,11 +233,15 @@ def cart_view(lang_code=None):
     cart = current_user.cart
     if not cart or not cart.cart_items:
         flash('Tu carrito está vacío.', 'info')
-        return render_template('cart.html', cart_items=[], total_price=0)
+        return render_template('cart.html', cart_items=[], total_price=0, config=current_app.config)
     
     cart_items = cart.cart_items
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+    # Calcular el total con descuento
+    total_price = sum(
+        item.product.price * (1 - (item.product.discount or 0)/100) * item.quantity 
+        for item in cart_items
+    )
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price, config=current_app.config)
 
 @app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 @login_required
@@ -261,12 +307,142 @@ def remove_from_cart(product_id):
         else:
             return redirect(url_for('cart_view'))
 
-@app.route('/checkout')
+@app.route('/create-checkout-session', methods=['POST'])
 @login_required
-def checkout():
-    # Implementa la lógica de checkout aquí (por ejemplo, integración con pasarelas de pago)
-    flash('Proceso de pago no implementado aún.', 'info')
+def create_checkout_session():
+    cart = current_user.cart
+    if not cart or not cart.cart_items:
+        flash('Tu carrito está vacío.', 'info')
+        return redirect(url_for('cart_view'))
+
+    cart_items = cart.cart_items
+    total_price = sum(item.product.price * item.quantity for item in cart_items)
+
+    # Construct the line items for Stripe
+    line_items = []
+    for item in cart_items:
+        line_items.append({
+            'price_data': {
+                'currency': 'eur',
+                'product_data': {
+                    'name': item.product.name,
+                    'images': [url_for('static', filename='img/' + item.product.image_file, _external=True)],
+                },
+                'unit_amount': int(item.product.price * 100),  # Stripe expects amounts in cents
+            },
+            'quantity': item.quantity,
+        })
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=url_for('success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=url_for('cancel', _external=True),
+            client_reference_id=current_user.id  # Asociar la sesión con el ID del usuario
+        )
+        return jsonify({'id': checkout_session.id})
+    except Exception as e:
+        current_app.logger.error(f"Error creando la sesión de checkout: {e}")
+        return jsonify(error=str(e)), 403
+    
+@app.route('/success')
+def success():
+    # Get session ID from URL params
+    session_id = request.args.get('session_id')
+    
+    if not session_id:
+        # No session ID provided, redirect to home
+        return redirect(url_for('index'))
+
+    try:
+        # Verify the checkout session with Stripe
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+        
+        # Verify payment status
+        if checkout_session.payment_status != 'paid':
+            flash('Payment not completed.', 'error')
+            return redirect(url_for('cart_view'))
+
+        # Clear shopping cart after verifying successful purchase
+        if current_user.is_authenticated and current_user.cart:
+            for item in current_user.cart.cart_items:
+                db.session.delete(item)
+            current_user.is_authorized = True
+            db.session.commit()
+            flash('¡Compra realizada con éxito!', 'success')
+            
+        return render_template('success.html')
+
+    except stripe.error.StripeError:
+        flash('Invalid payment session.', 'error')
+        return redirect(url_for('cart_view'))
+
+@app.route('/cancel')
+def cancel():
     return redirect(url_for('cart_view'))
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    payload = request.data
+    sig_header = request.headers.get('Stripe-Signature')
+    endpoint_secret = app.config['STRIPE_WEBHOOK_SECRET']
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError:
+        # Invalid payload
+        return {}, 400
+    except stripe.error.SignatureVerificationError:
+        # Invalid signature
+        return {}, 400
+
+    # Handle the event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # Fulfill the purchase, e.g., update database, send email
+        handle_checkout_session(session)
+
+    return {}, 200
+
+def handle_checkout_session(session):
+    """Handle successful Stripe checkout session by updating orders and cart."""
+    try:
+        # Obtener el usuario usando client_reference_id
+        user_id = session.get('client_reference_id')
+        user = User.query.get(user_id)
+        if not user or not user.cart:
+            return
+        
+        # Limpiar el carrito después del pago exitoso
+        cart_items = user.cart.cart_items
+        for item in cart_items:
+            db.session.delete(item)
+        
+        # Enviar correo de confirmación
+        msg = Message(
+            'Confirmación de Pedido',
+            sender=current_app.config['MAIL_DEFAULT_SENDER'],
+            recipients=[user.email]
+        )
+        
+        msg.body = f"""
+        ¡Gracias por tu pedido!
+
+        ID de Pedido: {session.id}
+        Monto Total: {session.amount_total / 100:.2f} {session.currency.upper()}
+        """
+        
+        mail.send(msg)
+        
+        db.session.commit()
+        
+    except Exception as e:
+        current_app.logger.error(f'Error al manejar la sesión de checkout: {str(e)}')
+        db.session.rollback()
 
 # -------------------------------------------------------------------
 # FUNCIONALIDAD: PRODUCTOS

@@ -99,10 +99,13 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    image_file = db.Column(db.String(20), nullable=True, default='default_product.jpg')
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
     features = db.Column(db.Text, nullable=True)
+    type = db.Column(db.String(50), nullable=False, default='NFC')
+    image_file = db.Column(db.String(20), nullable=True, default='default_product.jpg')
+    discount = db.Column(db.Float, nullable=True, default=0)
+    price = db.Column(db.Float, nullable=False)
+    stock = db.Column(db.Integer, nullable=False, default=0)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relaciones
     cart_items = db.relationship('CartItem', backref='product', lazy=True)

@@ -49,6 +49,9 @@
     <!-- Navbar -->
     {% include 'layout/navbar.html' %}
 
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}

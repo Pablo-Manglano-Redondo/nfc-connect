@@ -16,12 +16,12 @@ from app.models import User
 # Formularios de Autenticación
 # -------------------------------------------------------------------
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=150)])
+    username = StringField('Nombre de usuario', validators=[DataRequired(), Length(min=2, max=150)])
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=150)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    profile_image = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
-    submit = SubmitField('Sign Up')
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirma contraseña', validators=[DataRequired(), EqualTo('password')])
+    profile_image = FileField('Foto de perfil', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Registrarse')
 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
@@ -35,14 +35,14 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=150)])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Contraseña', validators=[DataRequired()])
     submit = SubmitField('Login')
 
 class LogoutForm(FlaskForm):
     submit = SubmitField('Logout')
 
 class DeleteAccountForm(FlaskForm):
-    submit = SubmitField('Delete Account')
+    submit = SubmitField('Borrar Cuenta')
 
 # -------------------------------------------------------------------
 # Formularios de Gestión de Cuenta de Usuario

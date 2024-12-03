@@ -604,7 +604,7 @@ main {
     background-color: var(--bs-white);
 }
 
-.store-section h2 {
+.section-title {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     color: var(--bs-dark);
@@ -612,50 +612,51 @@ main {
     text-align: center;
 }
 
-.store-section p.lead {
-    font-size: 1.5rem;
-    color: var(--bs-dark);
+.store-section .lead {
+    font-size: 1.25rem;
+    color: var(--bs-gray-700);
     text-align: center;
+    max-width: 600px;
+    margin: 0 auto 2rem;
 }
 
 .store-section .card {
     border: none;
     border-radius: 0.75rem;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     height: 100%;
-    max-width: 300px; /* Tarjeta más pequeña */
-    margin: 0 auto; /* Centrado */
+    max-width: 100%;
     background-color: var(--bs-white);
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     overflow: hidden;
-    text-align: center; /* Texto centrado */
+    text-align: left;
 }
 
 .store-section .card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.16);
 }
 
-.store-section .card-img-top {
+.store-section .product-image {
     height: 200px;
     object-fit: cover;
     transition: transform 0.4s ease;
 }
 
-.store-section .card:hover .card-img-top {
-    transform: scale(1.03);
+.store-section .card:hover .product-image {
+    transform: scale(1.05);
 }
 
 .store-section .card-body {
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centrado vertical */
+    justify-content: space-between;
 }
 
 .store-section .card-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
 }
 
 .store-section .card-title a {
@@ -670,17 +671,28 @@ main {
 }
 
 .store-section .card-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--bs-gray-600);
     line-height: 1.5;
     margin-bottom: 1rem;
 }
 
-.store-section .card-footer {
-    background: transparent;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    padding: 0.75rem;
-    width: 100%;
+.store-section .list-unstyled {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 1rem;
+}
+
+.store-section .list-unstyled li {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--bs-gray-700);
+}
+
+.store-section .list-unstyled li i {
+    margin-right: 0.5rem;
+    color: var(--bs-success);
 }
 
 .store-section .price {
@@ -689,17 +701,116 @@ main {
     color: var(--bs-primary);
 }
 
-.store-section .btn-cart:hover i {
-    transform: translateX(3px);
+.store-section .btn-custom {
+    background-color: var(--bs-primary);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
 }
 
-/* Mejoras responsivas */
+.store-section .btn-custom:hover {
+    background-color: var(--bs-primary-dark);
+}
+
+.store-section .badge {
+    font-size: 0.85rem;
+    padding: 0.5em 0.75em;
+}
+
+/* ===================================================
+   Sección de Filtros Mejorada
+=================================================== */
+.filter-form {
+    background-color: #f8f9fa; /* Color de fondo suave */
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.filter-form .form-label {
+    font-weight: 600;
+    color: var(--bs-dark);
+}
+
+.filter-form .btn-primary {
+    background-color: var(--bs-primary);
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.filter-form .btn-primary:hover {
+    background-color: var(--bs-primary-dark);
+}
+
+.filter-form .btn-outline-secondary {
+    border-color: var(--bs-secondary);
+    color: var(--bs-secondary);
+}
+
+.filter-form .btn-outline-secondary:hover {
+    background-color: var(--bs-secondary);
+    color: #fff;
+}
+
+.filter-form .form-check-label {
+    font-size: 0.95rem;
+    color: var(--bs-dark);
+}
+
+.filter-form .form-check-input:checked + .form-check-label {
+    font-weight: 600;
+    color: var(--bs-primary);
+}
+
+/* ===================================================
+   Modal de Confirmación Mejorado
+=================================================== */
+#cartModal .modal-content {
+    border-radius: 1rem;
+}
+
+#cartModal .modal-header {
+    border-bottom: none;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+#cartModal .modal-header.bg-success {
+    background-color: var(--bs-success);
+}
+
+#cartModal .modal-header .modal-title {
+    color: #fff;
+}
+
+#cartModal .modal-body {
+    text-align: center;
+}
+
+#cartModal .btn-custom {
+    background-color: var(--bs-primary);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+#cartModal .btn-custom:hover {
+    background-color: var(--bs-primary-dark);
+}
+
+/* ===================================================
+   Responsividad Mejorada
+=================================================== */
 @media (max-width: 992px) {
     .store-section .card {
-        max-width: 280px;
+        max-width: 100%;
     }
     
-    .store-section .card-img-top {
+    .store-section .product-image {
         height: 180px;
     }
 }
@@ -710,20 +821,28 @@ main {
     }
 
     .store-section .card {
-        max-width: 260px;
+        max-width: 100%;
     }
 
-    .store-section .card-img-top {
+    .store-section .product-image {
         height: 160px;
     }
 
-    .store-section h2 {
+    .store-section .section-title {
         font-size: 1.75rem;
     }
 
-    .store-section p.lead {
+    .store-section .lead {
         font-size: 1rem;
         margin-bottom: 1.5rem;
+    }
+
+    .filter-form {
+        padding: 1.5rem;
+    }
+
+    .filter-form .btn-primary, .filter-form .btn-outline-secondary {
+        width: 100%;
     }
 }
 
@@ -732,11 +851,7 @@ main {
         padding: 2rem 0;
     }
 
-    .store-section .card {
-        max-width: 240px;
-    }
-
-    .store-section .card-img-top {
+    .store-section .product-image {
         height: 150px;
     }
 
@@ -754,6 +869,18 @@ main {
 
     .store-section .price {
         font-size: 1.1rem;
+    }
+
+    .filter-form .row.g-4 {
+        flex-direction: column;
+    }
+
+    .filter-form .col-md-4, .filter-form .col-md-6, .filter-form .col-md-2 {
+        width: 100%;
+    }
+
+    .filter-form .btn-primary, .filter-form .btn-outline-secondary {
+        margin-top: 1rem;
     }
 }
 

@@ -1,3 +1,5 @@
+<!-- templates/cart.html -->
+
 {% extends "app.html" %}
 
 {% block title %}
@@ -45,9 +47,22 @@
                                     <div class="card-body">
                                         <h5 class="card-title">{{ item.product.name }}</h5>
                                         <p class="card-text">{{ item.product.description }}</p>
-                                        <p class="card-text"><strong>{{ _('Precio') }}:</strong> {{ "%.2f"|format(item.product.price) }}€</p>
+                                        <p class="card-text"><strong>{{ _('Precio') }}:</strong> 
+                                            {% if item.product.discount %}
+                                                <del class="text-muted">{{ "%.2f"|format(item.product.price) }}€</del>
+                                                <span class="text-danger">{{ "%.2f"|format(item.product.price * (1 - item.product.discount/100)) }}€</span>
+                                            {% else %}
+                                                {{ "%.2f"|format(item.product.price) }}€
+                                            {% endif %}
+                                        </p>
                                         <p class="card-text"><strong>{{ _('Cantidad') }}:</strong> {{ item.quantity }}</p>
-                                        <p class="card-text"><strong>{{ _('Subtotal') }}:</strong> {{ "%.2f"|format(item.product.price * item.quantity) }}€</p>
+                                        <p class="card-text"><strong>{{ _('Subtotal') }}:</strong> 
+                                            {% if item.product.discount %}
+                                                {{ "%.2f"|format((item.product.price * (1 - item.product.discount/100)) * item.quantity) }}€
+                                            {% else %}
+                                                {{ "%.2f"|format(item.product.price * item.quantity) }}€
+                                            {% endif %}
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="col-md-2 d-flex align-items-center">
@@ -61,7 +76,7 @@
                     {% endfor %}
                     <div class="col-md-12 text-end">
                         <h4>{{ _('Total') }}: {{ "%.2f"|format(total_price) }}€</h4>
-                        <a href="{{ url_for('checkout') }}" class="btn btn-custom">{{ _('Proceder al Pago') }}</a>
+                        <button id="checkout-button" class="btn btn-custom">{{ _('Proceder al Pago') }}</button>
                     </div>
                 {% else %}
                     <div class="col-12 text-center">
@@ -73,4 +88,42 @@
         </div>
     </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const stripe = Stripe('{{ config.STRIPE_PUBLIC_KEY }}');
+
+    const checkoutButton = document.getElementById('checkout-button');
+    if (checkoutButton) {
+        checkoutButton.addEventListener('click', () => {
+            fetch('{{ url_for("create_checkout_session") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}' // Asegúrate de que estás manejando CSRF
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(session => {
+                return stripe.redirectToCheckout({ sessionId: session.id });
+            })
+            .then(result => {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al procesar el pago.');
+            });
+        });
+    }
+</script>
 {% endblock %}

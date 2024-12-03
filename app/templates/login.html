@@ -4,46 +4,101 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="register-container" style="padding-top: 7rem;">
-  {% if current_user.is_authenticated %}
-    <h1>You are already logged in as {{ current_user.username }}</h1>
-    <form method="POST" action="{{ url_for('logout') }}">
-      {{ logout_form.hidden_tag() }}
-      <button type="submit" class="btn btn-danger btn-block">Logout</button>
-    </form>
-    <form method="POST" action="{{ url_for('delete_account') }}" class="mt-3">
-      {{ delete_account_form.hidden_tag() }}
-      <button type="submit" class="btn btn-warning btn-block">Delete Account</button>
-    </form>
-  {% else %}
-    <h1>Login</h1>
-    <form method="POST" action="{{ url_for('login') }}">
-      {{ form.hidden_tag() }}
-      <div class="form-group">
-        {{ form.email.label(class="form-control-label") }}
-        {{ form.email(class="form-control") }}
-        {% for error in form.email.errors %}
-          <div class="text-danger">{{ error }}</div>
-        {% endfor %}
+<div class="container py-5"></div>
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0 rounded-lg" style="margin-top: 3rem;">
+        <div class="card-body p-5">
+          {% if current_user.is_authenticated %}
+            <h2 class="text-center mb-4">Bienvenido!</h2>
+            <p class="text-center text-secondary mb-4">Estás autenticado como <span class="fw-bold text-primary">{{ current_user.username }}</span></p>
+            <form method="POST" action="{{ url_for('logout') }}">
+              {{ logout_form.hidden_tag() }}
+              <button type="submit" class="btn btn-outline-danger btn-lg w-100 mb-3"></button>
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </button>
+            </form>
+            <form method="POST" action="{{ url_for('delete_account') }}">
+              {{ delete_account_form.hidden_tag() }}
+              <button type="submit" class="btn btn-outline-warning btn-lg w-100"></button>
+                <i class="fas fa-user-times me-2"></i>Borrar cuenta
+              </button>
+            </form>
+          {% else %}
+            <h2 class="text-center mb-4">Bienvenido</h2>
+            <form method="POST" action="{{ url_for('login') }}" class="needs-validation" novalidate>
+              {{ form.hidden_tag() }}
+              <div class="form-group mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control form-control-lg", placeholder="Introduce tu email") }}
+                {% for error in form.email.errors %}
+                  <div class="text-danger small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                {% endfor %}
+              </div>
+              <div class="form-group mb-4">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control form-control-lg", placeholder="Introduce tu contraseña") }}
+                {% for error in form.password.errors %}
+                  <div class="text-danger small mt-1"><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                {% endfor %}
+              </div>
+              {{ form.submit(class="btn btn-primary btn-lg w-100 mb-3") }}
+            </form>
+            
+            <div class="text-center">
+              <p class="text-secondary mb-3">¿No tienes cuenta? <a href="{{ url_for('register') }}" class="text-primary text-decoration-none">Registrate aqui</a></p>
+              <div class="divider d-flex align-items-center my-4">
+                <hr class="flex-grow-1">
+                <span class="px-3 text-secondary">O continua con</span>
+                <hr class="flex-grow-1">
+              </div>
+              <a href="{{ url_for('login_google') }}" class="btn btn-outline-danger btn-lg w-100">
+                <i class="fab fa-google me-2"></i> Inicia sesión con Google
+              </a>
+          {% endif %}
+        </div>
       </div>
-      <div class="form-group">
-        {{ form.password.label(class="form-label") }}
-        {{ form.password(class="form-control") }}
-        {% for error in form.password.errors %}
-          <div class="text-danger">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div class="mb-3">
-        {{ form.submit(class="btn btn-custom btn-block") }}
-      </div>
-    </form>
-    
-    <div class="text-center mt-3">
-      <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
-      <p>Or</p>
-      <a href="{{ url_for('login_google') }}" class="btn btn-danger btn-social"><i class="fab fa-google"></i> Register with Google</a>
-      <!-- Si agregas más proveedores en el futuro, puedes añadir más botones aquí -->
     </div>
-  {% endif %}
+  </div>
 </div>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+#mainContent {
+    flex: 1;
+}
+.card {
+  background-color: #ffffff;
+  transition: transform 0.2s;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+.btn {
+  transition: all 0.3s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+body {
+  background-color: #ffffff;
+}
+.form-label {
+  color: #212529;
+}
+.text-secondary {
+  color: #6c757d !important;
+}
+</style>
 {% endblock %}

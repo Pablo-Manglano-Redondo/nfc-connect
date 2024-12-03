@@ -1,9 +1,4 @@
-Arreglar apariencia de product_detail y cart (para el carrito, sobre todo en telefono)
-Arreglar apariencia login / register
-Implementar login google
-Implementar pasarela de pago
-Arreglar apariencia dashboard (normal y telefono)
+Arreglar apariencia de product_detail y cart
+Eliminar modal shadow
+Implementar login/register google
 Completar cookies y privacy pages
-Implementar iconos modernos en user-link (dashboard)
-Pending for approval para crear linktree
-Pasarela de pago - Stripe

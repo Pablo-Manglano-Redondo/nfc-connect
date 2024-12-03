@@ -9,6 +9,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = True
 
+    STRIPE_PUBLIC_KEY = 'pk_test_51QRyAQGMakmO5k4ECXed1lzVrZcRfuDlcmolgSxoSzdzIhUTwgv32nGQ6XZi3cFTNSilE1GPGXdRIZ530T3YsOQv00vGfhDlTN' #os.environ.get('STRIPE_PUBLIC_KEY')
+    STRIPE_SECRET_KEY = 'sk_test_51QRyAQGMakmO5k4E3ZbRQCYYomqXeoV9TqbXpbWblsyveiNbKONXDhljQuIGiyAsc4WNELf5mJVmWcSvI2p7b3Hs00oeTAzDQT' #os.environ.get('STRIPE_SECRET_KEY')
+    STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
+
     MAIL_SERVER = 'smtp.office365.com'
     MAIL_PORT = 587
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')

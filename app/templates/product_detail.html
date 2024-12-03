@@ -1,4 +1,3 @@
-<!-- templates/product_detail.html -->
 {% extends "app.html" %}
 
 {% block title %}
@@ -9,19 +8,35 @@
 <main>
     <section class="product-detail-section py-5">
         <div class="container" style="padding-top: 7rem;">
-            <div class="row">
+            <div class="row g-4">
                 <!-- Imagen Principal del Producto -->
                 <div class="col-md-6" data-aos="fade-right">
-                    <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" class="img-fluid" alt="{{ product.name }}">
+                    <div class="main-image-container">
+                        <img id="mainImage" src="{{ url_for('static', filename='img/' ~ product.image_file) }}" 
+                             class="img-fluid rounded" alt="{{ product.name }}">
+                    </div>
                     
                     <!-- Galería de Imágenes Adicionales -->
                     {% if product.images %}
-                    <div class="mt-3">
-                        <h5>{{ _('Más Imágenes') }}</h5>
-                        <div class="row">
+                    <div class="mt-4">
+                        <h5 class="mb-3 gallery-title">{{ _('Más Imágenes') }}</h5>
+                        <div class="row g-2 thumbnail-gallery">
+                            <div class="col-3">
+                                <div class="thumbnail-wrapper">
+                                    <img src="{{ url_for('static', filename='img/' ~ product.image_file) }}" 
+                                         class="img-thumbnail thumbnail-img active" 
+                                         onclick="changeMainImage(this.src)"
+                                         alt="{{ product.name }}">
+                                </div>
+                            </div>
                             {% for image in product.images %}
-                            <div class="col-4 mb-3">
-                                <img src="{{ url_for('static', filename='img/' ~ image.image_file) }}" class="img-fluid" alt="{{ product.name }}">
+                            <div class="col-3">
+                                <div class="thumbnail-wrapper">
+                                    <img src="{{ url_for('static', filename='img/' ~ image.image_file) }}" 
+                                         class="img-thumbnail thumbnail-img" 
+                                         onclick="changeMainImage(this.src)"
+                                         alt="{{ product.name }}">
+                                </div>
                             </div>
                             {% endfor %}
                         </div>
@@ -31,29 +46,168 @@
                 
                 <!-- Información del Producto -->
                 <div class="col-md-6" data-aos="fade-left">
-                    <h2>{{ product.name }}</h2>
-                    <p class="lead">{{ _('Precio') }}: {{ "%.2f"|format(product.price) }}€</p>
-                    <p>{{ product.description }}</p>
-                    
-                    <!-- Formulario para Añadir al Carrito -->
-                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
-                        {{ add_to_cart_form.hidden_tag() }}
-                        <button type="submit" class="btn btn-primary">{{ _('Añadir al Carrito') }}</button>
-                    </form>
-                    
-                    <!-- Información Adicional: Características -->
-                    {% if features_list %}
-                    <hr>
-                    <h4>{{ _('Características') }}</h4>
-                    <ul>
-                        {% for feature in features_list %}
-                        <li>{{ feature }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
+                    <div class="product-info-container">
+                        <h2 class="product-title mb-3">{{ product.name }}</h2>
+                        <p class="price-tag mb-4">{{ "%.2f"|format(product.price) }}€</p>
+                        <p class="product-description">{{ product.description }}</p>
+                        
+                        <!-- Formulario para Añadir al Carrito -->
+                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="mb-4">
+                            {{ add_to_cart_form.hidden_tag() }}
+                            <button type="submit" class="btn btn-primary btn-lg add-to-cart-btn">
+                                <i class="fas fa-shopping-cart me-2"></i>{{ _('Añadir al Carrito') }}
+                            </button>
+                        </form>
+                        
+                        <!-- Características -->
+                        {% if features_list %}
+                        <div class="features-section mt-4">
+                            <h4 class="features-title">{{ _('Características') }}</h4>
+                            <ul class="feature-list">
+                                {% for feature in features_list %}
+                                <li class="feature-item">{{ feature }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 </main>
+
+<style>
+.main-image-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.main-image-container:hover {
+    transform: scale(1.02);
+}
+
+.thumbnail-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+.thumbnail-wrapper:hover {
+    transform: translateY(-3px);
+}
+
+.thumbnail-img {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-img:hover {
+    opacity: 0.9;
+}
+
+.thumbnail-img.active {
+    border: 3px solid #007bff;
+    box-shadow: 0 0 0 2px white;
+}
+
+.product-info-container {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.product-title {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.price-tag {
+    font-size: 2.2rem;
+    color: #007bff;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.product-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+}
+
+.add-to-cart-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+.features-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.feature-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.feature-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.feature-item:before {
+    content: "✓";
+    color: #28a745;
+    margin-right: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.gallery-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+</style>
+
+<script>
+function changeMainImage(newSrc) {
+    const mainImage = document.getElementById('mainImage');
+    mainImage.style.opacity = '0';
+    setTimeout(() => {
+        mainImage.src = newSrc;
+        mainImage.style.opacity = '1';
+    }, 200);
+    
+    const thumbnails = document.querySelectorAll('.thumbnail-img');
+    thumbnails.forEach(thumb => {
+        thumb.classList.remove('active');
+        if (thumb.src === newSrc) {
+            thumb.classList.add('active');
+        }
+    });
+}
+
+document.getElementById('mainImage').style.transition = 'opacity 0.2s ease';
+</script>
 {% endblock %}
