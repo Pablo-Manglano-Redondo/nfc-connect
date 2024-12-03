@@ -4375,8 +4375,8 @@ textarea.form-control-lg {
   top: 0;
   left: 0;
   z-index: var(--bs-backdrop-zindex);
-  width: 100vw;
-  height: 100vh;
+  width: 120vw;
+  height: 120vh;
   background-color: var(--bs-backdrop-bg); }
   .modal-backdrop.fade {
     opacity: 0; }

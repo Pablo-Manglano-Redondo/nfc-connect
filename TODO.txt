@@ -1,4 +1,3 @@
 Arreglar apariencia de product_detail y cart
-Eliminar modal shadow
 Implementar login/register google
 Completar cookies y privacy pages
