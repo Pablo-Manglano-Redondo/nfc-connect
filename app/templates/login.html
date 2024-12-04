@@ -4,7 +4,7 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="container py-5"></div>
+<div class="container py-5">
   <div class="row justify-content-center mb-4">
     <div class="col-md-6 col-lg-5">
       <div class="card shadow-sm border-0 rounded-lg" style="margin-top: 3rem;">
@@ -14,14 +14,14 @@
             <p class="text-center text-secondary mb-4">Estás autenticado como <span class="fw-bold text-primary">{{ current_user.username }}</span></p>
             <form method="POST" action="{{ url_for('logout') }}">
               {{ logout_form.hidden_tag() }}
-              <button type="submit" class="btn btn-outline-danger btn-lg w-100 mb-3"></button>
-                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              <button type="submit" class="btn btn-outline-danger btn-lg w-100 mb-3">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
               </button>
             </form>
             <form method="POST" action="{{ url_for('delete_account') }}">
               {{ delete_account_form.hidden_tag() }}
-              <button type="submit" class="btn btn-outline-warning btn-lg w-100"></button>
-                <i class="fas fa-user-times me-2"></i>Borrar cuenta
+              <button type="submit" class="btn btn-outline-warning btn-lg w-100">
+                <i class="fas fa-user-times me-2"></i> Borrar cuenta
               </button>
             </form>
           {% else %}
@@ -46,15 +46,16 @@
             </form>
             
             <div class="text-center">
-              <p class="text-secondary mb-3">¿No tienes cuenta? <a href="{{ url_for('register') }}" class="text-primary text-decoration-none">Registrate aqui</a></p>
+              <p class="text-secondary mb-3">¿No tienes cuenta? <a href="{{ url_for('register') }}" class="text-primary text-decoration-none">Regístrate aquí</a></p>
               <div class="divider d-flex align-items-center my-4">
                 <hr class="flex-grow-1">
-                <span class="px-3 text-secondary">O continua con</span>
+                <span class="px-3 text-secondary">O continúa con</span>
                 <hr class="flex-grow-1">
               </div>
-              <a href="{{ url_for('login_google') }}" class="btn btn-outline-danger btn-lg w-100">
+              <a href="{{ url_for('google.login') }}" class="btn btn-outline-danger btn-lg w-100">
                 <i class="fab fa-google me-2"></i> Inicia sesión con Google
               </a>
+            </div>
           {% endif %}
         </div>
       </div>

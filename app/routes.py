@@ -7,14 +7,16 @@ import secrets
 import openai
 from flask import (
     abort, current_app, json, jsonify, render_template, request, redirect,
-    flash, url_for, g, session
+    flash, url_for, g
 )
 from flask_mail import Message
 from flask_login import (
     login_user, logout_user, current_user, login_required
 )
 from flask_wtf.csrf import CSRFProtect
-from flask_dance.contrib.google import google
+from flask_dance.contrib.google import make_google_blueprint
+from flask_dance.consumer import oauth_authorized
+
 from sqlalchemy import asc, desc, func, or_
 import stripe
 from werkzeug.utils import secure_filename
@@ -369,7 +371,7 @@ def success():
         if current_user.is_authenticated and current_user.cart:
             for item in current_user.cart.cart_items:
                 db.session.delete(item)
-            current_user.is_authorized = True
+            current_user.is_authorized = True  # Asegúrate de que este campo exista en tu modelo User
             db.session.commit()
             flash('¡Compra realizada con éxito!', 'success')
             
@@ -617,41 +619,72 @@ def inject_add_to_cart_form():
     form = AddToCartForm()
     return dict(add_to_cart_form=form)
 
-# -------------------------------------------------------------------
-# FUNCIONALIDAD: OAUTH CON GOOGLE
-# -------------------------------------------------------------------
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    form = DeleteAccountForm()
+    if form.validate_on_submit():
+        db.session.delete(current_user)
+        db.session.commit()
+        flash('Tu cuenta ha sido eliminada.', 'success')
+        return redirect(url_for('index'))
+    flash('Error al eliminar la cuenta.', 'danger')
+    return redirect(url_for('login'))
 
-@app.route("/login/google")
-def login_google():
-    if not google.authorized:
-        return redirect(url_for("google.login"))
-    resp = google.get("/oauth2/v2/userinfo")
+#------------------------------------------------------------------------
+#------------------------FUNCIONALIDAD: OAUTH CON FLASK-DANCE-------------
+#------------------------------------------------------------------------
+
+# Crear el blueprint de Google OAuth
+google_bp = make_google_blueprint(
+    client_id=app.config['GOOGLE_OAUTH_CLIENT_ID'],
+    client_secret=app.config['GOOGLE_OAUTH_CLIENT_SECRET'],
+    scope=["profile", "email"],
+    redirect_url="/login/google/authorized"  # Asegúrate de que coincida con la consola de Google
+)
+
+app.register_blueprint(google_bp, url_prefix="/login")
+
+# Definir el manejador de señales de OAuth directamente aquí
+@oauth_authorized.connect_via(google_bp)
+def google_logged_in(blueprint, token):
+    if not token:
+        flash("No se pudo iniciar sesión con Google.", "danger")
+        return False  # Evita que Flask-Dance siga procesando
+
+    # Obtener información del usuario desde Google
+    resp = blueprint.session.get("/oauth2/v2/userinfo")
     if not resp.ok:
-        flash("Failed to fetch user info from Google.", "danger")
-        return redirect(url_for("login"))
-    
+        flash("No se pudo obtener la información del usuario desde Google.", "danger")
+        return False
+
     user_info = resp.json()
-    email = user_info["email"]
-    name = user_info.get("name", email.split("@")[0])
+    email = user_info.get("email")
+    name = user_info.get("name", email.split("@")[0] if email else "Usuario")
     picture = user_info.get("picture", "default.jpg")
 
-    # Buscar si el usuario ya existe
+    if not email:
+        flash("El correo electrónico no está disponible o no está verificado por Google.", "danger")
+        return False
+
+    # Buscar al usuario en la base de datos
     user = User.query.filter_by(email=email).first()
     if user is None:
-        # Crear un nuevo usuario
+        # Crear un nuevo usuario si no existe
         user = User(
             username=name,
             email=email,
             profile_image=picture
         )
-        user.set_password(os.urandom(16).hex())  # Generar una contraseña aleatoria
+        user.set_password(secrets.token_hex(16))  # Generar una contraseña aleatoria
         db.session.add(user)
         db.session.commit()
-    
+
     # Iniciar sesión al usuario
     login_user(user)
     flash("Has iniciado sesión exitosamente con Google.", "success")
-    return redirect(url_for("dashboard"))
+
+    return False  # Evita redirecciones adicionales
 
 # -------------------------------------------------------------------
 # FUNCIONALIDAD: DASHBOARD
@@ -929,6 +962,9 @@ def save_background(form_file, folder_name):
         filename = f"{current_user.username}-foto{f_ext}"
     elif f_ext.lower() in ['.mp4', '.mov', '.avi']:
         filename = f"{current_user.username}-video{f_ext}"
+    else:
+        flash('Tipo de archivo de fondo no soportado.', 'danger')
+        return None
     file_path = os.path.join(app.root_path, 'static', folder_name, filename)
 
     form_file.save(file_path)

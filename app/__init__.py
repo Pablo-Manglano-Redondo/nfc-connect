@@ -43,19 +43,3 @@ app.jinja_env.globals.update(url_for_locale=utils.url_for_locale)
 @login_manager.user_loader
 def load_user(user_id):
     return models.User.query.get(int(user_id))
-
-#------------------------------------------------------------------------
-#------------------------FUNCIONALIDAD: OAUTH CON FLASK-DANCE-------------
-#------------------------------------------------------------------------
-
-from flask_dance.contrib.google import make_google_blueprint, google
-
-# Crear el blueprint de Google OAuth
-google_bp = make_google_blueprint(
-    client_id=app.config['GOOGLE_OAUTH_CLIENT_ID'],
-    client_secret=app.config['GOOGLE_OAUTH_CLIENT_SECRET'],
-    scope=["profile", "email"],
-    redirect_url="/login/google/authorized"  # Debe coincidir con el URI de redirección configurado en Google
-)
-
-app.register_blueprint(google_bp, url_prefix="/login")
